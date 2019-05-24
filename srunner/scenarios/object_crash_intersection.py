@@ -43,7 +43,7 @@ class VehicleTurningRight(BasicScenario):
     _ego_acceptable_distance = 35
 
     # other vehicle parameters
-    _other_actor_target_velocity = 10
+    _other_actor_target_velocity = 5
     _trigger_distance_from_ego = 14
     _other_actor_max_throttle = 1.0
     _other_actor_max_brake = 1.0
@@ -110,8 +110,8 @@ class VehicleTurningRight(BasicScenario):
         # building the tress
         root.add_child(scenario_sequence)
         scenario_sequence.add_child(trigger_distance)
-        scenario_sequence.add_child(sync_arrival_parallel)
-        scenario_sequence.add_child(stop_other_actor)
+        # scenario_sequence.add_child(sync_arrival_parallel)
+        # scenario_sequence.add_child(stop_other_actor)
         scenario_sequence.add_child(timeout_other_actor)
         scenario_sequence.add_child(keep_velocity_other)
         scenario_sequence.add_child(stop_other)
@@ -165,7 +165,7 @@ class VehicleTurningLeft(BasicScenario):
     _ego_acceptable_distance = 40
 
     # other vehicle parameters
-    _other_actor_target_velocity = 10
+    _other_actor_target_velocity = 5
     _trigger_distance_from_ego = 23
     _other_actor_max_throttle = 1.0
     _other_actor_max_brake = 1.0
@@ -234,8 +234,8 @@ class VehicleTurningLeft(BasicScenario):
         # building the tress
         root.add_child(scenario_sequence)
         scenario_sequence.add_child(trigger_distance)
-        scenario_sequence.add_child(sync_arrival_parallel)
-        scenario_sequence.add_child(stop_other_actor)
+        # scenario_sequence.add_child(sync_arrival_parallel)
+        # scenario_sequence.add_child(stop_other_actor)
         scenario_sequence.add_child(timeout_other_actor)
         scenario_sequence.add_child(keep_velocity_other)
         scenario_sequence.add_child(stop_other)

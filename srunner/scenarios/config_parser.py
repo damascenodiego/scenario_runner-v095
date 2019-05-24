@@ -15,7 +15,7 @@ import os
 import xml.etree.ElementTree as ET
 
 import carla
-# from agents.navigation.local_planner import RoadOption
+# from PythonAPI.carla.agents.navigation.local_planner import RoadOption
 
 
 class RouteConfiguration(object):
