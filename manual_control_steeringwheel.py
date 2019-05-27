@@ -99,6 +99,7 @@ try:
     from pygame.locals import K_r
     from pygame.locals import K_s
     from pygame.locals import K_w
+    from pygame.locals import K_KP_ENTER
 except ImportError:
     raise RuntimeError('cannot import pygame, make sure pygame package is installed')
 
@@ -824,6 +825,12 @@ def game_loop(args):
                 break
             world.render(display)
             pygame.display.flip()
+            ego = world.player
+            # print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(ego.get_location().x, ego.get_location().y, ego.get_location().z))
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN and event.key == K_KP_ENTER:
+                    ego = world.player
+                    print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(ego.get_location().x, ego.get_location().y, ego.get_location().z))
 
     finally:
 
