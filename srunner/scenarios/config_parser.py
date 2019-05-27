@@ -15,7 +15,7 @@ import os
 import xml.etree.ElementTree as ET
 
 import carla
-# from PythonAPI.carla.agents.navigation.local_planner import RoadOption
+from PythonAPI.carla.agents.navigation.local_planner import RoadOption
 
 
 class RouteConfiguration(object):
@@ -96,7 +96,6 @@ class ScenarioConfiguration(object):
     other_actors = []
     town = None
     name = None
-    type = None
     type = None
     target = None
     route = None

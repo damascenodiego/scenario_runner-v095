@@ -321,14 +321,14 @@ class DualControl(object):
     def _parse_vehicle_wheel(self):
         numAxes = self._joystick.get_numaxes()
         jsInputs = [float(self._joystick.get_axis(i)) for i in range(numAxes)]
-        print (jsInputs)
+        # print (jsInputs)
         jsButtons = [float(self._joystick.get_button(i)) for i in
                      range(self._joystick.get_numbuttons())]
 
         # Custom function to map range of inputs [1, -1] to outputs [0, 1] i.e 1 from inputs means nothing is pressed
         # For the steering, it seems fine as it is
-        # K1 = 1.0  # 0.55
-        K1 = 0.75
+        K1 = 1.0  # 0.55
+        # K1 = 0.75
         # K1 = 0.33 # 0.55
         steerCmd = K1 * math.tan(1.1 * jsInputs[self._steer_idx])
 
@@ -426,7 +426,7 @@ class HUD(object):
             'Client:  % 16.0f FPS' % clock.get_fps(),
             '',
             'Vehicle: % 20s' % get_actor_display_name(world.player, truncate=20),
-            # 'Map:     % 20s' % world.map.name,
+            'Map:     % 20s' % world.world.map_name,
             'Simulation time: % 12s' % datetime.timedelta(seconds=int(self.simulation_time)),
             '',
             'Speed:   % 15.0f km/h' % (3.6 * math.sqrt(v.x**2 + v.y**2 + v.z**2)),

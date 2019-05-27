@@ -39,9 +39,6 @@ def main():
 
     location = random.choice(world.get_map().get_spawn_points()).location
 
-    str_location = "({},{},{})".format(location.x,location.y,location.z)
-    print(str_location)
-
     for blueprint in vehicle_blueprints:
         transform = carla.Transform(location, carla.Rotation(yaw=-45.0))
         vehicle = world.spawn_actor(blueprint, transform)

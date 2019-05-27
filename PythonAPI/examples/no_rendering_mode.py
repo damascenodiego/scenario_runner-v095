@@ -1267,7 +1267,7 @@ class ModuleInput(object):
 
     def _parse_events(self):
         self.mouse_pos = pygame.mouse.get_pos()
-        print(pygame.mouse.get_pos())
+        #print(pygame.mouse.get_pos())
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit_game()
