@@ -245,6 +245,9 @@ class ScenarioManager(object):
             if self.scenario.test_criteria.status == py_trees.common.Status.FAILURE:
                 failure = True
                 result = "FAILURE"
+                for criterion in self.scenario.test_criteria.children:
+                    if criterion.status == py_trees.common.Status.FAILURE:
+                        print('Criteria failed: {}'.format(criterion.name))
         else:
             for criterion in self.scenario.test_criteria:
                 if (not criterion.optional and
@@ -252,6 +255,7 @@ class ScenarioManager(object):
                         criterion.test_status != "ACCEPTABLE"):
                     failure = True
                     result = "FAILURE"
+                    print('Criteria failed: {}'.format(criterion.name))
                 elif criterion.test_status == "ACCEPTABLE":
                     result = "ACCEPTABLE"
 
