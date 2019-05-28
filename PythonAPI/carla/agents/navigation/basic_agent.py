@@ -30,7 +30,7 @@ class BasicAgent(Agent):
         """
         super(BasicAgent, self).__init__(vehicle)
 
-        self._proximity_threshold = 10.0  # meters
+        self._proximity_threshold = 0.5  # meters
         self._state = AgentState.NAVIGATING
         args_lateral_dict = {
             'K_P': 1,
@@ -40,7 +40,7 @@ class BasicAgent(Agent):
         self._local_planner = LocalPlanner(
             self._vehicle, opt_dict={'target_speed' : target_speed,
             'lateral_control_dict':args_lateral_dict})
-        self._hop_resolution = 2.0
+        self._hop_resolution = 0.2
         self._path_seperation_hop = 2
         self._path_seperation_threshold = 0.5
         self._target_speed = target_speed
@@ -119,6 +119,6 @@ class BasicAgent(Agent):
         else:
             self._state = AgentState.NAVIGATING
             # standard local planner behavior
-            control = self._local_planner.run_step()
+            control = self._local_planner.run_step(debug=debug)
 
         return control

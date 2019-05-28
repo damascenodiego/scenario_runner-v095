@@ -1,7 +1,10 @@
 #!/usr/bin/env python
 
 # Copyright (c) 2018 Intel Labs.
+# Copyright (c) 2019 University of Leicester
+# Copyright (c) 2019 University of Sao Paulo
 # authors: Fabian Oboril (fabian.oboril@intel.com)
+# authors: Diego Damasceno (damascenodiego@usp.br)
 #
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
@@ -22,6 +25,7 @@ import carla
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.timer import GameTime
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
+from PythonAPI.carla.agents.tools.misc import draw_waypoints
 
 
 class Criterion(py_trees.behaviour.Behaviour):
@@ -251,7 +255,7 @@ class CollisionTest(Criterion):
         world = self.actor.get_world()
         blueprint = world.get_blueprint_library().find('sensor.other.collision')
         self._collision_sensor = world.spawn_actor(blueprint, carla.Transform(), attach_to=self.actor)
-        self._collision_sensor.listen(lambda event: self._count_collisions(weakref.ref(self), event))
+        self._collision_sensor.listen(lambda event: CollisionTest._count_collisions(weakref.ref(self), event))
 
     def update(self):
         """

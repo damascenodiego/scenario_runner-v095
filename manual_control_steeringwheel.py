@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Copyright (c) 2019 University of Leicester
+# Copyright (c) 2019 University of Sao Paulo
 #
 # This work is licensed under the terms of the MIT license.
 # For a copy, see <https://opensource.org/licenses/MIT>.
@@ -818,7 +819,7 @@ def game_loop(args):
 
         clock = pygame.time.Clock()
         while True:
-            clock.tick_busy_loop(60)
+            clock.tick_busy_loop(20)
             if controller.parse_events(world, clock):
                 return
             if not world.tick(clock):
