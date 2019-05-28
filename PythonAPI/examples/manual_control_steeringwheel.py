@@ -778,9 +778,13 @@ def game_loop(args):
         client = carla.Client(args.host, args.port)
         client.set_timeout(2.0)
 
+        SCREEN_MODE = pygame.HWSURFACE | pygame.DOUBLEBUF
+        if(args.fullscreen):
+            SCREEN_MODE = pygame.FULLSCREEN
+
         display = pygame.display.set_mode(
             (args.width, args.height),
-            pygame.HWSURFACE | pygame.DOUBLEBUF)
+            SCREEN_MODE)
 
         hud = HUD(args.width, args.height)
         world = World(client.get_world(), hud, args.filter)
@@ -788,7 +792,7 @@ def game_loop(args):
 
         clock = pygame.time.Clock()
         while True:
-            clock.tick_busy_loop(20)
+            clock.tick_busy_loop(60)
             if controller.parse_events(world, clock):
                 return
             world.tick(clock)
@@ -841,6 +845,10 @@ def main():
         metavar='PATTERN',
         default='vehicle.*',
         help='actor filter (default: "vehicle.*")')
+    argparser.add_argument(
+        '--fullscreen',
+        action='store_true',
+        help='enable fullscreen mode')
     args = argparser.parse_args()
 
     args.width, args.height = [int(x) for x in args.res.split('x')]
