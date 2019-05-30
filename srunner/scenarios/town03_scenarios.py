@@ -8,7 +8,7 @@
 # For a copy, see <https://opensource.org/licenses/MIT>.
 
 """
-Scenarios designed to the OpenDay @ Uni of Leicester 2019
+Scenarios designed for the OpenDay @ Uni of Leicester 2019
 """
 
 from __future__ import print_function
@@ -23,12 +23,12 @@ from srunner.scenariomanager.timer import TimeOut
 from srunner.scenarios.basic_scenario import *
 
 
-OPEN_DAY_SCENARIOS = [
-    "OpenDay"
+TOWN03_SCENARIOS = [
+    "Town03GasStation"
 ]
 
 
-class OpenDay(BasicScenario):
+class Town03GasStation(BasicScenario):
 
     """
     This class holds everything required for a scenario,
@@ -37,9 +37,16 @@ class OpenDay(BasicScenario):
     vehicle has green)
     """
 
-    category = "OpenDay"
+    category = "Town03Scenarios"
     radius = 10.0           # meters
     timeout = 300           # Timeout of scenario in seconds
+
+    # other vehicle parameters
+    _cyclist_target_velocity = -10
+    _cyclist_trigger_distance_from_ego = 15
+    _cyclist_max_throttle = 1
+    _cyclist_max_brake = 1.0
+    _cyclist_location_of_collision = carla.Location(x=85, y=-104, z=8)
 
     def __init__(self, world, ego_vehicle, other_actors, town, randomize=False, debug_mode=False, config=None):
         """
@@ -54,7 +61,7 @@ class OpenDay(BasicScenario):
         if hasattr(self.config, 'route'):
             self.route = self.config.route.data
 
-        super(OpenDay, self).__init__("OpenDay", ego_vehicle, other_actors, town, world, debug_mode, True)
+        super(Town03GasStation, self).__init__("Town03GasStation", ego_vehicle, other_actors, town, world, debug_mode, True)
 
     def _create_behavior(self):
         """
@@ -62,11 +69,63 @@ class OpenDay(BasicScenario):
         """
 
         # Build behavior tree
+        root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         sequence = py_trees.composites.Sequence("Sequence Behavior")
         timeout = TimeOut(self.timeout)
+
+        # leaf nodes
+        trigger_distance = InTriggerDistanceToVehicle(
+            self.other_actors[1],
+            self.ego_vehicle,
+            self._cyclist_trigger_distance_from_ego)
+        start_other = KeepVelocity(
+            self.other_actors[0],
+            self._cyclist_target_velocity)
+        # trigger_other = InTriggerRegion(
+        #     self.other_actors[0],
+        #     70, 75,
+        #     -109, -112)
+        instant_vel = SetInstantVelocity(
+            self.other_actors[0],
+            carla.Vector3D(self._cyclist_target_velocity,0,0))
+        show_route = PlotTrajectory(
+            self.ego_vehicle,
+            self.route)
+        # timeout_other = TimeOut(3)
+        # sync_arrival = SyncArrival(
+        #     self.other_actors[0], self.ego_vehicle, self._cyclist_location_of_collision)
+        # sync_arrival_stop = InTriggerDistanceToVehicle(self.other_actors[0],
+        #                                                self.ego_vehicle,
+        #                                                15)
+
+        # non leaf nodes
+        cyclist_root = py_trees.composites.Parallel(
+            policy=py_trees.common.ParallelPolicy.SuccessOnOne())
+        scenario_sequence = py_trees.composites.Sequence()
+        keep_velocity_other = py_trees.composites.Parallel(
+            policy=py_trees.common.ParallelPolicy.SuccessOnOne())
+        # sync_arrival_parallel = py_trees.composites.Parallel(
+        #     "Synchronize arrival times",
+        #     policy=py_trees.common.ParallelPolicy.SuccessOnOne())
+
+        # building the tress
+        cyclist_root.add_child(scenario_sequence)
+        scenario_sequence.add_child(trigger_distance)
+        # scenario_sequence.add_child(sync_arrival_parallel)
+        scenario_sequence.add_child(keep_velocity_other)
+        # scenario_sequence.add_child(stop_other)
+        # scenario_sequence.add_child(timeout_other)
+        keep_velocity_other.add_child(instant_vel)
+        # sync_arrival_parallel.add_child(sync_arrival)
+        # sync_arrival_parallel.add_child(sync_arrival_stop)
+
+        sequence.add_child(cyclist_root)
         sequence.add_child(timeout)
 
-        return sequence
+        # root.add_child(show_route)
+        root.add_child(sequence)
+
+        return root
 
     def _create_test_criteria(self):
         """
@@ -101,8 +160,8 @@ class OpenDay(BasicScenario):
 
         parallel_criteria.add_child(collision_criterion)
         parallel_criteria.add_child(completion_criterion)
-        parallel_criteria.add_child(target_criterion)
-        parallel_criteria.add_child(route_criterion)
+        #parallel_criteria.add_child(target_criterion)
+        #parallel_criteria.add_child(route_criterion)
         parallel_criteria.add_child(wrong_way_criterion)
         parallel_criteria.add_child(red_light_criterion)
 

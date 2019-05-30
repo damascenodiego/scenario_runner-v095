@@ -157,6 +157,7 @@ class World(object):
             for vehicle in possible_vehicles:
                 if vehicle.attributes['role_name'] == "hero":
                     self.player = vehicle
+                    break
         self.player_name = self.player.type_id
         self.collision_sensor = CollisionSensor(self.player, self.hud)
         self.lane_invasion_sensor = LaneInvasionSensor(self.player, self.hud)
@@ -414,6 +415,7 @@ class HUD(object):
         mono = pygame.font.match_font(mono)
         self._font_mono = pygame.font.Font(mono, 14)
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
+        self._image = FadingImage(font, width, height)
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
         self.server_fps = 0
         self.frame_number = 0
@@ -430,6 +432,7 @@ class HUD(object):
 
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
+        self._image.tick(world, clock)
         if not self._show_info:
             return
         t = world.player.get_transform()
@@ -493,6 +496,10 @@ class HUD(object):
     def notification(self, text, seconds=2.0):
         self._notifications.set_text(text, seconds=seconds)
 
+    def notification_image(self, image, seconds=2.0):
+        self._image.set_image(image, seconds=seconds)
+
+
     def error(self, text):
         self._notifications.set_text('Error: %s' % text, (255, 0, 0))
 
@@ -532,6 +539,7 @@ class HUD(object):
                     display.blit(surface, (8, v_offset))
                 v_offset += 18
         self._notifications.render(display)
+        self._image.render(display)
         self.help.render(display)
 
 
@@ -593,6 +601,42 @@ class HelpText(object):
 
 
 # ==============================================================================
+# -- FadingImage ------------------------------------------------------------------
+# ==============================================================================
+
+
+class FadingImage(object):
+    def __init__(self, font, width, height):
+        lines = __doc__.split('\n')
+        self.font = font
+        self._screen_res = [width, height]
+        self.dim = (680, len(lines) * 22 + 12)
+        self.pos = (0.5 * width - 0.5 * self.dim[0], 0.5 * height - 0.5 * self.dim[1])
+        self.seconds_left = 0
+        self.surface = pygame.Surface(self.dim)
+        self._image = None
+
+    def set_image(self, image, seconds=2.0):
+        self._image = image
+        x_centered = self._screen_res[0] / 2 - self._image.get_width() / 2
+        y_centered = self._screen_res[1] / 2 - self._image.get_height() / 2
+        self.pos = (x_centered, y_centered)
+        self.seconds_left = seconds
+
+
+    def tick(self, _, clock):
+        delta_seconds = 1e-3 * clock.get_time()
+        self.seconds_left = max(0.0, self.seconds_left - delta_seconds)
+        if self._image is not None:
+            self._image.set_alpha(500.0 * self.seconds_left)
+
+    def render(self, display):
+        if self._image is not None:
+            display.blit(self._image, self.pos)
+
+
+
+# ==============================================================================
 # -- CollisionSensor -----------------------------------------------------------
 # ==============================================================================
 
@@ -624,6 +668,7 @@ class CollisionSensor(object):
             return
         actor_type = get_actor_display_name(event.other_actor)
         self.hud.notification('Collision with %r' % actor_type)
+        self.hud.notification_image(pygame.image.load('/home/driverleics/racecar.png').convert())
         impulse = event.normal_impulse
         intensity = math.sqrt(impulse.x**2 + impulse.y**2 + impulse.z**2)
         self.history.append((event.frame_number, intensity))
@@ -707,14 +752,18 @@ class CameraManager(object):
         ]
         self.transform_index = 1
         self.sensors = [
-            ['sensor.camera.rgb', cc.Raw, 'Camera RGB'],
-            ['sensor.camera.depth', cc.Raw, 'Camera Depth (Raw)'],
-            ['sensor.camera.depth', cc.Depth, 'Camera Depth (Gray Scale)'],
-            ['sensor.camera.depth', cc.LogarithmicDepth, 'Camera Depth (Logarithmic Gray Scale)'],
-            ['sensor.camera.semantic_segmentation', cc.Raw, 'Camera Semantic Segmentation (Raw)'],
-            ['sensor.camera.semantic_segmentation', cc.CityScapesPalette,
-                'Camera Semantic Segmentation (CityScapes Palette)'],
-            ['sensor.lidar.ray_cast', None, 'Lidar (Ray-Cast)']]
+            ['sensor.camera.rgb', cc.Raw, 'Camera RGB']
+
+            # Removing the other cameras improves performance. Allows for 1080p resolution.
+
+            #['sensor.camera.depth', cc.Raw, 'Camera Depth (Raw)'],
+            #['sensor.camera.depth', cc.Depth, 'Camera Depth (Gray Scale)'],
+            #['sensor.camera.depth', cc.LogarithmicDepth, 'Camera Depth (Logarithmic Gray Scale)'],
+            #['sensor.camera.semantic_segmentation', cc.Raw, 'Camera Semantic Segmentation (Raw)'],
+            #['sensor.camera.semantic_segmentation', cc.CityScapesPalette,
+            #    'Camera Semantic Segmentation (CityScapes Palette)'],
+            #['sensor.lidar.ray_cast', None, 'Lidar (Ray-Cast)']
+            ]
         world = self._parent.get_world()
         bp_library = world.get_blueprint_library()
         for item in self.sensors:
@@ -819,7 +868,7 @@ def game_loop(args):
 
         clock = pygame.time.Clock()
         while True:
-            clock.tick_busy_loop(20)
+            clock.tick_busy_loop(60)
             if controller.parse_events(world, clock):
                 return
             if not world.tick(clock):
@@ -828,10 +877,11 @@ def game_loop(args):
             pygame.display.flip()
             ego = world.player
             # print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(ego.get_location().x, ego.get_location().y, ego.get_location().z))
-            for event in pygame.event.get():
-                if event.type == pygame.KEYDOWN and event.key == K_KP_ENTER:
-                    ego = world.player
-                    print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(ego.get_location().x, ego.get_location().y, ego.get_location().z))
+            # for event in pygame.event.get():
+            #     if event.type == pygame.KEYDOWN and event.key == K_KP_ENTER:
+            #         ego = world.player
+            #         print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(ego.get_location().x, ego.get_location().y, ego.get_location().z))
+
 
     finally:
 

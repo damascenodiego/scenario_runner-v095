@@ -50,7 +50,7 @@ class OppositeVehicleRunningRedLight(BasicScenario):
     _intersection_location = carla.Location(x=-3, y=-150, z=0)
 
     # other vehicle
-    _other_actor_target_velocity = 15      # Target velocity of other vehicle
+    _other_actor_target_velocity = 100      # Target velocity of other vehicle
     _other_actor_max_brake = 1.0           # Maximum brake of other vehicle
     _other_actor_distance = 30             # Distance the other vehicle should drive
 
@@ -100,6 +100,7 @@ class OppositeVehicleRunningRedLight(BasicScenario):
 
         # wait until traffic light for ego vehicle is green
         wait_for_green = WaitForTrafficLightState(self._traffic_light, "Green")
+        wait_for_yellow = WaitForTrafficLightState(self._traffic_light, "Yellow")
 
         sync_arrival_parallel = py_trees.composites.Parallel(
             "Synchronize arrival times",
@@ -110,7 +111,7 @@ class OppositeVehicleRunningRedLight(BasicScenario):
                                                        self.ego_vehicle,
                                                        15)
         sync_arrival_parallel.add_child(sync_arrival)
-        sync_arrival_parallel.add_child(sync_arrival_stop)
+        # sync_arrival_parallel.add_child(sync_arrival_stop)
 
         keep_velocity_for_distance = py_trees.composites.Parallel(
             "Keep velocity for distance",
@@ -135,7 +136,13 @@ class OppositeVehicleRunningRedLight(BasicScenario):
         # Build behavior tree
         sequence = py_trees.composites.Sequence("Sequence Behavior")
         sequence.add_child(startcondition)
-        sequence.add_child(wait_for_green)
+
+        sync_green_or_yellow = py_trees.composites.Parallel(
+            "Synchronize arrival times",
+            policy=py_trees.common.ParallelPolicy.SuccessOnOne())
+        sync_green_or_yellow.add_child(wait_for_green)
+        sync_green_or_yellow.add_child(wait_for_yellow)
+        sequence.add_child(sync_green_or_yellow)
         sequence.add_child(sync_arrival_parallel)
         sequence.add_child(keep_velocity_for_distance)
         sequence.add_child(wait)

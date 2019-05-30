@@ -23,6 +23,25 @@ import glob
 import os
 import sys
 
+# ==============================================================================
+# -- find carla module ---------------------------------------------------------
+# ==============================================================================
+
+
+import glob
+import os
+import sys
+import time
+
+# try:
+#     sys.path.append(os.path.abspath('./PythonAPI/carla/dist/carla-*%d.%d-%s.egg' % (
+#         sys.version_info.major,
+#         sys.version_info.minor,
+#         'win-amd64' if os.name == 'nt' else 'linux-x86_64'))[0])
+# except IndexError:
+#     pass
+
+
 import carla
 
 from srunner.scenarios.follow_leading_vehicle import *
@@ -30,7 +49,7 @@ from srunner.scenarios.opposite_vehicle_taking_priority import *
 from srunner.scenarios.object_crash_vehicle import *
 from srunner.scenarios.no_signal_junction_crossing import *
 from srunner.scenarios.object_crash_intersection import *
-from srunner.scenarios.open_day_scenarios import *
+from srunner.scenarios.town03_scenarios import *
 from srunner.scenarios.control_loss import *
 from srunner.scenarios.config_parser import *
 from srunner.scenariomanager.scenario_manager import ScenarioManager
@@ -50,8 +69,9 @@ SCENARIOS = {
     "NoSignalJunction": NO_SIGNAL_JUNCTION_SCENARIOS,
     "VehicleTurning": VEHICLE_TURNING_SCENARIOS,
     "ControlLoss": CONTROL_LOSS_SCENARIOS,
-    "OpenDay": OPEN_DAY_SCENARIOS
+    "Town03Scenarios": TOWN03_SCENARIOS
 }
+
 
 
 class ScenarioRunner(object):
@@ -85,6 +105,10 @@ class ScenarioRunner(object):
         # requests in the localhost at port 2000.
         self.client = carla.Client(args.host, int(args.port))
         self.client.set_timeout(self.client_timeout)
+        self.client.reload_world()
+        self.client = carla.Client(args.host, int(args.port))
+        self.client.set_timeout(self.client_timeout)
+
 
         # Once we have a client we can retrieve the world that is currently
         # running.
@@ -161,7 +185,11 @@ class ScenarioRunner(object):
                 "Error: Unable to spawn vehicle {} at {}".format(model, spawn_point))
         else:
             # Let's deactivate the autopilot of the vehicle
-            vehicle.set_autopilot(False)
+            if isinstance(vehicle, carla.Vehicle):
+                vehicle.set_autopilot(False)
+            elif isinstance(vehicle, carla.Walker):
+                pass
+
 
         return vehicle
 

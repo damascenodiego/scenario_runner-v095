@@ -29,6 +29,9 @@ from __future__ import print_function
 import glob
 import os
 import sys
+import evdev
+from evdev import ecodes, InputDevice, ff
+
 
 try:
     sys.path.append(glob.glob('../carla/dist/carla-*%d.%d-%s.egg' % (
@@ -48,11 +51,13 @@ import carla
 
 from carla import ColorConverter as cc
 
+
 import argparse
 import collections
 import datetime
 import logging
 import math
+import time
 import random
 import re
 import weakref
@@ -94,6 +99,7 @@ try:
     from pygame.locals import K_r
     from pygame.locals import K_s
     from pygame.locals import K_w
+    from pygame.locals import K_KP_ENTER
 except ImportError:
     raise RuntimeError('cannot import pygame, make sure pygame package is installed')
 
@@ -140,6 +146,32 @@ class World(object):
         self.restart()
         self.world.on_tick(hud.on_world_tick)
 
+    def next_weather(self, reverse=False):
+        self._weather_index += -1 if reverse else 1
+        self._weather_index %= len(self._weather_presets)
+        preset = self._weather_presets[self._weather_index]
+        self.hud.notification('Weather: %s' % preset[1])
+        self.player.get_world().set_weather(preset[0])
+
+    def tick(self, clock):
+        self.hud.tick(self, clock)
+
+    def render(self, display):
+        self.camera_manager.render(display)
+        self.hud.render(display)
+
+    def destroy(self):
+        actors = [
+            self.camera_manager.sensor,
+            self.collision_sensor.sensor,
+            self.lane_invasion_sensor.sensor,
+            self.gnss_sensor.sensor,
+            self.player]
+        for actor in actors:
+            if actor is not None:
+                actor.destroy()
+
+
     def restart(self):
         # Keep same camera config if the camera manager exists.
         cam_index = self.camera_manager.index if self.camera_manager is not None else 0
@@ -172,32 +204,6 @@ class World(object):
         actor_type = get_actor_display_name(self.player)
         self.hud.notification(actor_type)
 
-    def next_weather(self, reverse=False):
-        self._weather_index += -1 if reverse else 1
-        self._weather_index %= len(self._weather_presets)
-        preset = self._weather_presets[self._weather_index]
-        self.hud.notification('Weather: %s' % preset[1])
-        self.player.get_world().set_weather(preset[0])
-
-    def tick(self, clock):
-        self.hud.tick(self, clock)
-
-    def render(self, display):
-        self.camera_manager.render(display)
-        self.hud.render(display)
-
-    def destroy(self):
-        actors = [
-            self.camera_manager.sensor,
-            self.collision_sensor.sensor,
-            self.lane_invasion_sensor.sensor,
-            self.gnss_sensor.sensor,
-            self.player]
-        for actor in actors:
-            if actor is not None:
-                actor.destroy()
-
-
 # ==============================================================================
 # -- DualControl -----------------------------------------------------------
 # ==============================================================================
@@ -227,6 +233,9 @@ class DualControl(object):
 
         self._joystick = pygame.joystick.Joystick(0)
         self._joystick.init()
+        # evdev references to the steering wheel (force feedback)
+        self._device = evdev.list_devices()[0]
+        self._evtdev = InputDevice(self._device)
 
         self._parser = ConfigParser()
         self._parser.read('wheel_config.ini')
@@ -244,10 +253,10 @@ class DualControl(object):
             if event.type == pygame.QUIT:
                 return True
             elif event.type == pygame.JOYBUTTONDOWN:
-                if event.button == 0:
-                    world.restart()
-                elif event.button == 1:
+                if event.button == 1:
                     world.hud.toggle_info()
+                elif event.button == 0:
+                    world.restart()
                 elif event.button == 2:
                     world.camera_manager.toggle_camera()
                 elif event.button == 3:
@@ -260,10 +269,10 @@ class DualControl(object):
             elif event.type == pygame.KEYUP:
                 if self._is_quit_shortcut(event.key):
                     return True
-                elif event.key == K_BACKSPACE:
-                    world.restart()
                 elif event.key == K_F1:
                     world.hud.toggle_info()
+                elif event.key == K_BACKSPACE:
+                    world.restart()
                 elif event.key == K_h or (event.key == K_SLASH and pygame.key.get_mods() & KMOD_SHIFT):
                     world.hud.help.toggle()
                 elif event.key == K_TAB:
@@ -299,10 +308,27 @@ class DualControl(object):
             if isinstance(self._control, carla.VehicleControl):
                 self._parse_vehicle_keys(pygame.key.get_pressed(), clock.get_time())
                 self._parse_vehicle_wheel()
+                self._parse_speedToWheel(world)
                 self._control.reverse = self._control.gear < 0
             elif isinstance(self._control, carla.WalkerControl):
                 self._parse_walker_keys(pygame.key.get_pressed(), clock.get_time())
             world.player.apply_control(self._control)
+
+    def _parse_speedToWheel(self,world):
+        # adjusts steering wheel autocenter using speed
+
+        v = world.player.get_velocity()
+        speed = (3.6 * math.sqrt(v.x ** 2 + v.y ** 2 + v.z ** 2))
+
+        # speed limit that influences the autocenter
+        S2W_THRESHOLD = 90
+        if(speed > S2W_THRESHOLD):
+            speed = S2W_THRESHOLD
+        # autocenterCmd  \in [0,65535]
+        autocenterCmd = 60000 * math.sin(speed/S2W_THRESHOLD)
+
+        # send autocenterCmd to the steeringwheel
+        self._evtdev.write(ecodes.EV_FF, ecodes.FF_AUTOCENTER, int(autocenterCmd))
 
     def _parse_vehicle_keys(self, keys, milliseconds):
         self._control.throttle = 1.0 if keys[K_UP] or keys[K_w] else 0.0
@@ -321,16 +347,19 @@ class DualControl(object):
     def _parse_vehicle_wheel(self):
         numAxes = self._joystick.get_numaxes()
         jsInputs = [float(self._joystick.get_axis(i)) for i in range(numAxes)]
-        # print (jsInputs)
         jsButtons = [float(self._joystick.get_button(i)) for i in
                      range(self._joystick.get_numbuttons())]
 
         # Custom function to map range of inputs [1, -1] to outputs [0, 1] i.e 1 from inputs means nothing is pressed
         # For the steering, it seems fine as it is
         K1 = 1.0  # 0.55
-        # K1 = 0.75
-        # K1 = 0.33 # 0.55
-        steerCmd = K1 * math.tan(1.1 * jsInputs[self._steer_idx])
+
+        # limiting wheel rotation to +/- 0.65
+        steerPos = jsInputs[self._steer_idx]
+        if (steerPos > .65): steerPos = .65
+        if (steerPos < -.65): steerPos = -.65
+        steerCmd = K1 * math.tan(1.1 * steerPos)
+
 
         K2 = 1.6  # 1.6
         throttleCmd = K2 + (2.05 * math.log10(
@@ -391,6 +420,7 @@ class HUD(object):
         mono = pygame.font.match_font(mono)
         self._font_mono = pygame.font.Font(mono, 14)
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
+        self._image = FadingImage(font, width, height)
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
         self.server_fps = 0
         self.frame_number = 0
@@ -407,6 +437,7 @@ class HUD(object):
 
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
+        self._image.tick(world, clock)
         if not self._show_info:
             return
         t = world.player.get_transform()
@@ -426,7 +457,7 @@ class HUD(object):
             'Client:  % 16.0f FPS' % clock.get_fps(),
             '',
             'Vehicle: % 20s' % get_actor_display_name(world.player, truncate=20),
-            # 'Map:     % 20s' % world.world.map_name,
+            # 'Map:     % 20s' % world.map.name,
             'Simulation time: % 12s' % datetime.timedelta(seconds=int(self.simulation_time)),
             '',
             'Speed:   % 15.0f km/h' % (3.6 * math.sqrt(v.x**2 + v.y**2 + v.z**2)),
@@ -470,6 +501,10 @@ class HUD(object):
     def notification(self, text, seconds=2.0):
         self._notifications.set_text(text, seconds=seconds)
 
+    def notification_image(self, image, seconds=2.0):
+        self._image.set_image(image, seconds=seconds)
+
+
     def error(self, text):
         self._notifications.set_text('Error: %s' % text, (255, 0, 0))
 
@@ -509,6 +544,7 @@ class HUD(object):
                     display.blit(surface, (8, v_offset))
                 v_offset += 18
         self._notifications.render(display)
+        self._image.render(display)
         self.help.render(display)
 
 
@@ -570,6 +606,42 @@ class HelpText(object):
 
 
 # ==============================================================================
+# -- FadingImage ------------------------------------------------------------------
+# ==============================================================================
+
+
+class FadingImage(object):
+    def __init__(self, font, width, height):
+        lines = __doc__.split('\n')
+        self.font = font
+        self._screen_res = [width, height]
+        self.dim = (680, len(lines) * 22 + 12)
+        self.pos = (0.5 * width - 0.5 * self.dim[0], 0.5 * height - 0.5 * self.dim[1])
+        self.seconds_left = 0
+        self.surface = pygame.Surface(self.dim)
+        self._image = None
+
+    def set_image(self, image, seconds=2.0):
+        self._image = image
+        x_centered = self._screen_res[0] / 2 - self._image.get_width() / 2
+        y_centered = self._screen_res[1] / 2 - self._image.get_height() / 2
+        self.pos = (x_centered, y_centered)
+        self.seconds_left = seconds
+
+
+    def tick(self, _, clock):
+        delta_seconds = 1e-3 * clock.get_time()
+        self.seconds_left = max(0.0, self.seconds_left - delta_seconds)
+        if self._image is not None:
+            self._image.set_alpha(500.0 * self.seconds_left)
+
+    def render(self, display):
+        if self._image is not None:
+            display.blit(self._image, self.pos)
+
+
+
+# ==============================================================================
 # -- CollisionSensor -----------------------------------------------------------
 # ==============================================================================
 
@@ -601,6 +673,7 @@ class CollisionSensor(object):
             return
         actor_type = get_actor_display_name(event.other_actor)
         self.hud.notification('Collision with %r' % actor_type)
+        self.hud.notification_image(pygame.image.load('/home/driverleics/racecar.png').convert())
         impulse = event.normal_impulse
         intensity = math.sqrt(impulse.x**2 + impulse.y**2 + impulse.z**2)
         self.history.append((event.frame_number, intensity))
@@ -676,18 +749,26 @@ class CameraManager(object):
         self.hud = hud
         self.recording = False
         self._camera_transforms = [
+            # carla.Transform(carla.Location(x=1.6, z=1.7)),
+            # carla.Transform(carla.Location(x=0.150, y= -0.30, z=1.25), carla.Rotation(pitch=-5)),
+            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15)),
             carla.Transform(carla.Location(x=-5.5, z=2.8), carla.Rotation(pitch=-15)),
-            carla.Transform(carla.Location(x=1.6, z=1.7))]
+            carla.Transform(carla.Location(x=-1.6, z=1.7))
+        ]
         self.transform_index = 1
         self.sensors = [
-            ['sensor.camera.rgb', cc.Raw, 'Camera RGB'],
-            ['sensor.camera.depth', cc.Raw, 'Camera Depth (Raw)'],
-            ['sensor.camera.depth', cc.Depth, 'Camera Depth (Gray Scale)'],
-            ['sensor.camera.depth', cc.LogarithmicDepth, 'Camera Depth (Logarithmic Gray Scale)'],
-            ['sensor.camera.semantic_segmentation', cc.Raw, 'Camera Semantic Segmentation (Raw)'],
-            ['sensor.camera.semantic_segmentation', cc.CityScapesPalette,
-                'Camera Semantic Segmentation (CityScapes Palette)'],
-            ['sensor.lidar.ray_cast', None, 'Lidar (Ray-Cast)']]
+            ['sensor.camera.rgb', cc.Raw, 'Camera RGB']
+
+            # Removing the other cameras improves performance. Allows for 1080p resolution.
+
+            #['sensor.camera.depth', cc.Raw, 'Camera Depth (Raw)'],
+            #['sensor.camera.depth', cc.Depth, 'Camera Depth (Gray Scale)'],
+            #['sensor.camera.depth', cc.LogarithmicDepth, 'Camera Depth (Logarithmic Gray Scale)'],
+            #['sensor.camera.semantic_segmentation', cc.Raw, 'Camera Semantic Segmentation (Raw)'],
+            #['sensor.camera.semantic_segmentation', cc.CityScapesPalette,
+            #    'Camera Semantic Segmentation (CityScapes Palette)'],
+            #['sensor.lidar.ray_cast', None, 'Lidar (Ray-Cast)']
+            ]
         world = self._parent.get_world()
         bp_library = world.get_blueprint_library()
         for item in self.sensors:
@@ -798,6 +879,13 @@ def game_loop(args):
             world.tick(clock)
             world.render(display)
             pygame.display.flip()
+            ego = world.player
+            # print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(ego.get_location().x, ego.get_location().y, ego.get_location().z))
+            # for event in pygame.event.get():
+            #     if event.type == pygame.KEYDOWN and event.key == K_KP_ENTER:
+            #         ego = world.player
+            #         print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(ego.get_location().x, ego.get_location().y, ego.get_location().z))
+
 
     finally:
 

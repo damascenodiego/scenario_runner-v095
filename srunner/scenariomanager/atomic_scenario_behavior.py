@@ -21,6 +21,7 @@ from PythonAPI.carla.agents.navigation.roaming_agent import *
 from PythonAPI.carla.agents.navigation.basic_agent import *
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
+from PythonAPI.carla.agents.tools.misc import distance_location, draw_waypoints_location
 
 EPSILON = 0.001
 
@@ -445,8 +446,10 @@ class KeepVelocity(AtomicBehavior):
         """
         new_status = py_trees.common.Status.RUNNING
 
+
         if CarlaDataProvider.get_velocity(self._actor) < self._target_velocity:
             self._control.throttle = 1.0
+
         else:
             self._control.throttle = 0.0
 
@@ -463,6 +466,91 @@ class KeepVelocity(AtomicBehavior):
         self._actor.apply_control(self._control)
         super(KeepVelocity, self).terminate(new_status)
 
+class SetInstantVelocity(AtomicBehavior):
+
+    """
+    This class contains an atomic behavior to set an instant velocity.
+    """
+
+    def __init__(self, actor, vector3d, name="SetInstantVelocity"):
+        """
+        Setup parameters including acceleration value (via actor.set_velocity())
+        and target velocity
+        """
+        super(SetInstantVelocity, self).__init__(name)
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+        self._control = carla.VehicleControl()
+        self._actor = actor
+        self._target_vector3d = vector3d
+
+        self._control.steering = 0
+
+    def update(self):
+        """
+        Set throttle to throttle_value, as long as velocity is < target_velocity
+        """
+        new_status = py_trees.common.Status.RUNNING
+
+        self._actor.set_velocity(self._target_vector3d)
+
+        self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
+        return new_status
+
+    def terminate(self, new_status):
+        """
+        On termination of this behavior, the throttle should be set back to 0.,
+        to avoid further acceleration.
+        """
+        super(SetInstantVelocity, self).terminate(new_status)
+
+
+class PlotTrajectory(AtomicBehavior):
+
+    """
+    This class contains an atomic behavior to set an instant velocity.
+    """
+
+    def __init__(self, ego_car, route, name="SetInstantVelocity"):
+        """
+        Setup parameters including acceleration value (via actor.set_velocity())
+        and target velocity
+        """
+        super(PlotTrajectory, self).__init__(name)
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+        self._control = carla.VehicleControl()
+        self._actor = ego_car
+        self._route = route
+        self._route_id = 0
+        self._route_sz = len(route)
+        self._threshold = 10
+
+
+    def update(self):
+        """
+        Set throttle to throttle_value, as long as velocity is < target_velocity
+        """
+        new_status = py_trees.common.Status.RUNNING
+
+        # purge the queue of obsolete waypoints
+        points = []
+        for idx in range(self._route_id, self._route_sz):
+            waypoint, _ = self._route[idx]
+            if distance_location(waypoint, self._actor.get_transform().location) < self._threshold:
+                points.append(carla.Transform(waypoint))
+                self._route_id = idx
+                break
+
+        draw_waypoints_location(self._actor.get_world(), points, self._actor.get_location().z + 1.0)
+
+        self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
+        return new_status
+
+    def terminate(self, new_status):
+        """
+        On termination of this behavior, the throttle should be set back to 0.,
+        to avoid further acceleration.
+        """
+        super(PlotTrajectory, self).terminate(new_status)
 
 class DriveDistance(AtomicBehavior):
 
@@ -608,7 +696,7 @@ class WaitForTrafficLightState(AtomicBehavior):
         return new_status
 
     def terminate(self, new_status):
-        self._traffic_light = None
+        # self._traffic_light = None
         super(WaitForTrafficLightState, self).terminate(new_status)
 
 
