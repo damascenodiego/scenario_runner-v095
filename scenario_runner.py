@@ -87,7 +87,7 @@ class ScenarioRunner(object):
     """
 
     # Tunable parameters
-    client_timeout = 10.0  # in seconds
+    client_timeout = 2.0  # in seconds
     wait_for_world = 10.0  # in seconds
 
 
@@ -105,10 +105,25 @@ class ScenarioRunner(object):
         # requests in the localhost at port 2000.
         self.client = carla.Client(args.host, int(args.port))
         self.client.set_timeout(self.client_timeout)
-        self.client.reload_world()
-        self.client = carla.Client(args.host, int(args.port))
-        self.client.set_timeout(self.client_timeout)
 
+        _failed = True
+        num_of_attempts = 0
+        while _failed:
+            try:
+                self.client = carla.Client(args.host, int(args.port))
+                self.client.set_timeout(self.client_timeout)
+                self.world = self.client.get_world()
+                _failed = False
+            except Exception as err:
+                # print(err)
+                num_of_attempts+=1
+                print("Attempting to connect to carla: Test {}".format(num_of_attempts))
+                time.sleep(1)
+                continue
+
+        print("Connected to CARLA server!")
+
+        self.client.reload_world()
 
         # Once we have a client we can retrieve the world that is currently
         # running.
@@ -339,5 +354,7 @@ if __name__ == '__main__':
     try:
         SCENARIORUNNER = ScenarioRunner(ARGUMENTS)
         SCENARIORUNNER.run(ARGUMENTS)
+    except Exception as err:
+        print(err)
     finally:
         del SCENARIORUNNER

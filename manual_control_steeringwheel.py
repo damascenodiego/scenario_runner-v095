@@ -145,7 +145,7 @@ class World(object):
                 if(event.type == pygame.KEYUP and event.key == K_ESCAPE):
                     raise KeyboardInterrupt("Closed before starting scenario")
             font = pygame.font.Font('freesansbold.ttf',32)
-            text = font.render("Scenario not yet ready"+("."*(counter % 4))+(" "*(4-counter % 4)),True,(255,255,255),(0,0,0))
+            text = font.render("Loading"+("."*(counter % 4))+(" "*(4-counter % 4)),True,(255,255,255),(0,0,0))
             textRect = text.get_rect()
             surf = pygame.display.get_surface()
             textRect.center = (surf.get_width() // 2, surf.get_height() // 2)
@@ -853,6 +853,23 @@ def game_loop(args):
     try:
         client = carla.Client(args.host, args.port)
         client.set_timeout(2.0)
+
+        _failed = True
+        num_of_attempts = 0
+        while _failed:
+            try:
+                client = carla.Client(args.host, int(args.port))
+                client.set_timeout(2.0)
+                world = client.get_world()
+                _failed = False
+            except Exception as err:
+                # print(err)
+                num_of_attempts+=1
+                print("Attempting to connect to carla: Test {}".format(num_of_attempts))
+                time.sleep(1)
+                continue
+
+        print("Connected to CARLA server!")
 
         SCREEN_MODE = pygame.HWSURFACE | pygame.DOUBLEBUF
         if(args.fullscreen):

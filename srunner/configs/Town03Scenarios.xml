@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <scenarios>
 	<scenario name="Town03GasStation" type="Town03GasStation" town="Town03">
-		<ego_vehicle x="100.0" y="-190.0" z="0" yaw="0.0" model="vehicle.tesla.model3" />
+		<ego_vehicle x="-50.0" y="-195.0" z="0" yaw="0.0" model="vehicle.tesla.model3" />
 		<other_actor x="93" y="-104" z="9" yaw="180" model="vehicle.diamondback.century" />
 		<other_actor x="89" y="-112" z="9" yaw="90" model="vehicle.carlamotors.carlacola" />
 		<other_actor x="70" y="-110" z="9" yaw="-90" model="walker.pedestrian.0001" />
