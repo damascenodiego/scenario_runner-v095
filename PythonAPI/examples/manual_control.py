@@ -377,6 +377,7 @@ class HUD(object):
         mono = pygame.font.match_font(mono)
         self._font_mono = pygame.font.Font(mono, 14)
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
+        self._image = FadingImage(font, width, height)
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
         self.server_fps = 0
         self.frame_number = 0
@@ -393,6 +394,7 @@ class HUD(object):
 
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
+        self._image.tick(world, clock)
         if not self._show_info:
             return
         t = world.player.get_transform()
@@ -412,7 +414,7 @@ class HUD(object):
             'Client:  % 16.0f FPS' % clock.get_fps(),
             '',
             'Vehicle: % 20s' % get_actor_display_name(world.player, truncate=20),
-            'Map:     % 20s' % world.map.name,
+            # 'Map:     % 20s' % world.map.name,
             'Simulation time: % 12s' % datetime.timedelta(seconds=int(self.simulation_time)),
             '',
             'Speed:   % 15.0f km/h' % (3.6 * math.sqrt(v.x**2 + v.y**2 + v.z**2)),
@@ -456,6 +458,10 @@ class HUD(object):
     def notification(self, text, seconds=2.0):
         self._notifications.set_text(text, seconds=seconds)
 
+    def notification_image(self, image, seconds=2.0):
+        self._image.set_image(image, seconds=seconds)
+
+
     def error(self, text):
         self._notifications.set_text('Error: %s' % text, (255, 0, 0))
 
@@ -495,6 +501,7 @@ class HUD(object):
                     display.blit(surface, (8, v_offset))
                 v_offset += 18
         self._notifications.render(display)
+        self._image.render(display)
         self.help.render(display)
 
 
@@ -556,6 +563,42 @@ class HelpText(object):
 
 
 # ==============================================================================
+# -- FadingImage ------------------------------------------------------------------
+# ==============================================================================
+
+
+class FadingImage(object):
+    def __init__(self, font, width, height):
+        lines = __doc__.split('\n')
+        self.font = font
+        self._screen_res = [width, height]
+        self.dim = (680, len(lines) * 22 + 12)
+        self.pos = (0.5 * width - 0.5 * self.dim[0], 0.5 * height - 0.5 * self.dim[1])
+        self.seconds_left = 0
+        self.surface = pygame.Surface(self.dim)
+        self._image = None
+
+    def set_image(self, image, seconds=2.0):
+        self._image = image
+        x_centered = self._screen_res[0] / 2 - self._image.get_width() / 2
+        y_centered = self._screen_res[1] / 2 - self._image.get_height() / 2
+        self.pos = (x_centered, y_centered)
+        self.seconds_left = seconds
+
+
+    def tick(self, _, clock):
+        delta_seconds = 1e-3 * clock.get_time()
+        self.seconds_left = max(0.0, self.seconds_left - delta_seconds)
+        if self._image is not None:
+            self._image.set_alpha(500.0 * self.seconds_left)
+
+    def render(self, display):
+        if self._image is not None:
+            display.blit(self._image, self.pos)
+
+
+
+# ==============================================================================
 # -- CollisionSensor -----------------------------------------------------------
 # ==============================================================================
 
@@ -587,6 +630,7 @@ class CollisionSensor(object):
             return
         actor_type = get_actor_display_name(event.other_actor)
         self.hud.notification('Collision with %r' % actor_type)
+        self.hud.notification_image(pygame.image.load('/home/driverleics/racecar.png').convert())
         impulse = event.normal_impulse
         intensity = math.sqrt(impulse.x**2 + impulse.y**2 + impulse.z**2)
         self.history.append((event.frame_number, intensity))
@@ -733,7 +777,7 @@ class CameraManager(object):
             lidar_data = np.array(points[:, :2])
             lidar_data *= min(self.hud.dim) / 100.0
             lidar_data += (0.5 * self.hud.dim[0], 0.5 * self.hud.dim[1])
-            lidar_data = np.fabs(lidar_data)  # pylint: disable=E1111
+            lidar_data = np.fabs(lidar_data) # pylint: disable=E1111
             lidar_data = lidar_data.astype(np.int32)
             lidar_data = np.reshape(lidar_data, (-1, 2))
             lidar_img_size = (self.hud.dim[0], self.hud.dim[1], 3)
@@ -765,9 +809,13 @@ def game_loop(args):
         client = carla.Client(args.host, args.port)
         client.set_timeout(2.0)
 
+        SCREEN_MODE = pygame.HWSURFACE | pygame.DOUBLEBUF
+        if(args.fullscreen):
+            SCREEN_MODE = pygame.FULLSCREEN
+
         display = pygame.display.set_mode(
             (args.width, args.height),
-            pygame.HWSURFACE | pygame.DOUBLEBUF)
+            SCREEN_MODE)
 
         hud = HUD(args.width, args.height)
         world = World(client.get_world(), hud, args.filter, args.rolename)
@@ -775,8 +823,8 @@ def game_loop(args):
 
         clock = pygame.time.Clock()
         while True:
-            clock.tick_busy_loop(20)
-            if controller.parse_events(client, world, clock):
+            clock.tick_busy_loop(60)
+            if controller.parse_events(world, clock):
                 return
             world.tick(clock)
             world.render(display)
@@ -831,6 +879,10 @@ def main():
         metavar='PATTERN',
         default='vehicle.*',
         help='actor filter (default: "vehicle.*")')
+    argparser.add_argument(
+        '--fullscreen',
+        action='store_true',
+        help='enable fullscreen mode')
     argparser.add_argument(
         '--rolename',
         metavar='NAME',
