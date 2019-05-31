@@ -82,6 +82,7 @@ import weakref
 
 try:
     import pygame
+    import pygame.camera
     from pygame.locals import KMOD_CTRL
     from pygame.locals import KMOD_SHIFT
     from pygame.locals import K_0
@@ -92,6 +93,7 @@ try:
     from pygame.locals import K_DOWN
     from pygame.locals import K_ESCAPE
     from pygame.locals import K_F1
+    from pygame.locals import K_F2
     from pygame.locals import K_LEFT
     from pygame.locals import K_PERIOD
     from pygame.locals import K_RIGHT
@@ -254,6 +256,8 @@ class KeyboardControl(object):
                     world.restart()
                 elif event.key == K_F1:
                     world.hud.toggle_info()
+                elif event.key == K_F2:
+                    world.hud.webcam.toggle()
                 elif event.key == K_h or (event.key == K_SLASH and pygame.key.get_mods() & KMOD_SHIFT):
                     world.hud.help.toggle()
                 elif event.key == K_TAB:
@@ -386,15 +390,12 @@ class HUD(object):
         self._info_text = []
         self._server_clock = pygame.time.Clock()
 
-        self._webcam = WebcamImage(width, height)
-        self._webcam_enabled = False
+        self.webcam = WebcamImage(width, height)
+        self.webcam_enabled = False
 
     def set_webcam_enable(self, on=False):
-        self._webcam_enabled = on
-        if self._webcam_enabled:
-            self._webcam.camera.start()
-        else:
-            self._webcam.camera.stop()
+        self.webcam_enabled = on
+        self.webcam.set_on(self.webcam_enabled)
 
 
     def on_world_tick(self, timestamp):
@@ -406,8 +407,6 @@ class HUD(object):
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
         self._image.tick(world, clock)
-        if self._webcam_enabled:
-            self._webcam.tick(world,clock)
         if not self._show_info:
             return
         t = world.player.get_transform()
@@ -479,6 +478,8 @@ class HUD(object):
         self._notifications.set_text('Error: %s' % text, (255, 0, 0))
 
     def render(self, display):
+        if self.webcam.is_on():
+            self.webcam.render(display)
         if self._show_info:
             info_surface = pygame.Surface((220, self.dim[1]))
             info_surface.set_alpha(100)
@@ -615,26 +616,37 @@ class FadingImage(object):
 
 
 class WebcamImage(object):
-    def __init__(self, width, height, device = '/dev/video0', cam_res = [640, 480]):
+    def __init__(self, width, height, device = '/dev/video0', cam_res = [320, 240]):
         self._screen_res = [width, height]
         self._camera_device = device
         self._camera_res = cam_res
         self.camera = pygame.camera.Camera(device, cam_res)
-        self.camera.start()
-        self.surface = pygame.surface.Surface(cam_res)
-        self.pos = (width - self._webcam_res[0], height - self._webcam_res[1])
+        self.pos = (width - self._camera_res[0], height - self._camera_res[1])
         self._image = None
+        self._show_camera = False
 
     def render(self, display):
-        self._image = self.camera.get_image(self.surface)
-        # self._image.set_alpha(100)
+        if self._show_camera:
+            self._image = self.camera.get_image()
+            self._image.set_alpha(300)
         display.blit(self._image, self.pos)
 
-    def __del__(self):
-        self.camera.stop()
-        del self.camera
-        del self.surface
+    def is_on(self):
+        return self._show_camera
 
+    def toggle(self):
+        self._show_camera = not self._show_camera
+        if self._show_camera:
+            self.camera.start()
+        else:
+            self.camera.stop()
+
+    def set_on(self, on = True):
+        self._show_camera = on
+        if self._show_camera:
+            self.camera.start()
+        else:
+            self.camera.stop()
 
 # ==============================================================================
 # -- CollisionSensor -----------------------------------------------------------
@@ -840,6 +852,7 @@ class CameraManager(object):
 
 def game_loop(args):
     pygame.init()
+    pygame.camera.init()
     pygame.font.init()
     world = None
 
@@ -866,7 +879,7 @@ def game_loop(args):
         clock = pygame.time.Clock()
         while True:
             clock.tick_busy_loop(60)
-            if controller.parse_events(world, clock):
+            if controller.parse_events(client,world, clock):
                 return
             world.tick(clock)
             world.render(display)
