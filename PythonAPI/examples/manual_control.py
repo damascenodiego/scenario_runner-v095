@@ -856,6 +856,10 @@ def game_loop(args):
             SCREEN_MODE)
 
         hud = HUD(args.width, args.height)
+
+        if args.webcam:
+            hud.set_webcam_enable(True)
+
         world = World(client.get_world(), hud, args.filter, args.rolename)
         controller = KeyboardControl(world, args.autopilot)
 
