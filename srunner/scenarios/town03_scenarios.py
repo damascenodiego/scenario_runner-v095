@@ -41,12 +41,15 @@ class Town03GasStation(BasicScenario):
     radius = 10.0           # meters
     timeout = 300           # Timeout of scenario in seconds
 
-    # other vehicle parameters
-    _cyclist_target_velocity = -10
+    # cyclist parameters
     _cyclist_trigger_distance_from_ego = 25
-    _cyclist_max_throttle = 1
-    _cyclist_max_brake = 1.0
     _cyclist_location_of_collision = carla.Location(83, -104)
+    _cyclist_timeout = 20
+
+    # car parameters
+    _car_trigger_distance_from_ego = 40
+    _car_location_of_collision = carla.Location(-8, 127)
+    _car_timeout = 20
 
     def __init__(self, world, ego_vehicle, other_actors, town, randomize=False, debug_mode=False, config=None):
         """
@@ -69,57 +72,57 @@ class Town03GasStation(BasicScenario):
         """
 
         # Build behavior tree
-        root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SuccessOnOne())
-        sequence = py_trees.composites.Sequence("Sequence Behavior")
+        root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SuccessOnAll())
         timeout = TimeOut(self.timeout)
 
         # leaf nodes
-        trigger_distance = InTriggerDistanceToVehicle(
+        cyclist_trigger_distance = InTriggerDistanceToVehicle(
             self.other_actors[0],
             self.ego_vehicle,
             self._cyclist_trigger_distance_from_ego)
-        # trigger_other = InTriggerRegion(
-        #     self.other_actors[0],
-        #     70, 75,
-        #     -109, -112)
-        instant_vel = TriggerCollision(
+        cyclist_collision = TriggerCollision(
             self.other_actors[0],
             self.ego_vehicle,
             self._cyclist_location_of_collision,
             [-1, 0])
-        show_route = PlotTrajectory(
+        car_trigger_distance = InTriggerDistanceToVehicle(
+            self.other_actors[2],
             self.ego_vehicle,
-            self.route)
-        # timeout_other = TimeOut(3)
-        # sync_arrival = SyncArrival(
-        #     self.other_actors[0], self.ego_vehicle, self._cyclist_location_of_collision)
-        # sync_arrival_stop = InTriggerDistanceToVehicle(self.other_actors[0],
-        #                                                self.ego_vehicle,
-        #                                                15)
+            self._car_trigger_distance_from_ego)
+        car_collision = TriggerCollision(
+            self.other_actors[2],
+            self.ego_vehicle,
+            self._car_location_of_collision,
+            [1, 0])
+        # show_route = PlotTrajectory(
+        #     self.ego_vehicle,
+        #     self.route)
 
         # non leaf nodes
         cyclist_root = py_trees.composites.Parallel(
             policy=py_trees.common.ParallelPolicy.SuccessOnOne())
-        scenario_sequence = py_trees.composites.Sequence()
-        keep_velocity_other = py_trees.composites.Parallel(
+        cyclist_sequence = py_trees.composites.Sequence()
+        cyclist_timeout = TimeOut(self._cyclist_timeout)
+        car_root = py_trees.composites.Parallel(
             policy=py_trees.common.ParallelPolicy.SuccessOnOne())
-        # sync_arrival_parallel = py_trees.composites.Parallel(
-        #     "Synchronize arrival times",
-        #     policy=py_trees.common.ParallelPolicy.SuccessOnOne())
+        car_sequence = py_trees.composites.Sequence()
+        car_timeout = TimeOut(self._car_timeout)
 
         # building the tress
-        cyclist_root.add_child(scenario_sequence)
-        scenario_sequence.add_child(trigger_distance)
-        scenario_sequence.add_child(keep_velocity_other)
-        #scenario_sequence.add_child(stop_other)
-        #scenario_sequence.add_child(timeout_other)
-        keep_velocity_other.add_child(instant_vel)
+        #cyclist_root.add_child(cyclist_timeout)
+        cyclist_root.add_child(cyclist_sequence)
+        cyclist_sequence.add_child(cyclist_trigger_distance)
+        cyclist_sequence.add_child(cyclist_collision)
 
-        sequence.add_child(cyclist_root)
-        sequence.add_child(timeout)
+        # car_root.add_child(car_timeout)
+        car_root.add_child(car_sequence)
+        car_sequence.add_child(car_trigger_distance)
+        car_sequence.add_child(car_collision)
 
-        # root.add_child(show_route)
-        root.add_child(sequence)
+        #root.add_child(show_route)
+        root.add_child(cyclist_root)
+        root.add_child(car_root)
+        root.add_child(timeout)
 
         return root
 
@@ -142,7 +145,7 @@ class Town03GasStation(BasicScenario):
                                       terminate_on_failure=True)
 
         completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self.route
-                                                  #, terminate_on_failure=True
+                                                  , terminate_on_failure=True
                                                   )
 
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
@@ -156,7 +159,7 @@ class Town03GasStation(BasicScenario):
 
         parallel_criteria.add_child(collision_criterion)
         parallel_criteria.add_child(completion_criterion)
-        #parallel_criteria.add_child(target_criterion)
+        parallel_criteria.add_child(target_criterion)
         #parallel_criteria.add_child(route_criterion)
         parallel_criteria.add_child(wrong_way_criterion)
         parallel_criteria.add_child(red_light_criterion)
