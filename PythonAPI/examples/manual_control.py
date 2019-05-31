@@ -386,6 +386,17 @@ class HUD(object):
         self._info_text = []
         self._server_clock = pygame.time.Clock()
 
+        self._webcam = WebcamImage(width, height)
+        self._webcam_enabled = False
+
+    def set_webcam_enable(self, on=False):
+        self._webcam_enabled = on
+        if self._webcam_enabled:
+            self._webcam.camera.start()
+        else:
+            self._webcam.camera.stop()
+
+
     def on_world_tick(self, timestamp):
         self._server_clock.tick()
         self.server_fps = self._server_clock.get_fps()
@@ -395,6 +406,8 @@ class HUD(object):
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
         self._image.tick(world, clock)
+        if self._webcam_enabled:
+            self._webcam.tick(world,clock)
         if not self._show_info:
             return
         t = world.player.get_transform()
@@ -596,6 +609,31 @@ class FadingImage(object):
         if self._image is not None:
             display.blit(self._image, self.pos)
 
+# ==============================================================================
+# -- WebcamImage ------------------------------------------------------------------
+# ==============================================================================
+
+
+class WebcamImage(object):
+    def __init__(self, width, height, device = '/dev/video0', cam_res = [640, 480]):
+        self._screen_res = [width, height]
+        self._camera_device = device
+        self._camera_res = cam_res
+        self.camera = pygame.camera.Camera(device, cam_res)
+        self.camera.start()
+        self.surface = pygame.surface.Surface(cam_res)
+        self.pos = (width - self._webcam_res[0], height - self._webcam_res[1])
+        self._image = None
+
+    def render(self, display):
+        self._image = self.camera.get_image(self.surface)
+        # self._image.set_alpha(100)
+        display.blit(self._image, self.pos)
+
+    def __del__(self):
+        self.camera.stop()
+        del self.camera
+        del self.surface
 
 
 # ==============================================================================
@@ -884,10 +922,15 @@ def main():
         action='store_true',
         help='enable fullscreen mode')
     argparser.add_argument(
+        '--webcam',
+        action='store_true',
+        help='enable webcam')
+    argparser.add_argument(
         '--rolename',
         metavar='NAME',
         default='hero',
         help='actor role name (default: "hero")')
+
     args = argparser.parse_args()
 
     args.width, args.height = [int(x) for x in args.res.split('x')]
