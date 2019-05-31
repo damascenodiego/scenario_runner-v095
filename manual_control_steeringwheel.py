@@ -860,7 +860,7 @@ def game_loop(args):
             try:
                 client = carla.Client(args.host, int(args.port))
                 client.set_timeout(2.0)
-                world = client.get_world()
+                client.get_world()
                 _failed = False
             except Exception as err:
                 # print(err)
@@ -901,7 +901,6 @@ def game_loop(args):
 
 
     finally:
-
         if world is not None:
             world.destroy()
 

@@ -43,10 +43,10 @@ class Town03GasStation(BasicScenario):
 
     # other vehicle parameters
     _cyclist_target_velocity = -10
-    _cyclist_trigger_distance_from_ego = 15
+    _cyclist_trigger_distance_from_ego = 25
     _cyclist_max_throttle = 1
     _cyclist_max_brake = 1.0
-    _cyclist_location_of_collision = carla.Location(x=85, y=-104, z=8)
+    _cyclist_location_of_collision = carla.Location(83, -104)
 
     def __init__(self, world, ego_vehicle, other_actors, town, randomize=False, debug_mode=False, config=None):
         """
@@ -75,19 +75,18 @@ class Town03GasStation(BasicScenario):
 
         # leaf nodes
         trigger_distance = InTriggerDistanceToVehicle(
-            self.other_actors[1],
+            self.other_actors[0],
             self.ego_vehicle,
             self._cyclist_trigger_distance_from_ego)
-        start_other = KeepVelocity(
-            self.other_actors[0],
-            self._cyclist_target_velocity)
         # trigger_other = InTriggerRegion(
         #     self.other_actors[0],
         #     70, 75,
         #     -109, -112)
-        instant_vel = SetInstantVelocity(
+        instant_vel = TriggerCollision(
             self.other_actors[0],
-            carla.Vector3D(self._cyclist_target_velocity,0,0))
+            self.ego_vehicle,
+            self._cyclist_location_of_collision,
+            [-1, 0])
         show_route = PlotTrajectory(
             self.ego_vehicle,
             self.route)
@@ -111,13 +110,10 @@ class Town03GasStation(BasicScenario):
         # building the tress
         cyclist_root.add_child(scenario_sequence)
         scenario_sequence.add_child(trigger_distance)
-        # scenario_sequence.add_child(sync_arrival_parallel)
         scenario_sequence.add_child(keep_velocity_other)
-        # scenario_sequence.add_child(stop_other)
-        # scenario_sequence.add_child(timeout_other)
+        #scenario_sequence.add_child(stop_other)
+        #scenario_sequence.add_child(timeout_other)
         keep_velocity_other.add_child(instant_vel)
-        # sync_arrival_parallel.add_child(sync_arrival)
-        # sync_arrival_parallel.add_child(sync_arrival_stop)
 
         sequence.add_child(cyclist_root)
         sequence.add_child(timeout)

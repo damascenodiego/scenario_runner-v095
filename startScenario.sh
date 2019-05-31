@@ -32,6 +32,7 @@ done
 
 $run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario &
 
+sleep 7s
 $run_python /home/driverleics/git/scenario_runner-v095/manual_control_steeringwheel.py -v --res=1920x1080 > log_manual.txt
 
 

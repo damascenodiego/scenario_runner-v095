@@ -466,24 +466,27 @@ class KeepVelocity(AtomicBehavior):
         self._actor.apply_control(self._control)
         super(KeepVelocity, self).terminate(new_status)
 
-class SetInstantVelocity(AtomicBehavior):
+
+class TriggerCollision(AtomicBehavior):
 
     """
     This class contains an atomic behavior to set an instant velocity.
     """
 
-    def __init__(self, actor, vector3d, name="SetInstantVelocity"):
+    def __init__(self, other_actor, actor, location, multiplier, name="TriggerCollision"):
         """
         Setup parameters including acceleration value (via actor.set_velocity())
         and target velocity
         """
-        super(SetInstantVelocity, self).__init__(name)
-        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+        super(TriggerCollision, self).__init__(name)
+        self.logger.debug("%s.__init__()" % self.__class__.__name__)
         self._control = carla.VehicleControl()
-        self._actor = actor
-        self._target_vector3d = vector3d
-
         self._control.steering = 0
+        self._location = location
+        self._other_actor = other_actor
+        self._actor = actor
+        self._multiplier = multiplier
+        self._other_velocity = 10
 
     def update(self):
         """
@@ -491,7 +494,18 @@ class SetInstantVelocity(AtomicBehavior):
         """
         new_status = py_trees.common.Status.RUNNING
 
-        self._actor.set_velocity(self._target_vector3d)
+        didIt = False
+
+        if not didIt:
+            actor_distance = self._location.distance(CarlaDataProvider.get_location(self._actor))
+            other_distance = self._location.distance(CarlaDataProvider.get_location(self._other_actor))
+            actor_velocity = CarlaDataProvider.get_velocity(self._actor)
+            self._other_velocity = other_distance * actor_velocity / actor_distance
+            didIt = True
+
+        self._other_actor.set_velocity(carla.Vector3D(self._other_velocity*self._multiplier[0],
+                                                      self._other_velocity*self._multiplier[1],
+                                                      0))
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
@@ -501,7 +515,7 @@ class SetInstantVelocity(AtomicBehavior):
         On termination of this behavior, the throttle should be set back to 0.,
         to avoid further acceleration.
         """
-        super(SetInstantVelocity, self).terminate(new_status)
+        super(TriggerCollision, self).terminate(new_status)
 
 
 class PlotTrajectory(AtomicBehavior):

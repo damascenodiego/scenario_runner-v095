@@ -125,6 +125,9 @@ class ScenarioRunner(object):
 
         self.client.reload_world()
 
+
+
+
         # Once we have a client we can retrieve the world that is currently
         # running.
         self.world = self.client.get_world()
