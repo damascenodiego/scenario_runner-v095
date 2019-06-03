@@ -169,6 +169,41 @@ class InTriggerDistanceToVehicle(AtomicBehavior):
 
         return new_status
 
+class PedestrianBehavior(AtomicBehavior):
+
+    """
+    This class contains the trigger to control a Walker (pedestrian actor)
+    of a scenario
+    """
+
+    def __init__(self, actor, speed, yaw, name="PedestrianBehavior"):
+        """
+        Setup trigger walker control
+        """
+        super(PedestrianBehavior, self).__init__(name)
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+        self._actor = actor
+        self._world = actor.get_world()
+        self._speed = speed
+        self._yaw = yaw
+
+
+    def update(self):
+        """
+        Set speed/yaw of a pedestrian actor
+        """
+        new_status = py_trees.common.Status.RUNNING
+
+        self._actor.set_autopilot(False)
+        control = carla.VehicleControl()
+        control.speed = self._speed
+        control.yaw = self._yaw
+        self._actor.apply_control(self._control)
+
+        self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
+
+        return new_status
+
 
 class InTriggerDistanceToLocation(AtomicBehavior):
 
