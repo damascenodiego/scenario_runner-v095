@@ -28,12 +28,12 @@ while [ "$1" != "" ]; do
 done
 
 
-/home/driverleics/Downloads/carla/CARLA_0.9.5/CarlaUE4.sh /Game/Carla/Maps/$town > log.txt &
+/home/driverleics/Downloads/carla/CARLA_0.9.5/CarlaUE4.sh /Game/Carla/Maps/$town &
 
 $run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario &
 
 sleep 7s
-$run_python /home/driverleics/git/scenario_runner-v095/manual_control_steeringwheel.py -v --res=1920x1080 > log_manual.txt
+$run_python /home/driverleics/git/scenario_runner-v095/manual_control_steeringwheel.py -v
 
 
 killall -9 python

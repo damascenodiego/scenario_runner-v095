@@ -486,7 +486,8 @@ class TriggerCollision(AtomicBehavior):
         self._other_actor = other_actor
         self._actor = actor
         self._multiplier = multiplier
-        self._other_velocity = 10
+        self._other_velocity = 0
+        self._hasComputedVelocity = False
 
     def update(self):
         """
@@ -494,18 +495,13 @@ class TriggerCollision(AtomicBehavior):
         """
         new_status = py_trees.common.Status.RUNNING
 
-        didIt = False
-
-        if not didIt:
+        if not self._hasComputedVelocity:
             actor_distance = self._location.distance(CarlaDataProvider.get_location(self._actor))
             other_distance = self._location.distance(CarlaDataProvider.get_location(self._other_actor))
             actor_velocity = CarlaDataProvider.get_velocity(self._actor)
             self._other_velocity = other_distance * actor_velocity / actor_distance
-            didIt = True
-
-        self._other_actor.set_velocity(carla.Vector3D(self._other_velocity*self._multiplier[0],
-                                                      self._other_velocity*self._multiplier[1],
-                                                      0))
+            self._other_actor.set_velocity(carla.Vector3D(self._other_velocity*self._multiplier[0], self._other_velocity*self._multiplier[1], 0))
+            self._hasComputedVelocity = True
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
@@ -537,7 +533,7 @@ class PlotTrajectory(AtomicBehavior):
         self._route_id = 0
         self._route_sz = len(route)
         self._threshold = 10
-
+        self._hasRendered = False
 
     def update(self):
         """
@@ -545,16 +541,12 @@ class PlotTrajectory(AtomicBehavior):
         """
         new_status = py_trees.common.Status.RUNNING
 
-        # purge the queue of obsolete waypoints
-        points = []
-        for idx in range(self._route_id, self._route_sz):
-            waypoint, _ = self._route[idx]
-            if distance_location(waypoint, self._actor.get_transform().location) < self._threshold:
+        if not self._hasRendered :
+            points = []
+            for waypoint, _ in self._route:
                 points.append(carla.Transform(waypoint))
-                self._route_id = idx
-                break
-
-        draw_waypoints_location(self._actor.get_world(), points, self._actor.get_location().z + 1.0)
+            draw_waypoints_location(self._actor.get_world(), points, 0.3)
+            self._hasRendered = True
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status

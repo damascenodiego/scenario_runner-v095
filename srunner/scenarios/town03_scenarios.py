@@ -94,9 +94,9 @@ class Town03GasStation(BasicScenario):
             self.ego_vehicle,
             self._car_location_of_collision,
             [1, 0])
-        # show_route = PlotTrajectory(
-        #     self.ego_vehicle,
-        #     self.route)
+        show_route = PlotTrajectory(
+             self.ego_vehicle,
+             self.route)
 
         # non leaf nodes
         cyclist_root = py_trees.composites.Parallel(
@@ -119,7 +119,7 @@ class Town03GasStation(BasicScenario):
         car_sequence.add_child(car_trigger_distance)
         car_sequence.add_child(car_collision)
 
-        #root.add_child(show_route)
+        root.add_child(show_route)
         root.add_child(cyclist_root)
         root.add_child(car_root)
         root.add_child(timeout)

@@ -123,7 +123,7 @@ class ScenarioRunner(object):
 
         print("Connected to CARLA server!")
 
-        self.client.reload_world()
+        # self.client.reload_world()
 
 
 

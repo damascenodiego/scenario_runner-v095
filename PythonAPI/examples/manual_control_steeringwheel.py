@@ -185,6 +185,10 @@ class World(object):
         # Spawn the player.
         if self.player is not None:
             spawn_point = self.player.get_transform()
+            #spawn_point.location.x = -50
+            #spawn_point.location.y = -197
+            #spawn_point.location.z = 0.0
+            spawn_point.rotation.yaw = 0.0
             spawn_point.location.z += 2.0
             spawn_point.rotation.roll = 0.0
             spawn_point.rotation.pitch = 0.0
@@ -871,6 +875,8 @@ def game_loop(args):
         world = World(client.get_world(), hud, args.filter)
         controller = DualControl(world, args.autopilot)
 
+        lastLocation = carla.Location(0, 0, 0)
+
         clock = pygame.time.Clock()
         while True:
             clock.tick_busy_loop(60)
@@ -880,8 +886,15 @@ def game_loop(args):
             world.render(display)
             pygame.display.flip()
             ego = world.player
-            # print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(ego.get_location().x, ego.get_location().y, ego.get_location().z))
-            # for event in pygame.event.get():
+
+            if lastLocation.distance(ego.get_location()) > 5:
+                lastLocation = ego.get_location()
+                print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(lastLocation.x,
+                                                                                                            lastLocation.y,
+                                                                                                            lastLocation.z))
+
+
+        # for event in pygame.event.get():
             #     if event.type == pygame.KEYDOWN and event.key == K_KP_ENTER:
             #         ego = world.player
             #         print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(ego.get_location().x, ego.get_location().y, ego.get_location().z))

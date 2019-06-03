@@ -45,7 +45,7 @@ def draw_waypoints_location(world, locations, z=0.5):
     for idx in range(length-1):
         begin = locations[idx].location   + carla.Location(z=z)
         end   = locations[idx+1].location + carla.Location(z=z)
-        world.debug.draw_arrow(begin, end, arrow_size=3, life_time=5.0)
+        world.debug.draw_arrow(begin, end, arrow_size=3, life_time=600.0)
         # world.debug.draw_point(t.location, size=0.3, life_time=1.0)
 
 
