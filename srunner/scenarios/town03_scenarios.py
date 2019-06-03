@@ -42,8 +42,8 @@ class Town03GasStation(BasicScenario):
     timeout = 300           # Timeout of scenario in seconds
 
     # cyclist parameters
-    _cyclist_trigger_distance_from_ego = 25
-    _cyclist_location_of_collision = carla.Location(83, -104)
+    _cyclist_trigger_distance_from_ego = 30
+    _cyclist_location_of_collision = carla.Location(78, -104)
     _cyclist_timeout = 20
 
     # car parameters

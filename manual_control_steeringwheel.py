@@ -235,6 +235,8 @@ class DualControl(object):
         # evdev references to the steering wheel (force feedback)
         self._device = evdev.list_devices()[0]
         self._evtdev = InputDevice(self._device)
+        self._evtdev.write(ecodes.EV_FF, ecodes.FF_AUTOCENTER, int(65535/2))
+        time.sleep(1)
 
         self._parser = ConfigParser()
         self._parser.read('wheel_config.ini')
@@ -415,7 +417,7 @@ class HUD(object):
         mono = pygame.font.match_font(mono)
         self._font_mono = pygame.font.Font(mono, 14)
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
-        self._image = FadingImage(font, width, height)
+        # self._image = FadingImage(font, width, height)
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
         self.server_fps = 0
         self.frame_number = 0
@@ -432,7 +434,7 @@ class HUD(object):
 
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
-        self._image.tick(world, clock)
+        # self._image.tick(world, clock)
         if not self._show_info:
             return
         t = world.player.get_transform()
@@ -539,7 +541,7 @@ class HUD(object):
                     display.blit(surface, (8, v_offset))
                 v_offset += 18
         self._notifications.render(display)
-        self._image.render(display)
+        # self._image.render(display)
         self.help.render(display)
 
 
@@ -668,7 +670,7 @@ class CollisionSensor(object):
             return
         actor_type = get_actor_display_name(event.other_actor)
         self.hud.notification('Collision with %r' % actor_type)
-        self.hud.notification_image(pygame.image.load('/home/driverleics/racecar.png').convert())
+        # self.hud.notification_image(pygame.image.load('/home/driverleics/racecar.png').convert())
         impulse = event.normal_impulse
         intensity = math.sqrt(impulse.x**2 + impulse.y**2 + impulse.z**2)
         self.history.append((event.frame_number, intensity))

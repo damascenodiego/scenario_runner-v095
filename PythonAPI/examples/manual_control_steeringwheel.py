@@ -185,9 +185,9 @@ class World(object):
         # Spawn the player.
         if self.player is not None:
             spawn_point = self.player.get_transform()
-            #spawn_point.location.x = -50
-            #spawn_point.location.y = -197
-            #spawn_point.location.z = 0.0
+            spawn_point.location.x = -50
+            spawn_point.location.y = -197
+            spawn_point.location.z = 0.0
             spawn_point.rotation.yaw = 0.0
             spawn_point.location.z += 2.0
             spawn_point.rotation.roll = 0.0
@@ -887,7 +887,7 @@ def game_loop(args):
             pygame.display.flip()
             ego = world.player
 
-            if lastLocation.distance(ego.get_location()) > 5:
+            if lastLocation.distance(ego.get_location()) > 3:
                 lastLocation = ego.get_location()
                 print("<waypoint  x=\"{}\" y=\"{}\" z=\"{}\" connection=\"RoadOption.LANEFOLLOW\"/>".format(lastLocation.x,
                                                                                                             lastLocation.y,

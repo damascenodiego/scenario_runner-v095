@@ -236,6 +236,7 @@ class DualControl(object):
         # evdev references to the steering wheel (force feedback)
         self._device = evdev.list_devices()[0]
         self._evtdev = InputDevice(self._device)
+        self._evtdev.write(ecodes.EV_FF, ecodes.FF_AUTOCENTER, 65535)
 
         self._parser = ConfigParser()
         self._parser.read('wheel_config.ini')

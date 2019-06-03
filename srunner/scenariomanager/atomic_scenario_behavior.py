@@ -517,26 +517,43 @@ class TriggerCollision(AtomicBehavior):
         self.logger.debug("%s.__init__()" % self.__class__.__name__)
         self._control = carla.VehicleControl()
         self._control.steering = 0
-        self._location = location
+        self._collisionLocation = location
         self._other_actor = other_actor
         self._actor = actor
         self._multiplier = multiplier
         self._other_velocity = 0
         self._hasComputedVelocity = False
+        self._loopCounter = 0
 
     def update(self):
         """
         Set throttle to throttle_value, as long as velocity is < target_velocity
         """
         new_status = py_trees.common.Status.RUNNING
+        self._loopCounter += 1
 
         if not self._hasComputedVelocity:
-            actor_distance = self._location.distance(CarlaDataProvider.get_location(self._actor))
-            other_distance = self._location.distance(CarlaDataProvider.get_location(self._other_actor))
+
+            # Updates the collisionLocation to match egoCar's 'x' or 'y' coordinate
+            if self._multiplier[0] != 0:
+                self._collisionLocation.x = CarlaDataProvider.get_location(self._actor).x
+            else:
+                self._collisionLocation.y = CarlaDataProvider.get_location(self._actor).y
+            self._collisionLocation.z = CarlaDataProvider.get_location(self._other_actor).z
+
+            actor_distance = self._collisionLocation.distance(CarlaDataProvider.get_location(self._actor))
+            other_distance = self._collisionLocation.distance(CarlaDataProvider.get_location(self._other_actor))
             actor_velocity = CarlaDataProvider.get_velocity(self._actor)
             self._other_velocity = other_distance * actor_velocity / actor_distance
             self._other_actor.set_velocity(carla.Vector3D(self._other_velocity*self._multiplier[0], self._other_velocity*self._multiplier[1], 0))
             self._hasComputedVelocity = True
+        else:
+            self._other_velocity += self._loopCounter/100
+            self._other_actor.set_velocity(carla.Vector3D(self._other_velocity*self._multiplier[0], self._other_velocity*self._multiplier[1], 0))
+
+            # Stops accelerating once the vehicle gets close enough
+            if self._other_actor.get_location().distance(self._collisionLocation) < 1:
+                return py_trees.common.Status.SUCCESS
 
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
