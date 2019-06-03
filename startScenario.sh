@@ -29,8 +29,8 @@ done
 
 
 /home/driverleics/Downloads/carla/CARLA_0.9.5/CarlaUE4.sh /Game/Carla/Maps/$town > log_server.txt & 
- 
-$run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario | tee log_scenario.txt &
+
+$run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario &
 
 sleep 7s
 $run_python /home/driverleics/git/scenario_runner-v095/manual_control_steeringwheel.py --res=1920x1080 > log_client.txt

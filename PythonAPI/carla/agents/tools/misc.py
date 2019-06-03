@@ -49,6 +49,44 @@ def draw_waypoints_location(world, locations, z=0.5):
         # world.debug.draw_point(t.location, size=0.3, life_time=1.0)
 
 
+def draw_string_location(world, string, location, z=0):
+    """
+    Draw a string at a certain height given in z.
+
+    :param world: carla.world object
+    :param location: location to draw
+    :param z: height in meters
+    :return:
+    """
+    world.debug.draw_string(location + carla.Location(z=z), string, life_time=600.0)
+
+
+def draw_circle(world, centerLocation, z, theta):
+
+    theta = 0  # angle that will be increased each loop
+    h = centerLocation.x      # x coordinate of circle center
+    k = centerLocation.y      # y coordinate of circle center
+    step = 0.2  # amount to add to theta each time (degrees)
+    radius = 5
+
+    x = h + radius * math.cos(theta)
+    y = k + radius * math.sin(theta)
+    lastLocation = carla.Location(x, y, z)
+
+    part = 1
+
+    while theta <= 6.3:
+        theta += step
+        x = h + radius * math.cos(theta)
+        y = k + radius * math.sin(theta)
+        world.debug.draw_arrow(lastLocation, carla.Location(x, y, z), thickness=0.2, arrow_size=2, color=carla.Color(0, 255, 0), life_time=600)
+        #world.debug.draw_point(lastLocation, color=carla.Color(0, 255, 0), life_time=600.0)
+        #print("("+str(x)+","+str(y)+")")
+        lastLocation = carla.Location(x, y, z)
+        part +=0.02
+
+
+
 
 def get_speed(vehicle):
     """

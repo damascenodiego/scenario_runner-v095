@@ -21,7 +21,7 @@ from PythonAPI.carla.agents.navigation.roaming_agent import *
 from PythonAPI.carla.agents.navigation.basic_agent import *
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
-from PythonAPI.carla.agents.tools.misc import distance_location, draw_waypoints_location
+from PythonAPI.carla.agents.tools.misc import draw_string_location, draw_circle, draw_waypoints_location
 
 EPSILON = 0.001
 
@@ -582,10 +582,9 @@ class PlotTrajectory(AtomicBehavior):
         self._control = carla.VehicleControl()
         self._actor = ego_car
         self._route = route
-        self._route_id = 0
-        self._route_sz = len(route)
-        self._threshold = 10
         self._hasRendered = False
+        self._finishLocation = self._route[-1][0]
+        self._loopCounter = 0
 
     def update(self):
         """
@@ -599,7 +598,10 @@ class PlotTrajectory(AtomicBehavior):
                 points.append(carla.Transform(waypoint))
             draw_waypoints_location(self._actor.get_world(), points, 0.3)
             self._hasRendered = True
+            #draw_string_location(self._actor.get_world(), "FINISH", self._finishLocation, 1)
+            draw_circle(self._actor.get_world(), self._finishLocation, 0.5, self._loopCounter/100)
 
+        self._loopCounter += 1
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
 
