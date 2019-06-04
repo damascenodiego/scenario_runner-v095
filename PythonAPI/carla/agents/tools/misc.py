@@ -61,31 +61,27 @@ def draw_string_location(world, string, location, z=0):
     world.debug.draw_string(location + carla.Location(z=z), string, life_time=600.0)
 
 
-def draw_circle(world, centerLocation, z, theta):
+def draw_circle(world, centerLocation, z, theta, lifetime):
 
-    theta = 0  # angle that will be increased each loop
-    h = centerLocation.x      # x coordinate of circle center
-    k = centerLocation.y      # y coordinate of circle center
-    step = 0.2  # amount to add to theta each time (degrees)
+    centerLocation.z = z
+    step = 20  # amount to add to theta each time (degrees)
+    loopCounter = 360 / step
     radius = 5
 
-    x = h + radius * math.cos(theta)
-    y = k + radius * math.sin(theta)
+    x = centerLocation.x  # + radius * math.cos(math.radians(theta))
+    y = centerLocation.y + radius * math.cos(math.radians(theta))
+    z = centerLocation.z + radius * math.sin(math.radians(theta))
     lastLocation = carla.Location(x, y, z)
 
-    part = 1
-
-    while theta <= 6.3:
+    while loopCounter > 0:
         theta += step
-        x = h + radius * math.cos(theta)
-        y = k + radius * math.sin(theta)
-        world.debug.draw_arrow(lastLocation, carla.Location(x, y, z), thickness=0.2, arrow_size=2, color=carla.Color(0, 255, 0), life_time=600)
-        #world.debug.draw_point(lastLocation, color=carla.Color(0, 255, 0), life_time=600.0)
-        #print("("+str(x)+","+str(y)+")")
+        loopCounter -= 1
+        radians = math.radians(theta)
+        x = centerLocation.x  # + radius * math.cos(radians)
+        y = centerLocation.y + radius * math.cos(radians)
+        z = centerLocation.z + radius * math.sin(radians)
+        world.debug.draw_arrow(lastLocation, carla.Location(x, y, z), thickness=0.15, arrow_size=2, color=carla.Color(0, 255, 0), life_time=lifetime)
         lastLocation = carla.Location(x, y, z)
-        part +=0.02
-
-
 
 
 def get_speed(vehicle):

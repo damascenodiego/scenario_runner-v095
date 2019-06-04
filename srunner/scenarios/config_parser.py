@@ -71,6 +71,8 @@ class ActorConfiguration(object):
         pos_y = float(set_attrib(node, 'y', 0))
         pos_z = float(set_attrib(node, 'z', 0))
         yaw = float(set_attrib(node, 'yaw', 0))
+        pitch = float(set_attrib(node, 'pitch', 0))
+        roll = float(set_attrib(node, 'roll', 0))
 
         if 'random_location' in node.keys():
             self.random_location = True
@@ -78,7 +80,7 @@ class ActorConfiguration(object):
         if 'autopilot' in node.keys():
             self.autopilot = True
 
-        self.transform = carla.Transform(carla.Location(x=pos_x, y=pos_y, z=pos_z), carla.Rotation(yaw=yaw))
+        self.transform = carla.Transform(carla.Location(x=pos_x, y=pos_y, z=pos_z), carla.Rotation(yaw=yaw, pitch=pitch, roll=roll))
         self.model = set_attrib(node, 'model', 'vehicle.*')
 
 

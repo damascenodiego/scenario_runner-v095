@@ -16,6 +16,7 @@ The atomic behaviors are implemented with py_trees.
 
 import carla
 import py_trees
+import threading
 
 from PythonAPI.carla.agents.navigation.roaming_agent import *
 from PythonAPI.carla.agents.navigation.basic_agent import *
@@ -584,7 +585,7 @@ class PlotTrajectory(AtomicBehavior):
         self._route = route
         self._hasRendered = False
         self._finishLocation = self._route[-1][0]
-        self._loopCounter = 0
+        self._initialTheta = 0
 
     def update(self):
         """
@@ -598,10 +599,11 @@ class PlotTrajectory(AtomicBehavior):
                 points.append(carla.Transform(waypoint))
             draw_waypoints_location(self._actor.get_world(), points, 0.3)
             self._hasRendered = True
-            #draw_string_location(self._actor.get_world(), "FINISH", self._finishLocation, 1)
-            draw_circle(self._actor.get_world(), self._finishLocation, 0.5, self._loopCounter/100)
+            draw_circle(self._actor.get_world(), self._finishLocation, 0.5, self._initialTheta, 600)
 
-        self._loopCounter += 1
+        # draw_circle(self._actor.get_world(), self._finishLocation, 0.5, self._initialTheta, 0.075)
+        # self._initialTheta += 1
+
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
         return new_status
 

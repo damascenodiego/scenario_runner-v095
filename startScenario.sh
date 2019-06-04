@@ -33,7 +33,7 @@ done
 $run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario &
 
 sleep 7s
-$run_python /home/driverleics/git/scenario_runner-v095/manual_control_steeringwheel.py --res=1920x1080 > log_client.txt
+$run_python /home/driverleics/git/scenario_runner-v095/manual_control_steeringwheel.py --res=1280x720 > log_client.txt
 
 
 killall -9 python

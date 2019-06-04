@@ -3,18 +3,19 @@
 	<scenario name="Town03GasStation" type="Town03GasStation" town="Town03">
 		<ego_vehicle x="-50.0" y="-197.0" z="0" yaw="0.0" model="vehicle.tesla.model3" />
 		<other_actor x="93" y="-104" z="9" yaw="180" model="vehicle.diamondback.century" />
-		<other_actor x="70" y="-110" z="9" yaw="-90" model="walker.pedestrian.0001" />
-		<other_actor x="-30" y="127" z="9" yaw="0" model="vehicle.lincoln.mkz2017" />
 		<other_actor x="89" y="-112" z="9" yaw="90" model="vehicle.carlamotors.carlacola" />
+		<other_actor x="-18.6" y="-1.9" z="2" yaw="98" model="vehicle.dodge_charger.police" />
+		<other_actor x="-17.4" y="3.5" z="2" yaw="130" pitch="180" model="vehicle.bmw.grandtourer" />
+		<other_actor x="-30" y="127" z="9" yaw="0" model="vehicle.lincoln.mkz2017" />
 		<other_actor x="71" y="-112" z="9" yaw="-90" model="walker.pedestrian.0002" />
 		<other_actor x="72" y="-110" z="9" yaw="-90" model="walker.pedestrian.0001" />
 		<other_actor x="73" y="-114" z="9" yaw="-90" model="walker.pedestrian.0001" />
 		<other_actor x="74" y="-113" z="9" yaw="-90" model="walker.pedestrian.0001" />
+		<other_actor x="-15.8" y="-1.6" z="2" yaw="-180" model="walker.pedestrian.0001" />
+		<other_actor x="-15.2" y="-1" z="2" yaw="145" model="walker.pedestrian.0002" />
 
 
 
-
-		<target x="-27" y="175.0" z="0" />
 		<snapshot file="/home/cdnd1/Picture/openday_snapshot.png" />
 		<route>
 			<waypoint  x="-50.0" y="-197.0" z="0.013624686747789383" connection="RoadOption.LANEFOLLOW"/>
