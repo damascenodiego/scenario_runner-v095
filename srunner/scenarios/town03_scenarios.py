@@ -134,9 +134,9 @@ class Town03GasStation(BasicScenario):
 
         parallel_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         parallel_criteria.add_child(collision_criterion)
-        parallel_criteria.add_child(completion_criterion)
+        #parallel_criteria.add_child(completion_criterion)
         parallel_criteria.add_child(target_criterion)
-        parallel_criteria.add_child(route_criterion)
+        #parallel_criteria.add_child(route_criterion)
         parallel_criteria.add_child(wrong_way_criterion)
         parallel_criteria.add_child(red_light_criterion)
 
