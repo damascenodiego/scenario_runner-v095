@@ -263,6 +263,12 @@ class CollisionTest(Criterion):
         """
         new_status = py_trees.common.Status.RUNNING
 
+        if self._collision_sensor is None:
+            world = self.actor.get_world()
+            blueprint = world.get_blueprint_library().find('sensor.other.collision')
+            self._collision_sensor = world.spawn_actor(blueprint, carla.Transform(), attach_to=self.actor)
+            self._collision_sensor.listen(lambda event: CollisionTest._count_collisions(weakref.ref(self), event))
+
         if self.actual_value > 0:
             self.test_status = "FAILURE"
         else:
@@ -303,11 +309,13 @@ class CollisionTest(Criterion):
 
         collision_event = TrafficEvent(type=actor_type)
         collision_event.set_dict({'type':event.other_actor.type_id, 'id': event.other_actor.id})
-        collision_event.set_message("Agent collided against object with type={} and id={}".format(
+        collision_event.set_message("Agent collided against object with type={} and id={}.".format(
             event.other_actor.type_id, event.other_actor.id))
 
         self.list_traffic_events.append(collision_event)
         self.actual_value += 1
+        print("COLLISION")
+
 
 
 class KeepLaneTest(Criterion):
@@ -333,6 +341,12 @@ class KeepLaneTest(Criterion):
         Check lane invasion count
         """
         new_status = py_trees.common.Status.RUNNING
+
+        if self._lane_sensor is None:
+            world = self.actor.get_world()
+            blueprint = world.get_blueprint_library().find('sensor.other.lane_invasion')
+            self._lane_sensor = world.spawn_actor(blueprint, carla.Transform(), attach_to=self.actor)
+            self._lane_sensor.listen(lambda event: self._count_lane_invasion(weakref.ref(self), event))
 
         if self.actual_value > 0:
             self.test_status = "FAILURE"
@@ -426,8 +440,8 @@ class WrongLaneTest(Criterion):
         super(WrongLaneTest, self).__init__(name, actor, 0, None, optional)
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
 
-        self._world = self.actor.get_world()
         self._actor = actor
+        self._world = self._actor.get_world()
         self._map = self._world.get_map()
         self._infractions = 0
         self._last_lane_id = None
@@ -442,6 +456,12 @@ class WrongLaneTest(Criterion):
         Check lane invasion count
         """
         new_status = py_trees.common.Status.RUNNING
+
+        if self._lane_sensor is None:
+            world = self._actor.get_world()
+            blueprint = world.get_blueprint_library().find('sensor.other.lane_invasion')
+            self._lane_sensor = world.spawn_actor(blueprint, carla.Transform(), attach_to=self._actor)
+            self._lane_sensor.listen(lambda event: self._lane_change(weakref.ref(self), event))
 
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
             new_status = py_trees.common.Status.FAILURE
@@ -488,6 +508,8 @@ class WrongLaneTest(Criterion):
                 # is there a difference of orientation greater than MAX_ALLOWED_ANGLE deg with respect of the lane
                 # direction?
                 self._infractions += 1
+                self.actual_value += 1
+                print("WRONG LANE")
 
                 wrong_way_event = TrafficEvent(type=TrafficEventType.WRONG_WAY_INFRACTION)
                 wrong_way_event.set_message('Agent invaded a lane in opposite direction: road_id={}, lane_id={}'.format(
@@ -498,6 +520,7 @@ class WrongLaneTest(Criterion):
         # remember the current lane and road
         self._last_lane_id = current_lane_id
         self._last_road_id = current_road_id
+
 
 class InRadiusRegionTest(Criterion):
 
@@ -514,12 +537,19 @@ class InRadiusRegionTest(Criterion):
         self._x = x
         self._y = y
         self._radius = radius
+        self._start_time = 0.0
+        self._elapsed_time = 0.0
 
     def update(self):
         """
         Check if the actor location is within trigger region
         """
         new_status = py_trees.common.Status.RUNNING
+
+
+        self._elapsed_time = GameTime.get_time() - self._start_time
+
+
 
         location = CarlaDataProvider.get_location(self._actor)
         if location is None:
@@ -534,6 +564,7 @@ class InRadiusRegionTest(Criterion):
                 self.test_status = "SUCCESS"
             else:
                 self.test_status = "RUNNING"
+
 
 
         if self.test_status == "SUCCESS":
@@ -586,6 +617,8 @@ class InRouteTest(Criterion):
                         break
                 if off_route:
                     self._counter_off_route += 1
+                    self.actual_value += 1
+                    print("OFF ROUTE")
 
                 if self._counter_off_route > self._offroad_max:
                     route_deviation_event = TrafficEvent(type=TrafficEventType.ROUTE_DEVIATION)
@@ -595,7 +628,7 @@ class InRouteTest(Criterion):
                     self.list_traffic_events.append(route_deviation_event)
 
                     self.test_status = "FAILURE"
-                    new_status = py_trees.common.Status.FAILURE
+                    #new_status = py_trees.common.Status.FAILURE
 
             self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 
@@ -688,6 +721,21 @@ class RunningRedLightTest(Criterion):
         if location is None:
             return new_status
 
+        # scan for red traffic lights
+        for traffic_light in self._list_traffic_lights:
+            if hasattr(traffic_light, 'trigger_volume'):
+                tl_t = traffic_light.get_transform()
+
+                transformed_tv = tl_t.transform(traffic_light.trigger_volume.location)
+                distance = carla.Location(transformed_tv).distance(location)
+                s = self.length(traffic_light.trigger_volume.extent) + self.length(self._actor.bounding_box.extent)
+                if distance <= s:
+                    # this traffic light is affecting the vehicle
+                    if traffic_light.state == carla.TrafficLightState.Red:
+                        self._target_traffic_light = traffic_light
+                        self._in_red_light = True
+                        break
+
         # were you in affected by a red traffic light and just decided to ignore it?
         if self._in_red_light:
             if self._target_traffic_light.state != carla.TrafficLightState.Red:
@@ -705,6 +753,8 @@ class RunningRedLightTest(Criterion):
                 if distance > s and self._target_traffic_light.state == carla.TrafficLightState.Red:
                     # you are running a red light
                     self.test_status = "FAILURE"
+                    self.actual_value += 1
+                    print("RED LIGHT")
 
                     red_light_event = TrafficEvent(type=TrafficEventType.TRAFFIC_LIGHT_INFRACTION)
                     red_light_event.set_message("Agent ran a red light {} at (x={}, y={}, x={})".format(
@@ -716,33 +766,60 @@ class RunningRedLightTest(Criterion):
                                               'y':location.y, 'z':location.z})
                     self.list_traffic_events.append(red_light_event)
 
-
                     # state reset
                     self._in_red_light = False
                     self._target_traffic_light = None
 
-
-        # scan for red traffic lights
-        for traffic_light in self._list_traffic_lights:
-            if hasattr(traffic_light, 'trigger_volume'):
-                tl_t = traffic_light.get_transform()
-
-                transformed_tv = tl_t.transform(traffic_light.trigger_volume.location)
-                distance = carla.Location(transformed_tv).distance(location)
-                s = self.length(traffic_light.trigger_volume.extent) + self.length(self._actor.bounding_box.extent)
-                if distance <= s:
-                    # this traffic light is affecting the vehicle
-                    if traffic_light.state == carla.TrafficLightState.Red:
-                        self._target_traffic_light = traffic_light
-                        self._in_red_light = True
-                        break
-
-
-
-
         if self._terminate_on_failure and (self.test_status == "FAILURE"):
             new_status = py_trees.common.Status.FAILURE
 
+        self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
+
+        return new_status
+
+
+class CountScore(Criterion):
+
+    """
+    The test is a success if the actor is within a given radius of a specified region
+    """
+
+    collision_weight = 300
+    wrongLane_weight = 50
+    redLight_weight = 100
+    offRoute_weight = 1
+    time_weight = 100
+
+    def __init__(self, criteria, actor, timeout, name="CountScore", terminate_on_failure=False):
+        super(CountScore, self).__init__(name, actor, 0, terminate_on_failure=terminate_on_failure)
+        self.criteria = criteria
+        self.score = 0
+        self.timeout = timeout
+        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
+
+    def update(self):
+        """
+        Check if the actor location is within trigger region
+        """
+        self.score = 0
+
+        for criterion in self.criteria:
+            if criterion.name == "CheckCollisions":
+                self.score -= criterion.actual_value * self.collision_weight
+            elif criterion.name == "WrongLaneTest":
+                self.score -= criterion.actual_value * self.wrongLane_weight
+            elif criterion.name == "RunningRedLightTest":
+                self.score -= criterion.actual_value * self.redLight_weight
+            elif criterion.name == "InRouteTest":
+                self.score -= criterion.actual_value * self.offRoute_weight
+            elif criterion.name == "InRadiusRegionTest":
+                self.score += (self.timeout - criterion._elapsed_time) * self.time_weight
+            else:
+                pass
+
+        print("SCORE = " + str(self.score))
+
+        new_status = py_trees.common.Status.SUCCESS
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 
         return new_status

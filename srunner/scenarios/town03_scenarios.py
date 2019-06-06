@@ -39,7 +39,7 @@ class Town03GasStation(BasicScenario):
 
     category = "Town03Scenarios"
     radius = 5.0           # meters
-    timeout = 900           # Timeout of scenario in seconds
+    timeout = 120           # Timeout of scenario in seconds
 
     # cyclist parameters
     _cyclist_trigger_distance_from_ego = 30
@@ -48,6 +48,8 @@ class Town03GasStation(BasicScenario):
     # car parameters
     _car_trigger_distance_from_ego = 40
     _car_location_of_collision = carla.Location(-8, 127)
+
+    score = 0
 
     def __init__(self, world, ego_vehicle, other_actors, town, randomize=False, debug_mode=False, config=None):
         """
@@ -91,16 +93,11 @@ class Town03GasStation(BasicScenario):
             self.ego_vehicle,
             self._car_location_of_collision,
             [1, 0])
-        show_route = PlotTrajectory(
-             self.ego_vehicle,
-             self._route)
 
         # non leaf nodes
-        cyclist_root = py_trees.composites.Parallel(
-            policy=py_trees.common.ParallelPolicy.SuccessOnOne())
+        cyclist_root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SuccessOnOne())
+        car_root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         cyclist_sequence = py_trees.composites.Sequence()
-        car_root = py_trees.composites.Parallel(
-            policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         car_sequence = py_trees.composites.Sequence()
 
         # building the tress
@@ -112,10 +109,11 @@ class Town03GasStation(BasicScenario):
         car_sequence.add_child(car_trigger_distance)
         car_sequence.add_child(car_collision)
 
-        root.add_child(show_route)
         root.add_child(cyclist_root)
         root.add_child(car_root)
         root.add_child(timeout)
+
+        self.plotTrajectory()
 
         return root
 
@@ -125,19 +123,36 @@ class Town03GasStation(BasicScenario):
         in parallel behavior tree.
         """
 
+        root = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnAll())
+        root_sequence = py_trees.composites.Sequence()
+
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
-        route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
-        completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
-        target_criterion = InRadiusRegionTest(self.ego_vehicle, x=self._target.x, y=self._target.y, radius=self.radius)
+        in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
+        target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
+        # completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
-        parallel_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
-        parallel_criteria.add_child(collision_criterion)
-        #parallel_criteria.add_child(completion_criterion)
-        parallel_criteria.add_child(target_criterion)
-        #parallel_criteria.add_child(route_criterion)
-        parallel_criteria.add_child(wrong_way_criterion)
-        parallel_criteria.add_child(red_light_criterion)
+        test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
+        test_criteria.add_child(collision_criterion)
+        test_criteria.add_child(target_criterion)
+        test_criteria.add_child(in_route_criterion)
+        test_criteria.add_child(wrong_way_criterion)
+        test_criteria.add_child(red_light_criterion)
+        # test_criteria.add_child(completion_criterion)
 
-        return parallel_criteria
+        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
+        score_counter = CountScore(criteria, self.ego_vehicle, self.timeout)
+
+        root_sequence.add_child(test_criteria)
+        root_sequence.add_child(score_counter)
+        root.add_child(root_sequence)
+
+        return root
+
+    def plotTrajectory(self):
+        points = []
+        for waypoint, _ in self._route:
+            points.append(carla.Transform(waypoint))
+        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.3)
+        draw_circle(self.ego_vehicle.get_world(), self._target, 0.5, 0, self.timeout)

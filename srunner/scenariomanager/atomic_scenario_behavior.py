@@ -567,53 +567,6 @@ class TriggerCollision(AtomicBehavior):
         super(TriggerCollision, self).terminate(new_status)
 
 
-class PlotTrajectory(AtomicBehavior):
-
-    """
-    This class contains an atomic behavior to set an instant velocity.
-    """
-
-    def __init__(self, ego_car, route, name="SetInstantVelocity"):
-        """
-        Setup parameters including acceleration value (via actor.set_velocity())
-        and target velocity
-        """
-        super(PlotTrajectory, self).__init__(name)
-        self.logger.debug("%s.__init__()" % (self.__class__.__name__))
-        self._control = carla.VehicleControl()
-        self._actor = ego_car
-        self._route = route
-        self._hasRendered = False
-        self._finishLocation = self._route[-1][0]
-        self._initialTheta = 0
-
-    def update(self):
-        """
-        Set throttle to throttle_value, as long as velocity is < target_velocity
-        """
-        new_status = py_trees.common.Status.RUNNING
-
-        if not self._hasRendered :
-            points = []
-            for waypoint, _ in self._route:
-                points.append(carla.Transform(waypoint))
-            draw_waypoints_location(self._actor.get_world(), points, 0.3)
-            self._hasRendered = True
-            draw_circle(self._actor.get_world(), self._finishLocation, 0.5, self._initialTheta, 600)
-
-        # draw_circle(self._actor.get_world(), self._finishLocation, 0.5, self._initialTheta, 0.075)
-        # self._initialTheta += 1
-
-        self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
-        return new_status
-
-    def terminate(self, new_status):
-        """
-        On termination of this behavior, the throttle should be set back to 0.,
-        to avoid further acceleration.
-        """
-        super(PlotTrajectory, self).terminate(new_status)
-
 class DriveDistance(AtomicBehavior):
 
     """
