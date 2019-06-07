@@ -832,7 +832,7 @@ class CountScore(Criterion):
             else:
                 pass
 
-        criterionScores['finalScore'] = self.score
+        criterionScores['finalScore'] = int(self.score)
         self.file.write(str(criterionScores) + "\n")
         self.file.close()
 

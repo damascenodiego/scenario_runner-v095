@@ -44,7 +44,7 @@ class DrivingSummary(tk.Frame):
         score = self.read_last_score()
         self.toplabel["text"] = "Your score is {}\n\n" \
                                 "" \
-                                "Thank you for visiting and have a lovely day.\n\n".format(score)
+                                "Thank you for visiting and have a lovely day.\n\n".format(int(score))
 
         self.button1.focus_set()
         print(self.__class__.__name__)
@@ -57,7 +57,8 @@ class DrivingSummary(tk.Frame):
             line = fp.readline()
             if not line:
                 break
-            last_line = line
+            if not len(line)==0:
+                last_line = line
         score_dict = literal_eval(last_line)
         finalScore = 0
         if 'finalScore' in score_dict.keys():

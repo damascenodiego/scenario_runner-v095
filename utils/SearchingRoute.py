@@ -34,8 +34,7 @@ class SearchingRoute(tk.Frame):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         video_name = os.path.join(dir_path, "videos", scenario.snapshot)
         video = imageio.get_reader(video_name)
-        self._description['text'] = "\n" \
-                                    "Searching for an interesting route" \
+        self._description['text'] = "Searching for an interesting route..." \
                                     "\n"
 
         meta_data = video.get_meta_data()
@@ -45,15 +44,14 @@ class SearchingRoute(tk.Frame):
             self._label.config(image=frame_image)
             self._label.image = frame_image
             time.sleep(wait_sleep)
-        self._description['text'] = "Populating scenario...\n" \
-                                    "Goal: {}\n" \
+        self._description['text'] = "Goal: {}\n" \
                                     "Time limit: {} seconds".format(
                                                 scenario.goal,
                                                 scenario.timeout,
                                                 scenario.description
         )
         time.sleep(self._controller.timeout_SearchingRoute)
-        self._controller.show_frame("DrivingMode")
+        self._controller.show_frame("PopulateScenario")
 
     def _event_call(self, event):
         print(self.__class__.__name__)

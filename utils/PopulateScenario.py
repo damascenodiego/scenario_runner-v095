@@ -9,12 +9,12 @@ class PopulateScenario(tk.Frame):
         super().__init__(parent)
         self._controller = controller
         self.configure(background='#67BFFF')
-        label = tk.Label(self, text="Populating Scenario...", font=controller.title_font,bg='#67BFFF')
-        label.pack(side="top", fill="x", pady=10)
+        # label = tk.Label(self, text="Populating Scenario...", font=controller.title_font,bg='#67BFFF')
+        # label.pack(side="top", fill="x", pady=10)
 
-        labelframe1 = tk.LabelFrame(self, text="Populating test scenario...", font=controller.title_font, bg='#67BFFF')
-        labelframe1.pack(fill="both", expand="yes")
-
+        labelframe1 = tk.LabelFrame(self,
+                                    text="Populating test scenario...\n",
+                                    font=controller.title_font, bg='#67BFFF')
 
         cycleimage= Image.open("cyclist.png")
         width = 128
@@ -56,14 +56,13 @@ class PopulateScenario(tk.Frame):
         ulabel = tk.Label(labelframe1, image=carphoto,bg='#67BFFF')
         ulabel.grid(row=0,column=3)
 
+        text_font = tkfont.Font(family='Helvetica', size=35, weight="bold", slant="italic")
+        bottomlabel = tk.Label(labelframe1, text="Follow the red line and drive safely!", font=text_font,bg='#67BFFF')
+        # bottomlabel.pack()
+        bottomlabel.grid(row=1, columnspan=4)
+
+        labelframe1.pack(fill="both", expand="yes")
         labelframe1.place(anchor="c", relx=.5, rely=.5)
-
-
-        # text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
-        # toplabel = tk.Label(labelframe1, text="Adding pedestrians,cyclists and cars", font=text_font,bg='#67BFFF')
-        # toplabel .grid(row=1, padx=8)
-        # # toplabel.pack()
-        # toplabel.place(anchor = "c", relx = .5, rely = .5)
 
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
 
