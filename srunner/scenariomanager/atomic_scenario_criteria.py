@@ -22,7 +22,6 @@ import numpy as np
 import py_trees
 import carla
 import datetime
-
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.timer import GameTime
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
@@ -315,7 +314,6 @@ class CollisionTest(Criterion):
 
         self.list_traffic_events.append(collision_event)
         self.actual_value += 1
-        print("COLLISION")
 
 
 
@@ -510,7 +508,7 @@ class WrongLaneTest(Criterion):
                 # direction?
                 self._infractions += 1
                 self.actual_value += 1
-                print("WRONG LANE")
+
 
                 wrong_way_event = TrafficEvent(type=TrafficEventType.WRONG_WAY_INFRACTION)
                 wrong_way_event.set_message('Agent invaded a lane in opposite direction: road_id={}, lane_id={}'.format(
@@ -616,7 +614,7 @@ class InRouteTest(Criterion):
                 if off_route:
                     self._counter_off_route += 1
                     self.actual_value += 1
-                    print("OFF ROUTE")
+
 
                 if self._counter_off_route > self._offroad_max:
                     route_deviation_event = TrafficEvent(type=TrafficEventType.ROUTE_DEVIATION)
@@ -752,7 +750,6 @@ class RunningRedLightTest(Criterion):
                     # you are running a red light
                     self.test_status = "FAILURE"
                     self.actual_value += 1
-                    print("RED LIGHT")
 
                     red_light_event = TrafficEvent(type=TrafficEventType.TRAFFIC_LIGHT_INFRACTION)
                     red_light_event.set_message("Agent ran a red light {} at (x={}, y={}, x={})".format(
@@ -782,10 +779,10 @@ class CountScore(Criterion):
     The test is a success if the actor is within a given radius of a specified region
     """
 
-    collision_weight = 300
+    collision_weight = 100
     wrongLane_weight = 50
     redLight_weight = 0
-    offRoute_weight = 1
+    offRoute_weight = 10
     time_weight = 100
 
 
@@ -808,7 +805,7 @@ class CountScore(Criterion):
         self.file = open("score.dict", "a")
 
         criterionScores = dict()
-        timestamp = str(datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+        timestamp = str(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
         criterionScores['timestamp'] = timestamp
         criterionScores['collision_weight'] = self.collision_weight
         criterionScores['wrongLane_weight'] = self.wrongLane_weight
