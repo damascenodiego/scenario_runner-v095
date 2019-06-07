@@ -546,10 +546,7 @@ class InRadiusRegionTest(Criterion):
         """
         new_status = py_trees.common.Status.RUNNING
 
-
         self._elapsed_time = GameTime.get_time() - self._start_time
-
-
 
         location = CarlaDataProvider.get_location(self._actor)
         if location is None:

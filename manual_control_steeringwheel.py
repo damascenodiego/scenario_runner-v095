@@ -262,6 +262,8 @@ class DualControl(object):
                     world.next_weather()
                 elif event.button == self._reverse_idx:
                     self._control.gear = 1 if self._control.reverse else -1
+                elif event.button == self._handbrake_idx:
+                    self._control.gear = 1 if self._control.reverse else -1
                 elif event.button == 23:
                     world.camera_manager.next_sensor()
 
@@ -359,15 +361,23 @@ class DualControl(object):
 
 
         K2 = 1.6  # 1.6
-        throttleCmd = K2 + (2.05 * math.log10(
-            -0.7 * jsInputs[self._throttle_idx] + 1.4) - 1.2) / 0.92
+
+
+        if (jsInputs[self._throttle_idx] == 0.0):
+            throttleCmd = 0
+        else:
+            throttleCmd = K2 + (2.05 * math.log10(-0.7 * jsInputs[self._throttle_idx] + 1.4) - 1.2) / 0.92
+
         if throttleCmd <= 0:
             throttleCmd = 0
         elif throttleCmd > 1:
             throttleCmd = 1
 
-        brakeCmd = 1.6 + (2.05 * math.log10(
-            -0.7 * jsInputs[self._brake_idx] + 1.4) - 1.2) / 0.92
+        if (jsInputs[self._brake_idx] == 0.0):
+            brakeCmd = 0
+        else:
+            brakeCmd = 1.6 + (2.05 * math.log10(-0.7 * jsInputs[self._brake_idx] + 1.4) - 1.2) / 0.92
+
         if brakeCmd <= 0:
             brakeCmd = 0
         elif brakeCmd > 1:
@@ -379,7 +389,7 @@ class DualControl(object):
 
         #toggle = jsButtons[self._reverse_idx]
 
-        self._control.hand_brake = bool(jsButtons[self._handbrake_idx])
+       # self._control.hand_brake = bool(jsButtons[self._handbrake_idx])
 
     def _parse_walker_keys(self, keys, milliseconds):
         self._control.speed = 0.0
@@ -422,7 +432,7 @@ class HUD(object):
         self.server_fps = 0
         self.frame_number = 0
         self.simulation_time = 0
-        self._show_info = True
+        self._show_info = False
         self._info_text = []
         self._server_clock = pygame.time.Clock()
 
@@ -434,12 +444,22 @@ class HUD(object):
 
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
-        # self._image.tick(world, clock)
-        if not self._show_info:
-            return
+
         t = world.player.get_transform()
         v = world.player.get_velocity()
         c = world.player.get_control()
+
+        time_left = int(98-self.simulation_time)
+        time_left = max((0, time_left))
+        txt = "TIME LEFT: " + str(time_left) + " seconds"
+        if isinstance(c, carla.VehicleControl):
+            if c.reverse:
+                txt += " - REVERSE"
+        self._notifications.set_text(txt, seconds=0.1)
+
+        # self._image.tick(world, clock)
+        if not self._show_info:
+            return
         heading = 'N' if abs(t.rotation.yaw) < 89.5 else ''
         heading += 'S' if abs(t.rotation.yaw) > 90.5 else ''
         heading += 'E' if 179.5 > t.rotation.yaw > 0.5 else ''
@@ -669,7 +689,7 @@ class CollisionSensor(object):
         if not self:
             return
         actor_type = get_actor_display_name(event.other_actor)
-        self.hud.notification('Collision with %r' % actor_type)
+        # self.hud.notification('Collision with %r' % actor_type)
         # self.hud.notification_image(pygame.image.load('/home/driverleics/racecar.png').convert())
         impulse = event.normal_impulse
         intensity = math.sqrt(impulse.x**2 + impulse.y**2 + impulse.z**2)
@@ -703,7 +723,7 @@ class LaneInvasionSensor(object):
             return
         lane_types = set(x.type for x in event.crossed_lane_markings)
         text = ['%r' % str(x).split()[-1] for x in lane_types]
-        self.hud.notification('Crossed line %s' % ' and '.join(text))
+        # self.hud.notification('Crossed line %s' % ' and '.join(text))
 
 # ==============================================================================
 # -- GnssSensor --------------------------------------------------------
@@ -851,7 +871,6 @@ def game_loop(args):
     pygame.init()
     pygame.font.init()
     world = None
-
     try:
         client = carla.Client(args.host, args.port)
         client.set_timeout(2.0)
@@ -886,8 +905,10 @@ def game_loop(args):
         controller = DualControl(world, args.autopilot)
 
         clock = pygame.time.Clock()
+
         while True:
             clock.tick_busy_loop(60)
+            ##GameTime.get_time() - self._start_time
             if controller.parse_events(world, clock):
                 return
             if not world.tick(clock):

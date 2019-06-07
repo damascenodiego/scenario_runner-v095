@@ -39,7 +39,7 @@ class Town03GasStation(BasicScenario):
 
     category = "Town03Scenarios"
     radius = 5.0           # meters
-    timeout = 120           # Timeout of scenario in seconds
+    timeout = 90           # Timeout of scenario in seconds
 
     # cyclist parameters
     _cyclist_trigger_distance_from_ego = 30
@@ -155,4 +155,4 @@ class Town03GasStation(BasicScenario):
         for waypoint, _ in self._route:
             points.append(carla.Transform(waypoint))
         draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.3)
-        draw_circle(self.ego_vehicle.get_world(), self._target, 0.5, 0, self.timeout)
+        draw_circle(self.ego_vehicle.get_world(), self._target, 0.5, 0, 600)
