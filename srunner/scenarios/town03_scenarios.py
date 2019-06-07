@@ -72,7 +72,7 @@ class Town03GasStation(BasicScenario):
 
         # Build behavior tree
         root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SuccessOnAll())
-        timeout = TimeOut(self.timeout)
+        timeout = TimeOut(self.timeout*10)
 
         # leaf nodes
         cyclist_trigger_distance = InTriggerDistanceToVehicle(
@@ -125,6 +125,7 @@ class Town03GasStation(BasicScenario):
 
         root = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnAll())
         root_sequence = py_trees.composites.Sequence()
+        timeout = TimeOut(self.timeout)
 
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
@@ -140,6 +141,7 @@ class Town03GasStation(BasicScenario):
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
         # test_criteria.add_child(completion_criterion)
+        test_criteria.add_child(timeout)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
         score_counter = CountScore(criteria, self.ego_vehicle, self.timeout)
@@ -147,6 +149,7 @@ class Town03GasStation(BasicScenario):
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)
         root.add_child(root_sequence)
+
 
         return root
 
