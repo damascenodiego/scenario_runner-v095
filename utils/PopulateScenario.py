@@ -12,7 +12,7 @@ class PopulateScenario(tk.Frame):
         label = tk.Label(self, text="Populating Scenario...", font=controller.title_font,bg='#67BFFF')
         label.pack(side="top", fill="x", pady=10)
 
-        labelframe1 = tk.LabelFrame(self, text="Adding pedestrians, cyclists and vehicles...",bg='#67BFFF')
+        labelframe1 = tk.LabelFrame(self, text="Configuring test scenario...", font=controller.title_font, bg='#67BFFF')
         labelframe1.pack(fill="both", expand="yes")
 
 
@@ -24,7 +24,7 @@ class PopulateScenario(tk.Frame):
         slabel = tk.Label(image=cyclephoto)
         slabel.image = cyclephoto
         clabel = tk.Label(labelframe1,image=cyclephoto,bg='#67BFFF')
-        clabel.grid(row=0,column=0,padx=2)
+        clabel.grid(row=0,column=0, padx=2)
 
         pedeimage = Image.open("pedestrian.png")
         width = 128
@@ -34,7 +34,7 @@ class PopulateScenario(tk.Frame):
         olabel = tk.Label(image = pedephoto)
         olabel.image = pedephoto
         plabel = tk.Label(labelframe1,image=pedephoto,bg='#67BFFF')
-        plabel.grid(row=0,column=1)
+        plabel.grid(row=0,column=1, padx=2)
 
         weatherimage = Image.open("weather.png")
         width = 128
@@ -44,7 +44,7 @@ class PopulateScenario(tk.Frame):
         qlabel = tk.Label(image= weatphoto)
         qlabel.image = weatphoto
         rlabel = tk.Label(labelframe1,image=weatphoto,bg='#67BFFF')
-        rlabel.grid(row=0,column=2)
+        rlabel.grid(row=0,column=2, padx=2)
 
         carimage = Image.open("car.png")
         width = 128
@@ -56,14 +56,14 @@ class PopulateScenario(tk.Frame):
         ulabel = tk.Label(labelframe1, image=carphoto,bg='#67BFFF')
         ulabel.grid(row=0,column=3)
 
-        #labelframe1.place(anchor="c", relx=.5, rely=.2)
+        labelframe1.place(anchor="c", relx=.5, rely=.5)
 
 
-
-        text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
-        toplabel = tk.Label(labelframe1, text="Adding pedestrians,cyclists and cars", font=text_font,bg='#67BFFF')
-        # toplabel.pack()
-        toplabel.place(anchor = "c", relx = .5, rely = .5)
+        # text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
+        # toplabel = tk.Label(labelframe1, text="Adding pedestrians,cyclists and cars", font=text_font,bg='#67BFFF')
+        # toplabel .grid(row=1, padx=8)
+        # # toplabel.pack()
+        # toplabel.place(anchor = "c", relx = .5, rely = .5)
 
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
 

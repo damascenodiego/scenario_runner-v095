@@ -28,8 +28,7 @@ class DrivingMode(tk.Frame):
     def run(self):
         command = self._parameters
         print(command)
-        # subprocess.run(command, stdout=sys.stdout, stderr=subprocess.PIPE)
-
+        subprocess.run(command, stdout=sys.stdout, stderr=subprocess.PIPE)
         time.sleep(self._controller.timeout_DrivingMode)
         self._controller.show_frame("DrivingSummary")
 

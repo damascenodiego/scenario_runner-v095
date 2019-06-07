@@ -11,7 +11,7 @@ town=Town03;
 
 case $1 in
 	town01Restaurant) 
-		scenario=Town01Restaurant
+		cenario=Town01Restaurant
 		town=Town01
 		;;
     town03GasStation)
@@ -33,4 +33,4 @@ sleep 7s
 $run_python /home/driverleics/git/scenario_runner-v095/manual_control_steeringwheel.py --res=1280x720 > log_client.txt
 
 
-killall -9 CarlaUE4
+killall -9 CarlaUE4 CarlaUE4.sh scenario_runner.py manual_control_steeringwheel.py 

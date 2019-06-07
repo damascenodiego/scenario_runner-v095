@@ -18,10 +18,10 @@ from utils.Scenario import Scenario
 
 class ScenarioRunnerApp(tk.Tk):
 
-    timeout_ExperimentInfo   = 1
-    timeout_SearchingRoute   = 1
-    timeout_PopulateScenario = 1
-    timeout_DrivingMode      = 1
+    timeout_ExperimentInfo   = 10
+    timeout_SearchingRoute   = 4
+    timeout_PopulateScenario = 5
+    timeout_DrivingMode      = 0
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -73,7 +73,7 @@ class ScenarioRunnerApp(tk.Tk):
 
         self.show_frame("StartPage")
         self.geometry("1400x900")  # You want the size of the app to be 500x500
-        self.resizable(0, 0)  # Don't allow resizing in the x or y direction
+        # self.resizable(0, 0)  # Don't allow resizing in the x or y direction
 
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
 

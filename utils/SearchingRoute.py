@@ -34,10 +34,13 @@ class SearchingRoute(tk.Frame):
         video = imageio.get_reader(video_name)
         self._description['text'] = "Searching for an interesting route...\n"
 
+        meta_data = video.get_meta_data()
+        wait_sleep = 0.2/meta_data['fps']
         for image in video.iter_data():
             frame_image = ImageTk.PhotoImage(Image.fromarray(image))
             self._label.config(image=frame_image)
             self._label.image = frame_image
+            time.sleep(wait_sleep)
         self._description['text'] = "Goal: {}\n" \
                                     "Time limit: {} seconds".format(
                                                 scenario.goal,
