@@ -10,15 +10,15 @@ class DrivingMode(tk.Frame):
         super().__init__(parent)
         self._controller = controller
         self.configure(background='#67BFFF')
-        label = tk.Label(self, text="Driving Mode", font=controller.title_font,bg='#67BFFF')
-        label.pack(side="top", fill="x", pady=10)
+        # label = tk.Label(self, text="Driving Mode", font=controller.title_font,bg='#67BFFF')
+        # label.pack(side="top", fill="x", pady=10)
 
-        labelframe1 = tk.LabelFrame(self, text="Driving Mode!",bg='#67BFFF')
-        labelframe1.pack(side="top",fill="both",pady=10, expand="yes")
+        labelframe1 = tk.LabelFrame(self, text="Driving Mode", bg='#67BFFF')
+        labelframe1.pack(fill="both", expand="yes")
         labelframe1.place(anchor="c", relx=.5, rely=.5)
 
         text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
-        top_label = tk.Label(labelframe1, text="The simulation will soon begin.", font=text_font,bg='#67BFFF')
+        top_label = tk.Label(labelframe1, text="The simulation will begin soon...", font=text_font,bg='#67BFFF')
         top_label.pack()
 
         self._parameters = [self._controller.bash_path]

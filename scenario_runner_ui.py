@@ -25,6 +25,7 @@ class ScenarioRunnerApp(tk.Tk):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.attributes("-zoomed", True)
 
         self.title("Carla Scenario Runner UI")
 
@@ -61,7 +62,7 @@ class ScenarioRunnerApp(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, ExperimentInfo, SearchingRoute, PopulateScenario, DrivingMode, DrivingSummary):
+        for F in (StartPage, ExperimentInfo, SearchingRoute, DrivingMode, DrivingSummary):
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame

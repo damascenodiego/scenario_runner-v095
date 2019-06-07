@@ -12,7 +12,7 @@ class PopulateScenario(tk.Frame):
         label = tk.Label(self, text="Populating Scenario...", font=controller.title_font,bg='#67BFFF')
         label.pack(side="top", fill="x", pady=10)
 
-        labelframe1 = tk.LabelFrame(self, text="Configuring test scenario...", font=controller.title_font, bg='#67BFFF')
+        labelframe1 = tk.LabelFrame(self, text="Populating test scenario...", font=controller.title_font, bg='#67BFFF')
         labelframe1.pack(fill="both", expand="yes")
 
 

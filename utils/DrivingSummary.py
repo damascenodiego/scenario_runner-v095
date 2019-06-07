@@ -10,7 +10,9 @@ class DrivingSummary(tk.Frame):
         super().__init__(parent)
         self._controller = controller
         self.configure(background='#67BFFF')
-        label = tk.Label(self, text="Driving summary", font=controller.title_font,bg='#67BFFF')
+        label = tk.Label(self,
+                         # text="Driving summary",
+                         font=controller.title_font,bg='#67BFFF')
         label.pack(side="top", fill="x", pady=10)
 
         labelframe1 = tk.LabelFrame(self, text="Hope you enjoyed it",bg='#67BFFF')

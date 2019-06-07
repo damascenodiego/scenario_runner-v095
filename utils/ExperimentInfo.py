@@ -12,14 +12,16 @@ class ExperimentInfo(tk.Frame):
         # label = tk.Label(self, text="Experiment Information", font=controller.title_font)
         # label.pack(side="top", fill="x", pady=10)
 
-        labelframe1 = tk.LabelFrame(self, text="Experiment Information", font=controller.title_font,bg='#67BFFF')
+        labelframe1 = tk.LabelFrame(self,
+                                    # text="Experiment Information",
+                                    font=controller.title_font,bg='#67BFFF')
         labelframe1.pack(fill="both", expand="yes")
 
         text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
-        ilabel = tk.Label(labelframe1, text='Self-driving vehicles are controlled by Artificial Intelligence (AI).\n'
-                                            'Alternatively, AIs can also be used for testing their safety!\n\n'
-                                            'The goal of this experiment is to show how AI can be used to\n'
-                                            'assess the safety of self-driving vehicles.', font=text_font,bg='#67BFFF')
+        ilabel = tk.Label(labelframe1, text='Self-driving vehicles are controlled by Artificial Intelligence (AI).\n\n'
+                                            'Alternatively, AI can also be used for software testing.\n\n'
+                                            'To assess the safety of self-driving vehicles, we can use AI to find interesting routes\n'
+                                            'and populate them with dangerous events.', font=text_font,bg='#67BFFF')
         ilabel.pack()
         ilabel.place(anchor="c", relx=.5, rely=.5)
 
