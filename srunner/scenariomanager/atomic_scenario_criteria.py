@@ -21,6 +21,7 @@ import math
 import numpy as np
 import py_trees
 import carla
+import datetime
 
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.timer import GameTime
@@ -783,15 +784,19 @@ class CountScore(Criterion):
 
     collision_weight = 300
     wrongLane_weight = 50
-    redLight_weight = 100
+    redLight_weight = 0
     offRoute_weight = 1
     time_weight = 100
+
+
+
 
     def __init__(self, criteria, actor, timeout, name="CountScore", terminate_on_failure=False):
         super(CountScore, self).__init__(name, actor, 0, terminate_on_failure=terminate_on_failure)
         self.criteria = criteria
         self.score = 0
         self.timeout = timeout
+        self.file = None
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
 
     def update(self):
@@ -800,23 +805,42 @@ class CountScore(Criterion):
         """
         self.score = 0
 
+        self.file = open("score.dict", "a")
+
+        criterionScores = dict()
+        timestamp = str(datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+        criterionScores['timestamp'] = timestamp
+        criterionScores['collision_weight'] = self.collision_weight
+        criterionScores['wrongLane_weight'] = self.wrongLane_weight
+        criterionScores['redLight_weight']  = self.redLight_weight
+        criterionScores['offRoute_weight']  = self.offRoute_weight
+        criterionScores['time_weight']      = self.time_weight
+
         for criterion in self.criteria:
             if criterion.name == "CheckCollisions":
+                criterionScores[criterion.name] = criterion.actual_value
                 self.score -= criterion.actual_value * self.collision_weight
             elif criterion.name == "WrongLaneTest":
+                criterionScores[criterion.name] = criterion.actual_value
                 self.score -= criterion.actual_value * self.wrongLane_weight
             elif criterion.name == "RunningRedLightTest":
+                criterionScores[criterion.name] = criterion.actual_value
                 self.score -= criterion.actual_value * self.redLight_weight
             elif criterion.name == "InRouteTest":
+                criterionScores[criterion.name] = criterion.actual_value
                 self.score -= criterion.actual_value * self.offRoute_weight
             elif criterion.name == "InRadiusRegionTest":
+                criterionScores[criterion.name] = self.timeout - criterion._elapsed_time
                 self.score += (self.timeout - criterion._elapsed_time) * self.time_weight
             else:
                 pass
 
-        print("SCORE = " + str(self.score))
+        criterionScores['finalScore'] = self.score
+        self.file.write(str(criterionScores) + "\n")
+        self.file.close()
 
         new_status = py_trees.common.Status.SUCCESS
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 
         return new_status
+

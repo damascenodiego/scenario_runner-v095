@@ -1,0 +1,1 @@
+{'collision_weight': 300, 'wrongLane_weight': 50, 'redLight_weight': 100, 'offRoute_weight': 1, 'time_weight': 100, 'CheckCollisions': 16, 'InRadiusRegionTest': 41.94037199020386, 'InRouteTest': 0, 'WrongLaneTest': 4, 'RunningRedLightTest': 4, 'finalScore': -1205.9628009796143}
