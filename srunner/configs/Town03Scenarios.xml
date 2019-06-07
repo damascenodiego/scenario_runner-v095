@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <scenarios>
 	<scenario name="Town03GasStation" type="Town03GasStation" town="Town03">
+		<indetifier value="Scenario: Town 03, Route A" />
+		<time_limit value="Time Limit: 90 seconds" />
+		<goal value="Goal: Reach the Gas Station" />
+		<snapshot file="/home/cdnd1/Picture/openday_snapshot.png" />
+
 		<ego_vehicle x="-50.0" y="-197.0" z="0" yaw="0.0" model="vehicle.tesla.model3" />
 		<other_actor x="93" y="-104" z="9" yaw="180" model="vehicle.diamondback.century" />
 		<other_actor x="89" y="-112" z="9" yaw="90" model="vehicle.carlamotors.carlacola" />
@@ -14,9 +19,6 @@
 		<other_actor x="-15.8" y="-1.6" z="2" yaw="-180" model="walker.pedestrian.0001" />
 		<other_actor x="-15.2" y="-1" z="2" yaw="145" model="walker.pedestrian.0002" />
 
-
-
-		<snapshot file="/home/cdnd1/Picture/openday_snapshot.png" />
 		<route>
 			<waypoint  x="-50.0" y="-197.0" z="0.013624686747789383" connection="RoadOption.LANEFOLLOW"/>
 			<waypoint  x="-47.5462646484375" y="-197.0007781982422" z="-0.013624686747789383" connection="RoadOption.LANEFOLLOW"/>
