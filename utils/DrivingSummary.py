@@ -30,7 +30,8 @@ class DrivingSummary(tk.Frame):
         self.toplabel.pack()
         # self.toplabel.place(anchor="c", relx=.5, rely=.5)
 
-        infomessage = tk.Label(labelframe1,text = "If you would like more information please visit: http://driverleics.github.io/", font=text_font, bg='#67BFFF')
+        infomessage = tk.Label(labelframe1,text = "If you would like more information please visit:\n"
+                                                  "http://driverleics.github.io/", font=text_font, bg='#67BFFF')
         infomessage.pack()
 
 

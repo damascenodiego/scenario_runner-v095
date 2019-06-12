@@ -13,7 +13,7 @@ class PopulateScenario(tk.Frame):
         # label.pack(side="top", fill="x", pady=10)
 
         labelframe1 = tk.LabelFrame(self,
-                                    text="Populating test scenario...\n",
+                                    text="Populating test scenario with obstacles...\n",
                                     font=controller.title_font, bg='#67BFFF')
 
         cycleimage= Image.open("cyclist.png")

@@ -18,7 +18,7 @@ from utils.Scenario import Scenario
 
 class ScenarioRunnerApp(tk.Tk):
 
-    timeout_ExperimentInfo   = 10
+    timeout_ExperimentInfo   = 12
     timeout_SearchingRoute   = 4
     timeout_PopulateScenario = 5
     timeout_DrivingMode      = 0
