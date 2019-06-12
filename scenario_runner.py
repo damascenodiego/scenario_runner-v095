@@ -19,6 +19,9 @@ from argparse import RawTextHelpFormatter
 from datetime import datetime
 import traceback
 
+import pygame
+from manual_control_steeringwheel import HUD, DualControl, World
+
 import glob
 import os
 import sys
@@ -106,6 +109,7 @@ class ScenarioRunner(object):
         self.client = carla.Client(args.host, int(args.port))
         self.client.set_timeout(self.client_timeout)
 
+        self._running = False
         _failed = True
         num_of_attempts = 0
         while _failed:
@@ -261,56 +265,87 @@ class ScenarioRunner(object):
         """
         Run all scenarios according to provided commandline args
         """
+        # Load the scenario configuration provided in the config file
+        scenario_config_file = find_scenario_config(args.scenario)
+        if scenario_config_file is None:
+            raise Exception("Configuration for scenario {} cannot be found!".format(args.scenario))
+        scenario_configurations = parse_scenario_configuration(scenario_config_file, args.scenario)
 
-        # Setup and run the scenarios for repetition times
-        for _ in range(int(args.repetitions)):
+        # Execute each configuration
+        for config in scenario_configurations:
 
-            # Load the scenario configurations provided in the config file
-            scenario_configurations = None
-            if args.scenario.startswith("group:"):
-                scenario_configurations = parse_scenario_configuration(args.scenario, args.scenario)
-            else:
-                scenario_config_file = find_scenario_config(args.scenario)
-                if scenario_config_file is None:
-                    print("Configuration for scenario {} cannot be found!".format(args.scenario))
-                    continue
-                scenario_configurations = parse_scenario_configuration(scenario_config_file, args.scenario)
-
-            # Execute each configuration
-            for config in scenario_configurations:
-
-                # Prepare scenario
-                print("Preparing scenario: " + config.name)
-                scenario_class = ScenarioRunner.get_scenario_class_or_fail(config.type)
-                try:
-                    self.prepare_actors(config)
-                    scenario = scenario_class(self.world,
-                                              self.ego_vehicle,
-                                              self.actors,
-                                              config.town,
-                                              args.randomize,
-                                              args.debug, config=config)
-                except Exception as exception:
-                    print("The scenario cannot be loaded")
-                    traceback.print_exc()
-                    print(exception)
-                    self.cleanup()
-                    continue
-
-                # Load scenario and run it
-                self.manager.load_scenario(scenario)
-                self.manager.run_scenario()
-
-                # Provide outputs if required
-                self.analyze_scenario(args, config)
-
-                # Stop scenario and cleanup
-                self.manager.stop_scenario()
-                del scenario
-
+            # Prepare scenario
+            print("Preparing scenario: " + config.name)
+            scenario_class = ScenarioRunner.get_scenario_class_or_fail(config.type)
+            try:
+                self.prepare_actors(config)
+                scenario = scenario_class(self.world,
+                                          self.ego_vehicle,
+                                          self.actors,
+                                          config.town,
+                                          args.randomize,
+                                          args.debug, config=config)
+            except Exception as exception:
+                print("The scenario cannot be loaded")
+                traceback.print_exc()
+                print(exception)
                 self.cleanup()
+                continue
 
-            print("No more scenarios .... Exiting")
+            # Load scenario and run it
+            self.manager.load_scenario(scenario)
+
+            ######################################
+            # start manual_control_steeringwheel #
+            ######################################
+
+            pygame.init()
+            pygame.font.init()
+
+            try:
+
+                SCREEN_MODE = pygame.HWSURFACE | pygame.DOUBLEBUF
+                if args.fullscreen:
+                    SCREEN_MODE = pygame.FULLSCREEN
+
+                display = pygame.display.set_mode(
+                    (args.width, args.height),
+                    SCREEN_MODE)
+
+                hud = HUD(args.width, args.height)
+                world = World(self.client.get_world(), hud, args.filter)
+                controller = DualControl(world, args.autopilot)
+
+                clock = pygame.time.Clock()
+
+                self.manager.start_time_scenario()
+                while self._running:
+                    clock.tick_busy_loop(60)
+                    if controller.parse_events(world, clock):
+                        return
+                    if not world.tick(clock):
+                        break
+                    world.render(display)
+                    pygame.display.flip()
+                self.manager.stop_time_scenario()
+
+            finally:
+                pygame.quit()
+
+            ######################################
+            # stop  manual_control_steeringwheel #
+            ######################################
+
+            # Provide outputs if required
+            self.analyze_scenario(args, config)
+
+            # Stop scenario and cleanup
+            self.manager.stop_scenario()
+            del scenario
+
+            self.cleanup()
+
+        print("No more scenarios .... Exiting")
 
 
 if __name__ == '__main__':
@@ -333,10 +368,19 @@ if __name__ == '__main__':
         '--scenario', help='Name of the scenario to be executed. Use the preposition \'group:\' to run all scenarios of one class, e.g. ControlLoss or FollowLeadingVehicle')
     # pylint: enable=line-too-long
     PARSER.add_argument('--randomize', action="store_true", help='Scenario parameters are randomized')
-    PARSER.add_argument('--repetitions', default=1, help='Number of scenario executions')
     PARSER.add_argument('--list', action="store_true", help='List all supported scenarios and exit')
     PARSER.add_argument('--list_class', action="store_true", help='List all supported scenario classes and exit')
     PARSER.add_argument('-v', '--version', action='version', version='%(prog)s ' + str(VERSION))
+    PARSER.add_argument(
+        '--filter',
+        metavar='PATTERN',
+        default='vehicle.*',
+        help='actor filter (default: "vehicle.*")')
+    PARSER.add_argument(
+        '--fullscreen',
+        action='store_true',
+        help='enable fullscreen mode')
+
     ARGUMENTS = PARSER.parse_args()
 
     if ARGUMENTS.list:

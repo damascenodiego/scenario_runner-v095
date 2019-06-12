@@ -128,6 +128,10 @@ class ScenarioManager(object):
         self.start_system_time = None
         self.end_system_time = None
 
+        self._running = False
+        self.start_game_time = 0
+        self.end_game_time = 0
+
         world.on_tick(self._tick_scenario)
 
     def load_scenario(self, scenario):
@@ -162,25 +166,12 @@ class ScenarioManager(object):
         """
         Trigger the start of the scenario and wait for it to finish/fail
         """
-        self.agent = agent
-        print("ScenarioManager: Running scenario {}".format(self.scenario_tree.name))
-        self.start_system_time = time.time()
-        start_game_time = GameTime.get_time()
-
-        self._running = True
+        self.start_time_scenario(agent)
 
         while self._running:
             time.sleep(0.5)
 
-        self.end_system_time = time.time()
-        end_game_time = GameTime.get_time()
-
-        self.scenario_duration_system = self.end_system_time - \
-            self.start_system_time
-        self.scenario_duration_game = end_game_time - start_game_time
-
-        if self.scenario_tree.status == py_trees.common.Status.FAILURE:
-            print("ScenarioManager: Terminated due to failure")
+        self.stop_time_scenario()
 
     def _tick_scenario(self, timestamp):
         """
@@ -220,6 +211,28 @@ class ScenarioManager(object):
 
                 if self.scenario_tree.status != py_trees.common.Status.RUNNING:
                     self._running = False
+
+    def start_time_scenario(self, agent=None):
+        """
+        Trigger the start of the scenario and wait for it to finish/fail
+        """
+        self.agent = agent
+        print("ScenarioManager: Running scenario {}".format(self.scenario_tree.name))
+        self.start_system_time = time.time()
+        self.start_game_time = GameTime.get_time()
+
+        self._running = True
+
+    def stop_time_scenario(self):
+        self.end_system_time = time.time()
+        self.end_game_time = GameTime.get_time()
+
+        self.scenario_duration_system = self.end_system_time - \
+                                        self.start_system_time
+        self.scenario_duration_game = self.end_game_time - self.start_game_time
+
+        if self.scenario_tree.status == py_trees.common.Status.FAILURE:
+            print("ScenarioManager: Terminated due to failure")
 
     def stop_scenario(self):
         """
