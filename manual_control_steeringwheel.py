@@ -138,7 +138,7 @@ class World(object):
         self.hud = hud
         self.player = None
         self._init_spawn = None
-        counter = 0
+        counter = 3
         #Find hero spanwed by the scenario
         while self.player is None:
             for event in pygame.event.get():
@@ -225,6 +225,7 @@ class DualControl(object):
 
         # initialize steering wheel
         pygame.joystick.init()
+        pygame.mouse.set_pos(0,0)
 
         joystick_count = pygame.joystick.get_count()
         if joystick_count > 1:
@@ -235,7 +236,7 @@ class DualControl(object):
         # evdev references to the steering wheel (force feedback)
         self._device = evdev.list_devices()[0]
         self._evtdev = InputDevice(self._device)
-        self._evtdev.write(ecodes.EV_FF, ecodes.FF_AUTOCENTER, int(65535/2))
+        self._evtdev.write(ecodes.EV_FF, ecodes.FF_AUTOCENTER, int(65535*.75))
         time.sleep(1)
 
         self._parser = ConfigParser()
@@ -256,16 +257,18 @@ class DualControl(object):
             elif event.type == pygame.JOYBUTTONDOWN:
                 if event.button == 1:
                     world.hud.toggle_info()
-                elif event.button == 2:
-                    world.camera_manager.toggle_camera()
-                elif event.button == 3:
-                    world.next_weather()
+                # elif event.button == 2:
+                #     world.camera_manager.toggle_camera()
+                # elif event.button == 3:
+                #     world.next_weather()
                 elif event.button == self._reverse_idx:
                     self._control.gear = 1 if self._control.reverse else -1
                 elif event.button == self._handbrake_idx:
                     self._control.gear = 1 if self._control.reverse else -1
                 elif event.button == 23:
                     world.camera_manager.next_sensor()
+            elif event.type == pygame.JOYHATMOTION:
+                self._parse_camera(world)
 
             elif event.type == pygame.KEYUP:
                 if self._is_quit_shortcut(event.key):
@@ -343,6 +346,16 @@ class DualControl(object):
         self._control.brake = 1.0 if keys[K_DOWN] or keys[K_s] else 0.0
         self._control.hand_brake = keys[K_SPACE]
 
+
+    def _parse_camera(self,world):
+        jsInputs = [item for item in self._joystick.get_hat(0)]
+
+        # Custom function to limit
+        # pad to interval [-1, 1]
+        hPos = jsInputs[0]
+        vPos = jsInputs[1]
+        world.camera_manager.toggle_camera(horizPos=hPos, vertiPos=vPos)
+
     def _parse_vehicle_wheel(self):
         numAxes = self._joystick.get_numaxes()
         jsInputs = [float(self._joystick.get_axis(i)) for i in range(numAxes)]
@@ -389,7 +402,7 @@ class DualControl(object):
 
         #toggle = jsButtons[self._reverse_idx]
 
-       # self._control.hand_brake = bool(jsButtons[self._handbrake_idx])
+        # self._control.hand_brake = bool(jsButtons[self._handbrake_idx])
 
     def _parse_walker_keys(self, keys, milliseconds):
         self._control.speed = 0.0
@@ -427,7 +440,7 @@ class HUD(object):
         mono = pygame.font.match_font(mono)
         self._font_mono = pygame.font.Font(mono, 14)
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
-        # self._image = FadingImage(font, width, height)
+        self._image = FadingImage(font, width, height)
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
         self.server_fps = 0
         self.frame_number = 0
@@ -455,9 +468,13 @@ class HUD(object):
         if isinstance(c, carla.VehicleControl):
             if c.reverse:
                 txt += " - REVERSE"
+                self._image.set_image(pygame.image.load('utils/images/reversing.png').convert(),seconds=1)
+                self._image.tick(world, clock)
+            else:
+                self._image.set_image(None)
         self._notifications.set_text(txt, seconds=0.1)
 
-        # self._image.tick(world, clock)
+
         if not self._show_info:
             return
         heading = 'N' if abs(t.rotation.yaw) < 89.5 else ''
@@ -526,6 +543,19 @@ class HUD(object):
         self._notifications.set_text('Error: %s' % text, (255, 0, 0))
 
     def render(self, display):
+
+        image = pygame.image.load('utils/images/UniOfLeicester.png').convert()
+        scale = .35
+        rect = (
+            int(self.dim[0]*scale),
+            int(
+                self.dim[0]*scale*image.get_height()/
+                image.get_width()
+            )
+        )
+        image = pygame.transform.scale(image, rect)
+        image.set_alpha(100)
+        display.blit(image, (self.dim[0]-image.get_width()-5,5))
         if self._show_info:
             info_surface = pygame.Surface((220, self.dim[1]))
             info_surface.set_alpha(100)
@@ -561,7 +591,7 @@ class HUD(object):
                     display.blit(surface, (8, v_offset))
                 v_offset += 18
         self._notifications.render(display)
-        # self._image.render(display)
+        self._image.render(display)
         self.help.render(display)
 
 
@@ -640,10 +670,11 @@ class FadingImage(object):
 
     def set_image(self, image, seconds=2.0):
         self._image = image
-        x_centered = self._screen_res[0] / 2 - self._image.get_width() / 2
-        y_centered = self._screen_res[1] / 2 - self._image.get_height() / 2
-        self.pos = (x_centered, y_centered)
-        self.seconds_left = seconds
+        if self._image is not None:
+            x_centered = self._screen_res[0] / 2 - self._image.get_width() / 2
+            y_centered = self._screen_res[1] / 2 - self._image.get_height() / 2
+            self.pos = (x_centered, y_centered)
+            self.seconds_left = seconds
 
 
     def tick(self, _, clock):
@@ -766,11 +797,14 @@ class CameraManager(object):
         self.hud = hud
         self.recording = False
         self._camera_transforms = [
+            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15)),
+            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=-90)),
+            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=90)),
+            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=180))
             # carla.Transform(carla.Location(x=1.6, z=1.7)),
             # carla.Transform(carla.Location(x=0.150, y= -0.30, z=1.25), carla.Rotation(pitch=-5)),
-            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15)),
-            carla.Transform(carla.Location(x=-5.5, z=2.8), carla.Rotation(pitch=-15)),
-            carla.Transform(carla.Location(x=-1.6, z=1.7))
+            # carla.Transform(carla.Location(x=-5.5, z=2.8), carla.Rotation(pitch=-15)),
+            # carla.Transform(carla.Location(x=-1.6, z=1.7))
         ]
         self.transform_index = 1
         self.sensors = [
@@ -798,9 +832,19 @@ class CameraManager(object):
             item.append(bp)
         self.index = None
 
-    def toggle_camera(self):
-        self.transform_index = (self.transform_index + 1) % len(self._camera_transforms)
-        self.sensor.set_transform(self._camera_transforms[self.transform_index])
+    def toggle_camera(self, horizPos=None, vertiPos=None):
+        if horizPos is None or vertiPos is None:
+            self.transform_index = (self.transform_index + 1) % len(self._camera_transforms)
+            self.sensor.set_transform(self._camera_transforms[self.transform_index])
+        else:
+            if horizPos < -.5:
+                self.sensor.set_transform(self._camera_transforms[1])
+            elif horizPos > .5:
+                self.sensor.set_transform(self._camera_transforms[2])
+            elif vertiPos < -.5:
+                self.sensor.set_transform(self._camera_transforms[3])
+            else:
+                self.sensor.set_transform(self._camera_transforms[0])
 
     def set_sensor(self, index, notify=True):
         index = index % len(self.sensors)
@@ -910,7 +954,7 @@ def game_loop(args):
             clock.tick_busy_loop(60)
             ##GameTime.get_time() - self._start_time
             if controller.parse_events(world, clock):
-                return
+                break
             if not world.tick(clock):
                 break
             world.render(display)

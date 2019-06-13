@@ -119,7 +119,7 @@ class ScenarioManager(object):
         self._debug_mode = debug_mode
         self.agent = None
         self._autonomous_agent_plugged = False
-        self._running = False
+        self.running = False
         self._timestamp_last_run = 0.0
         self._my_lock = threading.Lock()
 
@@ -128,7 +128,7 @@ class ScenarioManager(object):
         self.start_system_time = None
         self.end_system_time = None
 
-        self._running = False
+        self.running = False
         self.start_game_time = 0
         self.end_game_time = 0
 
@@ -154,7 +154,7 @@ class ScenarioManager(object):
         """
         Reset all parameters
         """
-        self._running = False
+        self.running = False
         self._timestamp_last_run = 0.0
         self.scenario_duration_system = 0.0
         self.scenario_duration_game = 0.0
@@ -168,7 +168,7 @@ class ScenarioManager(object):
         """
         self.start_time_scenario(agent)
 
-        while self._running:
+        while self.running:
             time.sleep(0.5)
 
         self.stop_time_scenario()
@@ -185,7 +185,7 @@ class ScenarioManager(object):
           multiple times in parallel.
         """
         with self._my_lock:
-            if self._running and self._timestamp_last_run < timestamp.elapsed_seconds:
+            if self.running and self._timestamp_last_run < timestamp.elapsed_seconds:
                 self._timestamp_last_run = timestamp.elapsed_seconds
 
                 if self._debug_mode:
@@ -210,7 +210,7 @@ class ScenarioManager(object):
                     sys.stdout.flush()
 
                 if self.scenario_tree.status != py_trees.common.Status.RUNNING:
-                    self._running = False
+                    self.running = False
 
     def start_time_scenario(self, agent=None):
         """
@@ -221,7 +221,7 @@ class ScenarioManager(object):
         self.start_system_time = time.time()
         self.start_game_time = GameTime.get_time()
 
-        self._running = True
+        self.running = True
 
     def stop_time_scenario(self):
         self.end_system_time = time.time()

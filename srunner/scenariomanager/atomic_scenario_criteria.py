@@ -22,6 +22,8 @@ import numpy as np
 import py_trees
 import carla
 import datetime
+import csv
+import os
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.timer import GameTime
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
@@ -793,7 +795,6 @@ class CountScore(Criterion):
         self.criteria = criteria
         self.score = 0
         self.timeout = timeout
-        self.file = None
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
 
     def update(self):
@@ -801,8 +802,6 @@ class CountScore(Criterion):
         Check if the actor location is within trigger region
         """
         self.score = 0
-
-        self.file = open("score.dict", "a")
 
         criterionScores = dict()
         timestamp = str(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
@@ -833,8 +832,18 @@ class CountScore(Criterion):
                 pass
 
         criterionScores['finalScore'] = int(self.score)
-        self.file.write(str(criterionScores) + "\n")
-        self.file.close()
+
+        # if score.csv does not exist, then create
+        if not os.path.isfile('score.csv') or os.path.getsize('score.csv') == 0:
+            with open("score.csv", 'w') as csvfile:
+                fieldnames = [k for k in criterionScores.keys()]
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
+
+        with open("score.csv", 'a') as csvfile:
+            fieldnames = [k for k in criterionScores.keys()]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writerow(criterionScores)
 
         new_status = py_trees.common.Status.SUCCESS
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))

@@ -109,7 +109,6 @@ class ScenarioRunner(object):
         self.client = carla.Client(args.host, int(args.port))
         self.client.set_timeout(self.client_timeout)
 
-        self._running = False
         _failed = True
         num_of_attempts = 0
         while _failed:
@@ -248,7 +247,7 @@ class ScenarioRunner(object):
         Provide feedback about success/failure of a scenario
         """
 
-        current_time = str(datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+        current_time = str(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
         junit_filename = None
         if args.junit:
             junit_filename = config.name + current_time + ".xml"
@@ -294,6 +293,7 @@ class ScenarioRunner(object):
 
             # Load scenario and run it
             self.manager.load_scenario(scenario)
+            time.sleep(5)
 
             ######################################
             # start manual_control_steeringwheel #
@@ -301,7 +301,7 @@ class ScenarioRunner(object):
 
             pygame.init()
             pygame.font.init()
-
+            world = None
             try:
 
                 SCREEN_MODE = pygame.HWSURFACE | pygame.DOUBLEBUF
@@ -314,22 +314,25 @@ class ScenarioRunner(object):
 
                 hud = HUD(args.width, args.height)
                 world = World(self.client.get_world(), hud, args.filter)
-                controller = DualControl(world, args.autopilot)
+                controller = DualControl(world, False)
 
                 clock = pygame.time.Clock()
 
                 self.manager.start_time_scenario()
-                while self._running:
+                while True:
                     clock.tick_busy_loop(60)
                     if controller.parse_events(world, clock):
                         return
-                    if not world.tick(clock):
+                    if not self.manager.running:
                         break
+                    world.tick(clock)
                     world.render(display)
                     pygame.display.flip()
                 self.manager.stop_time_scenario()
 
             finally:
+                if world is not None:
+                    world.destroy()
                 pygame.quit()
 
             ######################################
@@ -372,6 +375,11 @@ if __name__ == '__main__':
     PARSER.add_argument('--list_class', action="store_true", help='List all supported scenario classes and exit')
     PARSER.add_argument('-v', '--version', action='version', version='%(prog)s ' + str(VERSION))
     PARSER.add_argument(
+        '--res',
+        metavar='WIDTHxHEIGHT',
+        default='1280x720',
+        help='window resolution (default: 1280x720)')
+    PARSER.add_argument(
         '--filter',
         metavar='PATTERN',
         default='vehicle.*',
@@ -382,6 +390,8 @@ if __name__ == '__main__':
         help='enable fullscreen mode')
 
     ARGUMENTS = PARSER.parse_args()
+
+    ARGUMENTS.width, ARGUMENTS.height = [int(x) for x in ARGUMENTS.res.split('x')]
 
     if ARGUMENTS.list:
         print("Currently the following scenarios are supported:")

@@ -16,7 +16,7 @@ class PopulateScenario(tk.Frame):
                                     text="Populating test scenario...\n",
                                     font=controller.title_font, bg='#67BFFF')
 
-        cycleimage= Image.open("cyclist.png")
+        cycleimage= Image.open("utils/images/cyclist.png")
         width = 128
         height = 128
         smallcyclephoto = cycleimage.resize((width,height),Image.ANTIALIAS)
@@ -26,7 +26,7 @@ class PopulateScenario(tk.Frame):
         clabel = tk.Label(labelframe1,image=cyclephoto,bg='#67BFFF')
         clabel.grid(row=0,column=0, padx=2)
 
-        pedeimage = Image.open("pedestrian.png")
+        pedeimage = Image.open("utils/images/pedestrian.png")
         width = 128
         height = 128
         smallpedephoto = pedeimage.resize((width,height),Image.ANTIALIAS)
@@ -36,7 +36,7 @@ class PopulateScenario(tk.Frame):
         plabel = tk.Label(labelframe1,image=pedephoto,bg='#67BFFF')
         plabel.grid(row=0,column=1, padx=2)
 
-        weatherimage = Image.open("weather.png")
+        weatherimage = Image.open("utils/images/weather.png")
         width = 128
         height = 128
         smallweat = weatherimage.resize((width,height),Image.ANTIALIAS)
@@ -46,7 +46,7 @@ class PopulateScenario(tk.Frame):
         rlabel = tk.Label(labelframe1,image=weatphoto,bg='#67BFFF')
         rlabel.grid(row=0,column=2, padx=2)
 
-        carimage = Image.open("car.png")
+        carimage = Image.open("utils/images/car.png")
         width = 128
         height = 128
         smallcar = carimage.resize((width, height), Image.ANTIALIAS)

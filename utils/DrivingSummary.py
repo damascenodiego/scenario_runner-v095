@@ -18,7 +18,7 @@ class DrivingSummary(tk.Frame):
         labelframe1 = tk.LabelFrame(self, text="Hope you enjoyed it",bg='#67BFFF')
         labelframe1.pack(fill="both", expand="yes")
 
-        photo = tk.PhotoImage(file="leicester.gif")
+        photo = tk.PhotoImage(file="utils/images/leicester.gif")
         a1label = tk.Label(labelframe1,image = photo,bg='#67BFFF')
         a1label.image = photo
         a1label.pack()

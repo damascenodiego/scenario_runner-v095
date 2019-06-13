@@ -12,7 +12,7 @@ class StartPage(tk.Frame):
         label = tk.Label(self, text="Welcome to CARLA ScenarioRunner v1.0", font=controller.title_font,bg='#67BFFF')
         label.pack(side="top", fill="x", pady=10)
 
-        simage = Image.open("car.png")
+        simage = Image.open("utils/images/car.png")
         sphoto = ImageTk.PhotoImage(simage)
         slabel = tk.Label(image=sphoto)
         slabel.image = sphoto
