@@ -28,7 +28,7 @@ esac
 
 xdotool windowminimize `wmctrl -l | grep "CarlaUE4 (64-bit Development GLSL_430)"|cut -d\  -f1`
 
-$run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario --res=1280x720 --fullscreen > log_scenario.txt
+$run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario --res=1280x720 --fullscreen > log_scenario_ui.txt
 
 # $run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario > log_scenario.txt &
 
