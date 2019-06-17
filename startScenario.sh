@@ -26,6 +26,7 @@ esac
 
 /home/driverleics/Downloads/carla/CARLA_0.9.5/CarlaUE4.sh /Game/Carla/Maps/$town > log_server.txt & 
 
+sleep 3s
 xdotool windowminimize `wmctrl -l | grep "CarlaUE4 (64-bit Development GLSL_430)"|cut -d\  -f1`
 
 $run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario --res=1280x720 --fullscreen > log_scenario_ui.txt

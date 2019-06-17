@@ -1,2 +1,4 @@
 timestamp,collision_weight,wrongLane_weight,redLight_weight,offRoute_weight,time_weight,CheckCollisions,InRadiusRegionTest,InRouteTest,WrongLaneTest,RunningRedLightTest,finalScore
 2019-06-13-17-57-28,100,50,0,10,100,907,13.103439647704363,0,6,4,-89689
+2019-06-14-11-05-39,100,50,0,10,100,15,28.854385508224368,0,1,4,1335
+2019-06-17-15-14-46,100,50,0,10,100,6,28.644752321764827,0,0,5,2264
