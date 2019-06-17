@@ -228,6 +228,7 @@
 			<waypoint  x="-34.88179397583008" y="175.934326171875" z="-0.012769965454936028" connection="RoadOption.LANEFOLLOW"/>
 		</route>
 	</scenario>
+
 	<scenario name="Town03TrainTrack" type="Town03TrainTrack" town="Town03">
 		<ego_vehicle x="-87.0" y="-115.0" z="1" yaw="90.0" model="vehicle.tesla.model3" />
 		<other_actor x="-114.5" y="17" z="1" yaw="90" model="vehicle.diamondback.century" />
@@ -497,9 +498,270 @@
 			<waypoint  x="67.23274993896484" y="83.9417495727539" z="0.12368430942296982" connection="RoadOption.LANEFOLLOW"/>
 			<waypoint  x="67.28514862060547" y="86.9637222290039" z="0.12327255308628082" connection="RoadOption.LANEFOLLOW"/>
 		</route>
+	</scenario>
+
+	<scenario name="Town01Restaurant" type="Town01Restaurant" town="Town01">
+		<ego_vehicle x="396.3" y="51.9" z="2" yaw="-90.0" model="vehicle.tesla.model3" />
+		<other_actor x="322" y="95.2" z="2" yaw="180" model="vehicle.lincoln.mkz2017" />
+		<other_actor x="235" y="134.5" z="2" yaw="-180" model="vehicle.dodge_charger.police" />
+		<other_actor x="202" y="119" z="2" yaw="90" model="vehicle.diamondback.century" />
+		<other_actor x="113" y="128" z="7" yaw="-180" model="vehicle.carlamotors.carlacola" />
+		<other_actor x="92" y="113" z="2" yaw="90" model="vehicle.lincoln.mkz2017" />
+		<other_actor x="79" y="326" z="7" yaw="160" model="vehicle.carlamotors.carlacola" />
+		<other_actor x="77" y="328" z="2" yaw="30" roll="90" model="vehicle.diamondback.century" />
+
+		<other_actor x="229.2" y="133.6" z="2" yaw="-20" model="walker.pedestrian.0001" />
+		<other_actor x="228.5" y="134" z="2" yaw="0" model="walker.pedestrian.0002" />
+		<other_actor x="228.5" y="134.9" z="2" yaw="20" model="walker.pedestrian.0001" />
+		<other_actor x="229.1" y="135.7" z="2" yaw="32" model="walker.pedestrian.0002" />
+		<other_actor x="228.2" y="136" z="2" yaw="-7" model="walker.pedestrian.0001" />
+		<other_actor x="75" y="328.6" z="2" yaw="0" model="walker.pedestrian.0001" />
 
 
-
-
+		<route>
+			<waypoint  x="396.29998779296875" y="51.89999771118164" z="-0.013818320818245411" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.3273010253906" y="49.50768280029297" z="-0.013818320818245411" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.3780517578125" y="46.49717330932617" z="-0.013764609582722187" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.43475341796875" y="43.4798469543457" z="-0.01358264870941639" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.4732971191406" y="40.469482421875" z="-0.013579902239143848" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.49517822265625" y="37.28775405883789" z="-0.013546179980039597" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.4935607910156" y="34.161705017089844" z="-0.013545074500143528" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.47412109375" y="31.046634674072266" z="-0.013591422699391842" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.4393615722656" y="28.001020431518555" z="-0.013550643809139729" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.3943786621094" y="24.899574279785156" z="-0.013557967729866505" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.3492431640625" y="21.82604217529297" z="-0.01336463913321495" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.3275451660156" y="18.773714065551758" z="-0.013208999298512936" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.3289489746094" y="15.714407920837402" z="-0.013199500739574432" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.3454284667969" y="12.70541000366211" z="-0.013199538923799992" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="396.2579650878906" y="9.700515747070312" z="-0.013207130134105682" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="395.8258972167969" y="6.693181991577148" z="-0.013531188480556011" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="394.84002685546875" y="3.841036796569824" z="-0.013512076810002327" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="393.2107849121094" y="1.2699978351593018" z="-0.013569259084761143" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="390.92877197265625" y="-0.76297527551651" z="-0.013625869527459145" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="388.09210205078125" y="-1.986822485923767" z="-0.01344245858490467" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="385.06939697265625" y="-2.2390787601470947" z="-0.01458335854113102" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="382.0470275878906" y="-2.1761085987091064" z="-0.013190154917538166" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="378.9729919433594" y="-2.204500436782837" z="-0.014083213172852993" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="375.969482421875" y="-2.2241098880767822" z="-0.01384967751801014" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="372.9146728515625" y="-2.2057247161865234" z="-0.013768462464213371" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="369.90484619140625" y="-2.1764752864837646" z="-0.013698425143957138" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="366.8367919921875" y="-2.134636878967285" z="-0.013744048774242401" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="363.7176513671875" y="-2.1003494262695312" z="-0.013554000295698643" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="360.7105407714844" y="-2.0897700786590576" z="-0.013713722117245197" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="357.6092834472656" y="-2.0694029331207275" z="-0.013703078962862492" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="354.4403076171875" y="-2.042926073074341" z="-0.013696746900677681" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="351.41143798828125" y="-2.012699604034424" z="-0.013698272407054901" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="348.3778381347656" y="-1.986820936203003" z="-0.01359027810394764" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="345.2804870605469" y="-1.9798705577850342" z="-0.01367622334510088" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="342.1875305175781" y="-1.8931238651275635" z="-0.013762854970991611" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="339.17864990234375" y="-1.152358889579773" z="-0.004238128662109375" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="336.9612731933594" y="0.9139676690101624" z="0.011694182641804218" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.5733947753906" y="3.691150665283203" z="0.019673271104693413" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.8279724121094" y="6.665442943572998" z="0.01879596710205078" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.66253662109375" y="9.684661865234375" z="0.017787856981158257" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.7400817871094" y="12.744071960449219" z="0.016954993829131126" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.80401611328125" y="15.774996757507324" z="0.015844229608774185" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.84173583984375" y="18.820371627807617" z="0.0009513854747638106" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.84918212890625" y="21.840559005737305" z="-0.014344481751322746" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.83056640625" y="24.886165618896484" z="-0.01368740014731884" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.81658935546875" y="27.95229148864746" z="-0.013605079613626003" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.80419921875" y="30.983938217163086" z="-0.013626594096422195" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.79510498046875" y="33.99760055541992" z="-0.013007812201976776" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.78826904296875" y="37.067569732666016" z="-0.005067214835435152" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.78363037109375" y="40.08500289916992" z="0.012302284128963947" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.78143310546875" y="43.09880828857422" z="0.02016555704176426" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.79010009765625" y="46.12266159057617" z="0.019946211948990822" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.8110046386719" y="49.13304901123047" z="0.019921761006116867" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.825927734375" y="52.15044403076172" z="0.019969940185546875" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.8507080078125" y="55.21940231323242" z="0.020046042278409004" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.8848876953125" y="58.310794830322266" z="0.020100325345993042" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.9266357421875" y="61.356868743896484" z="0.020048942416906357" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.95257568359375" y="64.45152282714844" z="0.019993742927908897" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.9517517089844" y="67.46885681152344" z="0.0200347900390625" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.9469909667969" y="70.59329223632812" z="0.01992042548954487" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.9706115722656" y="73.70842742919922" z="0.02003982476890087" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.00732421875" y="76.75365447998047" z="0.0003819656267296523" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.03326416015625" y="79.78044891357422" z="-0.014188002794981003" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.0535583496094" y="82.88980102539062" z="-0.013613777235150337" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.0661926269531" y="85.95673370361328" z="-0.01363395620137453" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.0716857910156" y="89.01124572753906" z="-0.013600463978946209" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.06976318359375" y="92.09996795654297" z="-0.013641814701259136" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.0606994628906" y="95.19351196289062" z="-0.013628463260829449" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.0443420410156" y="98.2748031616211" z="-0.013625907711684704" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="335.0210876464844" y="101.29659271240234" z="-0.013577193953096867" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.9903564453125" y="104.35595703125" z="-0.013655928894877434" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.9528503417969" y="107.39519500732422" z="-0.013623885810375214" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.9075622558594" y="110.49288940429688" z="-0.0069956970401108265" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.8551940917969" y="113.55271911621094" z="0.011713104322552681" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.7958984375" y="116.60298919677734" z="0.020415572449564934" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.7586975097656" y="119.7081527709961" z="0.020668067038059235" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.7447204589844" y="122.81034088134766" z="0.019535865634679794" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="334.0269775390625" y="125.73291778564453" z="0.02006855048239231" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="332.0426940917969" y="128.08094787597656" z="0.019222868606448174" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="329.1787414550781" y="129.16404724121094" z="0.0175323486328125" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="326.1355285644531" y="129.37835693359375" z="0.01718742400407791" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="323.135009765625" y="129.43898010253906" z="0.017400970682501793" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="320.0647277832031" y="129.49176025390625" z="0.010820731520652771" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="317.03759765625" y="129.52352905273438" z="-0.005498847924172878" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="313.8670959472656" y="129.53855895996094" z="-0.013822364620864391" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="310.7578125" y="129.56405639648438" z="-0.013641547411680222" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="307.62445068359375" y="129.58016967773438" z="-0.013660239987075329" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="304.52197265625" y="129.5343475341797" z="-0.013657608069479465" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="301.48681640625" y="129.481689453125" z="-0.013744696974754333" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="298.4633483886719" y="129.530419921875" z="-0.013544006273150444" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="295.2988586425781" y="129.53986755371094" z="-0.013503302820026875" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="292.0752868652344" y="129.53485412597656" z="-0.013718909583985806" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="289.0035400390625" y="129.53991577148438" z="-0.013525695540010929" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="285.939453125" y="129.5353436279297" z="-0.013573646545410156" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="282.8059997558594" y="129.5356475830078" z="-0.013736801221966743" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="279.6610107421875" y="129.5332244873047" z="-0.013500518165528774" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="276.58843994140625" y="129.53871520996094" z="-0.013634796254336834" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="273.5258483886719" y="129.5357830810547" z="-0.01355976052582264" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="270.37078857421875" y="129.53555297851562" z="-0.013528060168027878" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="267.2573547363281" y="129.53156494140625" z="-0.013638915494084358" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="264.11956787109375" y="129.5409698486328" z="-0.013823585584759712" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="260.9727478027344" y="129.51451110839844" z="-0.013631782494485378" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="257.9517822265625" y="129.53097778320312" z="-0.013655280694365501" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="254.84315490722656" y="129.53698120117188" z="-0.013695105910301208" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="251.804443359375" y="129.53287231445312" z="-0.013477668166160583" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="248.78167724609375" y="129.53193725585938" z="-0.01378070842474699" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="245.7602996826172" y="129.53934326171875" z="-0.013542594388127327" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="242.75265502929688" y="129.53620544433594" z="-0.013548774644732475" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="239.5496063232422" y="129.53289978027344" z="-0.013782843947410583" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="236.34683227539062" y="129.5321990966797" z="-0.013741607777774334" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="233.2797088623047" y="129.5311834716797" z="-0.013647804036736488" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="230.1721954345703" y="129.53579833984375" z="-0.013801345601677895" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="227.1107177734375" y="129.53572326660156" z="-0.013766707852482796" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="223.93777465820312" y="129.5396307373047" z="-0.013798140920698643" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="220.800048828125" y="129.5388330078125" z="-0.013768424279987812" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="217.70852661132812" y="129.53408752441406" z="-0.01371768955141306" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="214.69039916992188" y="129.5306640625" z="-0.013584823347628117" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="211.57139587402344" y="129.53311950683594" z="-0.01375934574753046" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="208.48004150390625" y="129.5338702392578" z="-0.013558273203670979" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="205.4178924560547" y="129.5377227783203" z="-0.013648414053022861" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="202.3896026611328" y="129.53205932617188" z="-0.013593863695859909" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="199.2874755859375" y="129.53669555664062" z="-0.013540801592171192" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="196.11680603027344" y="129.53742126464844" z="-0.013778610154986382" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="193.0824737548828" y="129.53035522460938" z="-0.013728560879826546" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="190.05224609375" y="129.53783203125" z="-0.013705519959330559" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="187.04185485839844" y="129.53647399902344" z="-0.013758544810116291" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="183.9007110595703" y="129.53930236816406" z="-0.013761824928224087" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="180.8107147216797" y="129.52317810058594" z="-0.013707350939512253" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="177.76620483398438" y="129.5183563232422" z="-0.013649482280015945" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="174.61143493652344" y="129.50311279296875" z="-0.013548240065574646" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="171.48452758789062" y="129.50637817382812" z="-0.013736914843320847" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="168.433837890625" y="129.50198364257812" z="-0.013595199212431908" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="165.3752899169922" y="129.5308905029297" z="-0.013668632134795189" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="162.3057098388672" y="129.53296142578125" z="-0.01373035367578268" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="159.23707580566406" y="129.5381964111328" z="-0.013710670173168182" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="156.14317321777344" y="129.53027282714844" z="-0.013679923489689827" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="152.9728240966797" y="129.53072631835938" z="-0.01354293804615736" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="149.86167907714844" y="129.53548278808594" z="-0.013584251515567303" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="146.83287048339844" y="129.53024353027344" z="-0.013637466356158257" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="143.76683044433594" y="129.5340625" z="-0.013628959655761719" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="140.5928955078125" y="129.53613647460938" z="-0.013634643517434597" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="137.4728546142578" y="129.53283935546875" z="-0.013641204684972763" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="134.41749572753906" y="129.53534057617188" z="-0.013634185306727886" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="131.41702270507812" y="129.54429626464844" z="-0.013642806559801102" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="128.336669921875" y="129.53542419433594" z="-0.013658523559570312" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="125.29942321777344" y="129.53441162109375" z="-0.013617820106446743" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="122.23675537109375" y="129.532509765625" z="-0.01359630562365055" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="119.19473266601562" y="129.53752685546875" z="-0.013586272485554218" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="116.11392974853516" y="129.5345635986328" z="-0.013492926955223083" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="113.10112762451172" y="129.5343524169922" z="-0.013580932281911373" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="109.98193359375" y="129.53028076171875" z="-0.005819549318403006" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="106.84803771972656" y="129.53599975585938" z="0.00905326846987009" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="103.76549530029297" y="129.2795867919922" z="0.01681472733616829" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="100.73380279541016" y="129.2697296142578" z="0.017596930265426636" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="97.6492691040039" y="129.42689514160156" z="0.018464088439941406" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="94.6797866821289" y="130.37977600097656" z="0.019541434943675995" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="92.45337677001953" y="132.40257263183594" z="0.020183715969324112" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="90.7618408203125" y="134.9438934326172" z="0.011697960086166859" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="89.60299682617188" y="137.71664428710938" z="-0.0056739808060228825" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.72554779052734" y="140.66537475585938" z="-0.014674529433250427" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.39414978027344" y="143.72149658203125" z="-0.013637199066579342" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.23538970947266" y="146.9020538330078" z="-0.013609695248305798" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.23550415039062" y="149.925537109375" z="-0.013581275939941406" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.27572021484375" y="153.0156707763672" z="-0.013697204180061817" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2571044921875" y="156.04757690429688" z="-0.013635520823299885" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.26902923583984" y="159.0995330810547" z="-0.013615722768008709" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2332763671875" y="162.1256103515625" z="-0.013609427958726883" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2779312133789" y="165.13470458984375" z="-0.013631897047162056" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2165054321289" y="168.13812255859375" z="-0.01361240353435278" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.24768676757812" y="171.1633758544922" z="-0.013611678965389729" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.26852264404297" y="174.26458740234375" z="-0.01353172305971384" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.26234283447266" y="177.31057739257812" z="-0.01361003890633583" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2331298828125" y="180.4066162109375" z="-0.013635978102684021" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.28041076660156" y="183.5013885498047" z="-0.013390273787081242" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.24727630615234" y="186.55987548828125" z="-0.013540420681238174" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.25765075683594" y="189.58673095703125" z="-0.012964744120836258" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.25975341796875" y="192.62704467773438" z="-0.014019393362104893" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.26064453125" y="195.70684814453125" z="-0.014382514171302319" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2814224243164" y="198.70773315429688" z="-0.014540710486471653" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.29445495605469" y="201.77330017089844" z="-0.013332519680261612" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.23891143798828" y="204.85888671875" z="-0.014354553073644638" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2830810546875" y="208.0775909423828" z="-0.013952788896858692" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2553466796875" y="211.1640625" z="-0.012985344044864178" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.24214782714844" y="214.23593139648438" z="-0.014017371460795403" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.22585906982422" y="217.29417419433594" z="-0.013726691715419292" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.22485961914062" y="220.3153076171875" z="-0.013570480048656464" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2399887084961" y="223.38775634765625" z="-0.013667525723576546" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2704833984375" y="226.41378784179688" z="-0.013620147481560707" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.21703796386719" y="229.41847229003906" z="-0.01369907334446907" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2798812866211" y="232.42774963378906" z="-0.013576125726103783" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.22483367919922" y="235.4497528076172" z="-0.01375808659940958" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.23785705566406" y="238.4522247314453" z="-0.013608665205538273" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2204086303711" y="241.48709106445312" z="-0.013686294667422771" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.28076629638672" y="244.53240966796875" z="-0.013767089694738388" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.22340850830078" y="247.55226135253906" z="-0.013949432410299778" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2875961303711" y="250.56936645507812" z="-0.013592070899903774" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.26998748779297" y="253.59642028808594" z="-0.013801460154354572" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.27654113769531" y="256.6412658691406" z="-0.013550338335335255" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.20572357177734" y="259.7331237792969" z="-0.013589171692728996" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.25681762695312" y="262.7880859375" z="-0.013781089335680008" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.27848510742188" y="265.8916015625" z="-0.013800544664263725" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.2725112915039" y="269.0110168457031" z="-0.013744163326919079" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.25292663574219" y="272.1070861816406" z="-0.013801993802189827" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.228466796875" y="275.17303466796875" z="-0.013618354685604572" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.20574645996094" y="278.18377685546875" z="-0.01348472572863102" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.28909912109375" y="281.2043151855469" z="-0.013633040711283684" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.27846374511719" y="284.2809143066406" z="-0.013763961382210255" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.27427520751953" y="287.353759765625" z="-0.01361087802797556" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.27654876708984" y="290.4715881347656" z="-0.013820151798427105" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.28491821289062" y="293.4796142578125" z="-0.013672714121639729" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.29968872070312" y="296.5260925292969" z="-0.013830680400133133" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.22140197753906" y="299.67010498046875" z="-0.013730544596910477" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.24942474365234" y="302.77783203125" z="-0.013819045387208462" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.27187042236328" y="305.7962341308594" z="-0.013733940199017525" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.26548461914062" y="308.8817443847656" z="-0.006028289441019297" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.23455505371094" y="311.9187316894531" z="0.008605307899415493" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.37751007080078" y="315.0081787109375" z="0.01648380234837532" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.31129455566406" y="318.0852355957031" z="0.017409972846508026" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="88.1014404296875" y="321.1803894042969" z="0.018364066258072853" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="86.93571472167969" y="324.0386962890625" z="0.019462356343865395" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="84.50357055664062" y="325.8409423828125" z="0.02031715400516987" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="81.53778839111328" y="326.30853271484375" z="0.01995830424129963" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="78.5360107421875" y="326.59857177734375" z="0.01983051188290119" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="75.49440002441406" y="326.6827087402344" z="0.019928015768527985" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="72.48191833496094" y="326.6638488769531" z="0.004436492919921875" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="69.44060516357422" y="326.6604919433594" z="-0.014045486226677895" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="66.36071014404297" y="326.6848449707031" z="-0.013981018215417862" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="63.30930709838867" y="326.6294921875" z="-0.014275702647864819" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="60.202552795410156" y="326.6900695800781" z="-0.013974914327263832" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="57.13904571533203" y="326.6457336425781" z="-0.013708571903407574" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="53.98573303222656" y="326.6007873535156" z="-0.013004150241613388" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="50.978431701660156" y="326.6378662109375" z="-0.013152656145393848" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="47.87165832519531" y="326.6895568847656" z="-0.01408409047871828" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="44.74908447265625" y="326.68204345703125" z="-0.013837547041475773" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="41.725341796875" y="326.6247619628906" z="-0.013204230926930904" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="38.62487030029297" y="326.68304443359375" z="-0.014031714759767056" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="35.49148941040039" y="326.6580505371094" z="-0.013789062388241291" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="32.42681884765625" y="326.6502685546875" z="-0.01369430497288704" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="29.39504051208496" y="326.65753173828125" z="-0.013725433498620987" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="26.291259765625" y="326.5605773925781" z="-0.013736190274357796" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="23.25992774963379" y="326.26580810546875" z="-0.013781318441033363" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="20.337142944335938" y="325.5686950683594" z="0.008871878497302532" connection="RoadOption.LANEFOLLOW"/>
+			<waypoint  x="17.32874870300293" y="325.2818298339844" z="0.009628943167626858" connection="RoadOption.LANEFOLLOW"/>
+		</route>
 	</scenario>
 </scenarios>

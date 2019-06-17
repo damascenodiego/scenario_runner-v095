@@ -544,18 +544,18 @@ class HUD(object):
 
     def render(self, display):
 
-        image = pygame.image.load('utils/images/UniOfLeicester.png').convert()
-        scale = .35
-        rect = (
-            int(self.dim[0]*scale),
-            int(
-                self.dim[0]*scale*image.get_height()/
-                image.get_width()
-            )
-        )
-        image = pygame.transform.scale(image, rect)
-        image.set_alpha(100)
-        display.blit(image, (self.dim[0]-image.get_width()-5,5))
+        # image = pygame.image.load('utils/images/UniOfLeicester.png').convert()
+        # scale = .35
+        # rect = (
+        #     int(self.dim[0]*scale),
+        #     int(
+        #         self.dim[0]*scale*image.get_height()/
+        #         image.get_width()
+        #     )
+        # )
+        # image = pygame.transform.scale(image, rect)
+        # image.set_alpha(100)
+        # display.blit(image, (self.dim[0]-image.get_width()-5,5))
         if self._show_info:
             info_surface = pygame.Surface((220, self.dim[1]))
             info_surface.set_alpha(100)
