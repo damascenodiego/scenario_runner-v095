@@ -61,15 +61,15 @@ def draw_string_location(world, string, location, z=0):
     world.debug.draw_string(location + carla.Location(z=z), string, life_time=600.0)
 
 
-def draw_circle(world, centerLocation, z, theta, lifetime):
+def draw_circle(world, centerLocation, z, theta, lifetime, multiplier):
 
     centerLocation.z = z
     step = 20  # amount to add to theta each time (degrees)
     loopCounter = 360 / step
     radius = 5
 
-    x = centerLocation.x  # + radius * math.cos(math.radians(theta))
-    y = centerLocation.y + radius * math.cos(math.radians(theta))
+    x = centerLocation.x + multiplier[0] * radius * math.cos(math.radians(theta))
+    y = centerLocation.y + multiplier[1] * radius * math.cos(math.radians(theta))
     z = centerLocation.z + radius * math.sin(math.radians(theta))
     lastLocation = carla.Location(x, y, z)
 
@@ -77,8 +77,8 @@ def draw_circle(world, centerLocation, z, theta, lifetime):
         theta += step
         loopCounter -= 1
         radians = math.radians(theta)
-        x = centerLocation.x  # + radius * math.cos(radians)
-        y = centerLocation.y + radius * math.cos(radians)
+        x = centerLocation.x + multiplier[0] * radius * math.cos(radians)
+        y = centerLocation.y + multiplier[1] * radius * math.cos(radians)
         z = centerLocation.z + radius * math.sin(radians)
         world.debug.draw_arrow(lastLocation, carla.Location(x, y, z), thickness=0.15, arrow_size=2, color=carla.Color(0, 255, 0), life_time=lifetime)
         lastLocation = carla.Location(x, y, z)

@@ -34,7 +34,7 @@ class SearchingRoute(tk.Frame):
         dir_path = os.path.dirname(os.path.realpath(__file__))
         video_name = os.path.join(dir_path, "videos", scenario.snapshot)
         video = imageio.get_reader(video_name)
-        self._description['text'] = "Searching for an interesting route..." \
+        self._description['text'] = "Searching for a challenging route..." \
                                     "\n"
 
         meta_data = video.get_meta_data()
