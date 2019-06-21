@@ -19,9 +19,9 @@ class ExperimentInfo(tk.Frame):
 
         text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
         ilabel = tk.Label(labelframe1, text='Safety is of utmost importance for trusting autonomous vehicles.\n'
-                                            'Artificial intelligence (AI) can be used to assess the safety of autonomous vehicles.\n\n'
-                                            'In this experiment, we use AI to generate challenging scenarios and populate them\n'
-                                            'with obstacles for assessing safety.\n', font=text_font,bg='#67BFFF')
+                                            'Artificial intelligence (AI) can be used to test the safety of autonomous vehicles.\n\n'
+                                            'In this activity, we use AI to (1) generate challenging scenarios and \n'
+                                            '(2) populate them with obstacles for testing safety.\n', font=text_font,bg='#67BFFF')
         ilabel.pack()
         ilabel.place(anchor="c", relx=.5, rely=.5)
 

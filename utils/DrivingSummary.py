@@ -42,26 +42,28 @@ class DrivingSummary(tk.Frame):
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
 
     def _event_call(self, event):
-        score = self.read_last_score()
-        self.toplabel["text"] = "Your score is {}\n\n" \
-                                "" \
-                                "Thank you for visiting and have a lovely day.\n\n".format(int(score))
+        # score = self.read_last_score()
+        self.toplabel["text"] = "\nThank you for visiting and drive safe!\n"
+                                # "Your score is {}\n\n" \
+                                # "" \
+                                # "Thank you for visiting and have a lovely day.\n\n".format(int(score))
 
-        self.button1.focus_set()
-        print(self.__class__.__name__)
-        print("event -> " + str(event))
+        # self.button1.focus_set()
+        # print(self.__class__.__name__)
+        # print("event -> " + str(event))
 
-    def read_last_score(self):
-        fp = open("score.dict","r")
-        last_line = ""
-        while 1:
-            line = fp.readline()
-            if not line:
-                break
-            if not len(line)==0:
-                last_line = line
-        score_dict = literal_eval(last_line)
-        finalScore = 0
-        if 'finalScore' in score_dict.keys():
-            finalScore = score_dict['finalScore']
-        return finalScore
+    # def read_last_score(self):
+    #     with open("score.csv","r") as fp:
+    #         scorereader = csv.reader(fp, delimiter=',', quotechar='|')
+    #     last_line = ""
+    #     while 1:
+    #         line = fp.readline()
+    #         if not line:
+    #             break
+    #         if not len(line)==0:
+    #             last_line = line
+    #     score_dict = literal_eval(last_line)
+    #     finalScore = 0
+    #     if 'finalScore' in score_dict.keys():
+    #         finalScore = score_dict['finalScore']
+    #     return finalScore
