@@ -52,7 +52,7 @@ from srunner.scenarios.opposite_vehicle_taking_priority import *
 from srunner.scenarios.object_crash_vehicle import *
 from srunner.scenarios.no_signal_junction_crossing import *
 from srunner.scenarios.object_crash_intersection import *
-from srunner.scenarios.town03_scenarios import *
+from srunner.scenarios.royal_society_scenarios import *
 from srunner.scenarios.control_loss import *
 from srunner.scenarios.config_parser import *
 from srunner.scenariomanager.scenario_manager import ScenarioManager
@@ -72,7 +72,7 @@ SCENARIOS = {
     "NoSignalJunction": NO_SIGNAL_JUNCTION_SCENARIOS,
     "VehicleTurning": VEHICLE_TURNING_SCENARIOS,
     "ControlLoss": CONTROL_LOSS_SCENARIOS,
-    "Town03Scenarios": TOWN03_SCENARIOS
+    "RoyalSocietyScenarios": ROYALSOCIETY_SCENARIOS
 }
 
 
