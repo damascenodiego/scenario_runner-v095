@@ -185,11 +185,11 @@ class World(object):
         # Spawn the player.
         if self.player is not None:
             spawn_point = self.player.get_transform()
-            spawn_point.location.x = 384.3
-            spawn_point.location.y = -233.5
+            spawn_point.location.x = 1.3
+            spawn_point.location.y = -240.4
             spawn_point.location.z = 0.0
-            spawn_point.rotation.yaw = 90.0
-            spawn_point.location.z += 2.0
+            spawn_point.rotation.yaw = 6
+            spawn_point.location.z += 0
             spawn_point.rotation.roll = 0.0
             spawn_point.rotation.pitch = 0.0
             self.destroy()

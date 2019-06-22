@@ -25,6 +25,10 @@ case $1 in
 		scenario=Town04ParkingLot
 		town=Town04
 		;;
+	Town07Farm)
+		scenario=Town07Farm
+		town=Town07
+		;;
     *)
 		scenario=Town03GasStation
 		town=Town03
