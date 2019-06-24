@@ -1,6 +1,6 @@
 #!/bin/bash
 # killall -9 python
-killall -9 CarlaUE4 CarlaUE4.sh
+killall -9 CarlaUE4 CarlaUE4.sh || echo "CarlaUE4 was not running."
 clear
 
 run_python=/home/driverleics/opt/python3.6-venv/bin/python
@@ -38,7 +38,7 @@ esac
 
 /home/driverleics/Downloads/carla/CARLA_0.9.5/CarlaUE4.sh /Game/Carla/Maps/$town > log_server.txt & 
 
-sleep 3s
+sleep 2s
 xdotool windowminimize `wmctrl -l | grep "CarlaUE4"|cut -d\  -f1`
 
 $run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scenario $scenario --res=1280x720 > log_scenario_ui.txt
@@ -53,4 +53,4 @@ $run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scen
 #rm -rf /home/driverleics/git/driverleics.github.io/_site/
 #/home/driverleics/.rvm/rubies/default/bin/bundle exec jekyll pagemaster scores
 
-killall -9 CarlaUE4 CarlaUE4.sh
+killall -9 CarlaUE4 CarlaUE4.sh || echo "CarlaUE4 was not running."

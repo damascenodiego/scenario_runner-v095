@@ -42,7 +42,7 @@ class ScenarioRunnerApp(tk.Tk):
         self.bash_path = config.get('DEFAULT', 'bash_path')
         self.xml_path = config.get('DEFAULT', 'xml_path')
 
-        self.csv_size = file_len("score.csv")
+        self.csv_size = self.file_len("score.csv")
 
 
         self.map_of_scenarios = loadXml(self.xml_path)
@@ -76,7 +76,9 @@ class ScenarioRunnerApp(tk.Tk):
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
 
     def _event_call(self, event):
-        print(event)
+        print(self.__class__.__name__)
+        print("event -> "+str(event))
+
 
     def show_frame(self, page_name):
         '''Show a frame for the given page name'''
@@ -87,11 +89,11 @@ class ScenarioRunnerApp(tk.Tk):
         frame.event_generate("<<" + page_name + ">>")
 
 
-def file_len(fname):
-    with open(fname) as f:
-        for i, l in enumerate(f):
-            pass
-    return i + 1
+    def file_len(self, fname):
+        with open(fname) as f:
+            for i, l in enumerate(f):
+                pass
+        return i + 1
 
 def loadXml(xml_path):
     scenarios = dict()

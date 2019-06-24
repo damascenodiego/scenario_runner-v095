@@ -3,6 +3,7 @@ import sys
 import tkinter as tk, threading
 from tkinter import font as tkfont
 import time
+from PIL import Image,ImageTk
 
 class DrivingMode(tk.Frame):
 
@@ -13,13 +14,21 @@ class DrivingMode(tk.Frame):
         # label = tk.Label(self, text="Driving Mode", font=controller.title_font,bg='#67BFFF')
         # label.pack(side="top", fill="x", pady=10)
 
-        labelframe1 = tk.LabelFrame(self, text="Driving Mode", bg='#67BFFF')
+        text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
+        labelframe1 = tk.LabelFrame(self, text="Driving mode", font=text_font,bg='#67BFFF')
         labelframe1.pack(fill="both", expand="yes")
         labelframe1.place(anchor="c", relx=.5, rely=.5)
 
-        text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
-        top_label = tk.Label(labelframe1, text="The simulation will begin soon...", font=text_font,bg='#67BFFF')
-        top_label.pack()
+        # top_label = tk.Label(labelframe1, text="The simulation will begin soon...", font=text_font,bg='#67BFFF')
+        # top_label.pack()
+
+        wheelimage = Image.open("utils/images/wheel_controls.png")
+        weatphoto = ImageTk.PhotoImage(wheelimage)
+        infolabel = tk.Label(labelframe1,image= weatphoto)
+        infolabel.image = weatphoto
+        infolabel.pack()
+
+
 
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
 

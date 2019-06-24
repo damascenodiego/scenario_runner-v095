@@ -35,6 +35,7 @@ class StartPage(tk.Frame):
     def _event_call(self, event):
         print(self.__class__.__name__)
         # print("event -> "+str(event))
+        self._controller.csv_size = self._controller.file_len("score.csv")
         self.button1.focus()
         self.button1.focus_set()
         self.button1.focus_force()
