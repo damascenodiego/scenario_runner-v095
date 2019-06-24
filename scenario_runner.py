@@ -339,15 +339,15 @@ class ScenarioRunner(object):
                 # Provide outputs if required
                 self.analyze_scenario(args, config)
 
-                score = 0
+                # score = 0
                 # for crit in self.manager.scenario.test_criteria:
                 #     if isinstance(crit, CountScore):
                 #         score = crit.score
-
-                hud.show_score(display, score)
-                self.print_score(score)
-                pygame.display.flip()
-                time.sleep(10)
+                #
+                # hud.show_score(display, score)
+                # self.print_score(score)
+                # pygame.display.flip()
+                # time.sleep(10)
 
 
                 # Stop scenario and cleanup
@@ -365,7 +365,7 @@ class ScenarioRunner(object):
 
         print("No more scenarios .... Exiting")
 
-    def print_score(self):
+    def print_score(self, score):
         pass
 
 

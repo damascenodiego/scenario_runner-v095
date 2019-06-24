@@ -246,26 +246,36 @@ class DualControl(object):
             self._parser.get('G29 Racing Wheel', 'throttle'))
         self._brake_idx = int(self._parser.get('G29 Racing Wheel', 'brake'))
         self._reverse_idx = int(self._parser.get('G29 Racing Wheel', 'reverse'))
-        self._handbrake_idx = int(
-            self._parser.get('G29 Racing Wheel', 'handbrake'))
+        self._handbrake_idx = int(self._parser.get('G29 Racing Wheel', 'handbrake'))
+        self._respawn_idx = int(self._parser.get('G29 Racing Wheel', 'respawn'))
+
+
 
     def parse_events(self, world, clock):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return True
             elif event.type == pygame.JOYBUTTONDOWN:
-                if event.button == 1:
-                    world.hud.toggle_info()
+                print(event.button)
+                # if event.button == 1:
+                #     world.hud.toggle_info()
                 # elif event.button == 2:
                 #     world.camera_manager.toggle_camera()
                 # elif event.button == 3:
                 #     world.next_weather()
+                if event.button == self._respawn_idx:
+                    if world.player is not None:
+                        transform = world.player.get_transform()
+                        transform.location.z += 2
+                        transform.rotation.roll = 0
+                        transform.rotation.pitch = 0
+                        world.player.set_transform(transform)
                 elif event.button == self._reverse_idx:
                     self._control.gear = 1 if self._control.reverse else -1
                 elif event.button == self._handbrake_idx:
                     self._control.gear = 1 if self._control.reverse else -1
-                elif event.button == 23:
-                    world.camera_manager.next_sensor()
+                # elif event.button == 23:
+                #     world.camera_manager.next_sensor()
             elif event.type == pygame.JOYHATMOTION:
                 self._parse_camera(world)
 
@@ -276,11 +286,11 @@ class DualControl(object):
                     world.hud.toggle_info()
                 elif event.key == K_h or (event.key == K_SLASH and pygame.key.get_mods() & KMOD_SHIFT):
                     world.hud.help.toggle()
-                elif event.key == K_TAB:
-                    world.camera_manager.toggle_camera()
-                elif event.key == K_c and pygame.key.get_mods() & KMOD_SHIFT:
-                    world.next_weather(reverse=True)
                 elif event.key == K_c:
+                    world.camera_manager.toggle_camera()
+                elif event.key == K_w and pygame.key.get_mods() & KMOD_SHIFT:
+                    world.next_weather(reverse=True)
+                elif event.key == K_w:
                     world.next_weather()
                 elif event.key == K_BACKQUOTE:
                     world.camera_manager.next_sensor()

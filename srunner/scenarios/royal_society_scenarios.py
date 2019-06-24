@@ -151,7 +151,7 @@ class Town03GasStation(BasicScenario):
         test_criteria.add_child(timeout)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = CountScore(criteria, self.ego_vehicle, self.timeout)
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)
@@ -301,7 +301,7 @@ class Town03TrainTrack(BasicScenario):
         test_criteria.add_child(timeout)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = CountScore(criteria, self.ego_vehicle, self.timeout)
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)
@@ -452,7 +452,7 @@ class Town01Restaurant(BasicScenario):
         test_criteria.add_child(timeout)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = CountScore(criteria, self.ego_vehicle, self.timeout)
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)
@@ -602,7 +602,7 @@ class Town04ParkingLot(BasicScenario):
         # test_criteria.add_child(route_percentage_criterion)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = CountScore(criteria, self.ego_vehicle, self.timeout)
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)
@@ -752,7 +752,7 @@ class Town07Farm(BasicScenario):
         # test_criteria.add_child(route_percentage_criterion)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = CountScore(criteria, self.ego_vehicle, self.timeout)
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)

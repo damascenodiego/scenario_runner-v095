@@ -775,7 +775,7 @@ class RunningRedLightTest(Criterion):
         return new_status
 
 
-class CountScore(Criterion):
+class ComputeScore(Criterion):
 
     """
     The test is a success if the actor is within a given radius of a specified region
@@ -790,8 +790,8 @@ class CountScore(Criterion):
 
 
 
-    def __init__(self, criteria, actor, timeout, name="CountScore", terminate_on_failure=False):
-        super(CountScore, self).__init__(name, actor, 0, terminate_on_failure=terminate_on_failure)
+    def __init__(self, criteria, actor, timeout, name="ComputeScore", terminate_on_failure=False):
+        super(ComputeScore, self).__init__(name, actor, 0, terminate_on_failure=terminate_on_failure)
         self.criteria = criteria
         self.score = 0
         self.timeout = timeout
