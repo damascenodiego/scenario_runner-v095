@@ -16,19 +16,27 @@ class StartPage(tk.Frame):
         sphoto = ImageTk.PhotoImage(simage)
         slabel = tk.Label(image=sphoto)
         slabel.image = sphoto
-        self.button1 = tk.Button(self, image=sphoto, text="Start Scenario (\u21b5)", compound=tk.TOP, command=lambda: controller.show_frame("ExperimentInfo"), font=controller.title_font,bg='#FF9A2E')
+        self.button1 = tk.Button(self,
+                                 image=sphoto,
+                                 text="Start Scenario (\u21b5)",
+                                 compound=tk.TOP,
+                                 command=lambda: controller.show_frame("ExperimentInfo"),
+                                 font=controller.title_font,bg='#FF9A2E')
 
         self.button1.focus()
         self.button1.pack()
         self.button1.place(anchor="c", relx=.5, rely=.5)
 
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
-        self.bind('<Return>', self.start_experiment)
 
     def start_experiment(self, event):
         self._controller.show_frame("ExperimentInfo")
 
     def _event_call(self, event):
+        print(self.__class__.__name__)
+        # print("event -> "+str(event))
+        self.button1.focus()
         self.button1.focus_set()
+        self.button1.focus_force()
         key = random.choice(list(self._controller.map_of_scenarios.keys()))
         self._controller.selected_scenario = self._controller.map_of_scenarios[key]

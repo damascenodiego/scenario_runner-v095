@@ -21,20 +21,23 @@ class DrivingMode(tk.Frame):
         top_label = tk.Label(labelframe1, text="The simulation will begin soon...", font=text_font,bg='#67BFFF')
         top_label.pack()
 
-        self._parameters = [self._controller.bash_path]
-
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
 
     def run(self):
-        command = self._parameters
+        parameters = [self._controller.bash_path, self._controller.selected_scenario.type]
+        command = parameters
         print(command)
-        subprocess.run(command, stdout=sys.stdout, stderr=subprocess.PIPE)
+        ret = subprocess.run(command, stdout=sys.stdout, stderr=subprocess.PIPE)
+        print(ret)
         time.sleep(self._controller.timeout_DrivingMode)
         self._controller.show_frame("DrivingSummary")
 
     def _event_call(self, event):
         print(self.__class__.__name__)
-        print("event -> "+str(event))
+        # print("event -> "+str(event))
+        self.focus()
+        self.focus_set()
+        self.focus_force()
         self._thread = threading.Thread(target=self.run)
         self._thread.daemon = 1
         self._thread.start()

@@ -22,6 +22,7 @@ class ScenarioRunnerApp(tk.Tk):
     timeout_SearchingRoute   = 4
     timeout_PopulateScenario = 5
     timeout_DrivingMode      = 0
+    timeout_DrivingSummary   = 15
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -39,16 +40,12 @@ class ScenarioRunnerApp(tk.Tk):
         config.read('scenarios.conf')
 
         self.bash_path = config.get('DEFAULT', 'bash_path')
+        self.xml_path = config.get('DEFAULT', 'xml_path')
 
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        with open(os.path.join(dir_path, "scenarios.list"), "r") as f:
-            counter = 0
-            lines = f.read().splitlines()
-            for line in lines:
-                print(">>"+line)
-                xml_fname = ntpath.basename(line)
-                self.map_of_scenarios[xml_fname] = loadXml(line)
-                counter += 1
+        self.csv_size = file_len("score.csv")
+
+
+        self.map_of_scenarios = loadXml(self.xml_path)
 
         key = random.choice(list(self.map_of_scenarios.keys()))
         self.selected_scenario = self.map_of_scenarios[key]
@@ -90,28 +87,36 @@ class ScenarioRunnerApp(tk.Tk):
         frame.event_generate("<<" + page_name + ">>")
 
 
+def file_len(fname):
+    with open(fname) as f:
+        for i, l in enumerate(f):
+            pass
+    return i + 1
+
 def loadXml(xml_path):
+    scenarios = dict()
     tree = ET.parse(xml_path)
     for scenario in tree.iter("scenario"):
         name = set_attrib(scenario, "name", "Scenario example")
         town = set_attrib(scenario, "town", "Town example")
-        for node in scenario.iter("description"):
-            goal        = set_attrib(node, "goal", "Follow the red line and have fun!")
-            description = set_attrib(node, "description", "Follow the red line!")
-            criteria    = set_attrib(node, "criteria", "Do not crash!")
-            timeout     = int(set_attrib(node, "timeout", 60))
-            a_scenario = Scenario(
-                xml_file=xml_path,
-                name=name,
-                description=description,
-                town=town,
-                goal=goal,
-                timeout=timeout,
-                criteria=criteria,
-                snapshot=name+".mp4"
-            )
-            return a_scenario
-
+        type = set_attrib(scenario, "type", "Town type")
+        goal = set_attrib(scenario, "goal", "Follow the red line and have fun!")
+        description = set_attrib(scenario, "description", "Follow the red line!")
+        criteria    = set_attrib(scenario, "criteria", "Do not crash!")
+        timeout     = int(set_attrib(scenario, "timeout", 60))
+        a_scenario = Scenario(
+            xml_file=xml_path,
+            name=name,
+            description=description,
+            town=town,
+            type=type,
+            goal=goal,
+            timeout=timeout,
+            criteria=criteria,
+            snapshot=name+".mp4"
+        )
+        scenarios[name] = a_scenario
+    return scenarios
 
 def set_attrib(node, key, default):
     """

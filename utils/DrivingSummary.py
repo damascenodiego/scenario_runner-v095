@@ -1,4 +1,5 @@
 import time
+import csv
 import tkinter as tk
 from tkinter import font as tkfont
 from ast import literal_eval
@@ -42,28 +43,36 @@ class DrivingSummary(tk.Frame):
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
 
     def _event_call(self, event):
-        # score = self.read_last_score()
-        self.toplabel["text"] = "\nThank you for visiting and drive safe!\n"
-                                # "Your score is {}\n\n" \
-                                # "" \
-                                # "Thank you for visiting and have a lovely day.\n\n".format(int(score))
+        print(self.__class__.__name__)
+        print("event -> "+str(event))
+        score = self.check_last_score()
+        if score is None:
+            self.toplabel["text"] = "\nThank you for visiting and drive safe!\n"
+        else:
+            self.toplabel["text"] = "\nYour score is {}\n"\
+                                    "\nThank you for visiting and drive safe!\n".format(int(score))
+        time.sleep(self._controller.timeout_DrivingSummary)
+        self.button1.focus()
+        self.button1.focus_set()
+        self.button1.focus_force()
 
-        # self.button1.focus_set()
-        # print(self.__class__.__name__)
-        # print("event -> " + str(event))
+    def check_last_score(self):
+        finalScore = None
+        try:
+            with open("score.csv","r") as fp:
+                scorereader = csv.reader(fp, delimiter=',', quotechar='|')
+            last_line = ""
+            while 1:
+                line = fp.readline()
+                if not line:
+                    break
+                if not len(line)==0:
+                    last_line = line
+            score_dict = literal_eval(last_line)
 
-    # def read_last_score(self):
-    #     with open("score.csv","r") as fp:
-    #         scorereader = csv.reader(fp, delimiter=',', quotechar='|')
-    #     last_line = ""
-    #     while 1:
-    #         line = fp.readline()
-    #         if not line:
-    #             break
-    #         if not len(line)==0:
-    #             last_line = line
-    #     score_dict = literal_eval(last_line)
-    #     finalScore = 0
-    #     if 'finalScore' in score_dict.keys():
-    #         finalScore = score_dict['finalScore']
-    #     return finalScore
+            if 'finalScore' in score_dict.keys():
+                finalScore = score_dict['finalScore']
+        except Exception as e:
+            print(e)
+
+        return finalScore

@@ -29,6 +29,9 @@ class ExperimentInfo(tk.Frame):
 
     def _event_call(self, event):
         print(self.__class__.__name__)
-        print("event -> " + str(event))
+        # print("event -> " + str(event))
+        self.focus()
+        self.focus_set()
+        self.focus_force()
         time.sleep(self._controller.timeout_ExperimentInfo)
         self._controller.show_frame("SearchingRoute")

@@ -1,12 +1,10 @@
 <?xml version="1.0"?>
 <scenarios>
-	<scenario name="Town03GasStation" type="Town03GasStation" town="Town03">
-        <description
-            description="Town 03, Route A"
-            goal="Reach the Gas Station"
-            timeout="90"
-            criteria="Avoid collisions and follow the red line!"
-        />
+	<scenario name="Town03GasStation" type="Town03GasStation" town="Town03"
+			  description="Town 03, Route A"
+			  goal="Reach the Gas Station"
+			  timeout="90"
+			  criteria="Avoid collisions and follow the red line!">
 
 		<ego_vehicle x="-50.0" y="-197.0" z="0" yaw="0.0" model="vehicle.tesla.model3" />
 		<other_actor x="93" y="-104" z="9" yaw="180" model="vehicle.diamondback.century" />

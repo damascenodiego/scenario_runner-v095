@@ -68,6 +68,6 @@ class PopulateScenario(tk.Frame):
 
     def _event_call(self, event):
         print(self.__class__.__name__)
-        print("event -> " + str(event))
+        # print("event -> " + str(event))
         time.sleep(self._controller.timeout_PopulateScenario)
         self._controller.show_frame("DrivingMode")
