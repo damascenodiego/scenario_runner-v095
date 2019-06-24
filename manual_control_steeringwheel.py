@@ -844,12 +844,12 @@ class CameraManager(object):
         self.recording = False
         self._camera_transforms = [
             carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15)),
+            carla.Transform(carla.Location(x=-5.5, z=2.8), carla.Rotation(pitch=-15)),
             carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=-55)),
             carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=55)),
             carla.Transform(carla.Location(x=0.150, y=0, z=1.15), carla.Rotation(yaw=180))
             # carla.Transform(carla.Location(x=1.6, z=1.7)),
             # carla.Transform(carla.Location(x=0.150, y= -0.30, z=1.25), carla.Rotation(pitch=-5)),
-            # carla.Transform(carla.Location(x=-5.5, z=2.8), carla.Rotation(pitch=-15)),
             # carla.Transform(carla.Location(x=-1.6, z=1.7))
         ]
         self.transform_index = 1
@@ -879,16 +879,16 @@ class CameraManager(object):
         self.index = None
 
     def toggle_camera(self, horizPos=None, vertiPos=None):
-        if horizPos is None or vertiPos is None:
-            self.transform_index = (self.transform_index + 1) % len(self._camera_transforms)
+        if horizPos is None and vertiPos is None:
+            self.transform_index = (self.transform_index + 1) % 2
             self.sensor.set_transform(self._camera_transforms[self.transform_index])
         else:
             if horizPos < -.5:
-                self.sensor.set_transform(self._camera_transforms[1])
-            elif horizPos > .5:
                 self.sensor.set_transform(self._camera_transforms[2])
-            elif vertiPos < -.5:
+            elif horizPos > .5:
                 self.sensor.set_transform(self._camera_transforms[3])
+            elif vertiPos < -.5:
+                self.sensor.set_transform(self._camera_transforms[4])
             else:
                 self.sensor.set_transform(self._camera_transforms[0])
 
