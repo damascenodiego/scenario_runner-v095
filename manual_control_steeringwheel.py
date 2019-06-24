@@ -225,7 +225,6 @@ class DualControl(object):
 
         # initialize steering wheel
         pygame.joystick.init()
-        pygame.mouse.set_pos(0,0)
 
         joystick_count = pygame.joystick.get_count()
         if joystick_count > 1:
@@ -433,6 +432,7 @@ class DualControl(object):
 class HUD(object):
     def __init__(self, width, height):
         self.dim = (width, height)
+        pygame.mouse.set_pos(width, height)
         font = pygame.font.Font(pygame.font.get_default_font(), 20)
         fonts = [x for x in pygame.font.get_fonts() if 'mono' in x]
         default_font = 'ubuntumono'
@@ -442,6 +442,7 @@ class HUD(object):
         self._notifications = FadingText(font, (width, 40), (0, height - 40))
         self._image = FadingImage(font, width, height)
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
+        self.score = ScoreText(pygame.font.Font(mono, 40), width, height)
         self.server_fps = 0
         self.frame_number = 0
         self.simulation_time = 0
@@ -454,6 +455,11 @@ class HUD(object):
         self.server_fps = self._server_clock.get_fps()
         self.frame_number = timestamp.frame_count
         self.simulation_time = timestamp.elapsed_seconds
+
+    def show_score(self, display, score):
+        self.score.set_score(score)
+        self.score.toggle()
+        self.score.render(display)
 
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
@@ -468,10 +474,10 @@ class HUD(object):
         if isinstance(c, carla.VehicleControl):
             if c.reverse:
                 txt += " - REVERSE"
-                self._image.set_image(pygame.image.load('utils/images/reversing.png').convert(),seconds=1)
-                self._image.tick(world, clock)
-            else:
-                self._image.set_image(None)
+            #     self._image.set_image(pygame.image.load('utils/images/r_icon.png').convert(),seconds=1)
+            #     self._image.tick(world, clock)
+            # else:
+            #     self._image.set_image(None)
         self._notifications.set_text(txt, seconds=0.1)
 
 
@@ -653,6 +659,36 @@ class HelpText(object):
 
 
 # ==============================================================================
+# -- ScoreText ------------------------------------------------------------------
+# ==============================================================================
+
+class ScoreText(object):
+    def __init__(self, font, width, height):
+        self.width, self.height = width,height
+        self.font = font
+        self.set_score(0)
+
+    def toggle(self):
+        self._render = not self._render
+
+    def set_score(self,score):
+        self.lines = ["Total score: {} points!".format(score)]
+        self.font = self.font
+        self.dim = (680, len(self.lines) * 40 + 12)
+        self.pos = (0.5 * self.width - 0.5 * self.dim[0], 0.5 * self.height - 0.5 * self.dim[1])
+        self.seconds_left = 0
+        self.surface = pygame.Surface(self.dim)
+        self.surface.fill((0, 0, 0, 0))
+        for n, line in enumerate(self.lines):
+            text_texture = self.font.render(line, True, (255, 255, 255))
+            self.surface.blit(text_texture, (22, n * 22))
+            self._render = False
+        self.surface.set_alpha(220)
+
+    def render(self, display):
+        if self._render:
+            display.blit(self.surface, self.pos)
+# ==============================================================================
 # -- FadingImage ------------------------------------------------------------------
 # ==============================================================================
 
@@ -798,8 +834,8 @@ class CameraManager(object):
         self.recording = False
         self._camera_transforms = [
             carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15)),
-            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=-90)),
-            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=90)),
+            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=-75)),
+            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=75)),
             carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=180))
             # carla.Transform(carla.Location(x=1.6, z=1.7)),
             # carla.Transform(carla.Location(x=0.150, y= -0.30, z=1.25), carla.Rotation(pitch=-5)),
