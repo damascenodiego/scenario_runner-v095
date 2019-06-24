@@ -48,5 +48,9 @@ $run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scen
 # sleep 7s
 # $run_python /home/driverleics/git/scenario_runner-v095/manual_control_steeringwheel.py --res=1280x720 --fullscreen > log_client.txt
 
+#cat /home/driverleics/git/scenario_runner-v095/score.csv  >  /home/driverleics/git/driverleics.github.io/_data/score.csv
+#cd /home/driverleics/git/driverleics.github.io/
+#rm -rf /home/driverleics/git/driverleics.github.io/_site/
+#/home/driverleics/.rvm/rubies/default/bin/bundle exec jekyll pagemaster scores
 
 killall -9 CarlaUE4 CarlaUE4.sh
