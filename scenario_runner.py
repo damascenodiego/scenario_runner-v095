@@ -299,10 +299,12 @@ class ScenarioRunner(object):
             # start manual_control_steeringwheel #
             ######################################
 
-            pygame.init()
-            pygame.font.init()
+
             world = None
             try:
+
+                pygame.init()
+                pygame.font.init()
 
                 SCREEN_MODE = pygame.HWSURFACE | pygame.DOUBLEBUF
                 if args.fullscreen:
@@ -330,25 +332,41 @@ class ScenarioRunner(object):
                     pygame.display.flip()
                 self.manager.stop_time_scenario()
 
+                ######################################
+                # stop  manual_control_steeringwheel #
+                ######################################
+
+                # Provide outputs if required
+                self.analyze_scenario(args, config)
+
+                score = 0
+                # for crit in self.manager.scenario.test_criteria:
+                #     if isinstance(crit, CountScore):
+                #         score = crit.score
+
+                hud.show_score(display, score)
+                self.print_score(score)
+                pygame.display.flip()
+                time.sleep(10)
+
+
+                # Stop scenario and cleanup
+                self.manager.stop_scenario()
+                del scenario
+
+                self.cleanup()
+
             finally:
                 if world is not None:
                     world.destroy()
                 pygame.quit()
 
-            ######################################
-            # stop  manual_control_steeringwheel #
-            ######################################
 
-            # Provide outputs if required
-            self.analyze_scenario(args, config)
-
-            # Stop scenario and cleanup
-            self.manager.stop_scenario()
-            del scenario
-
-            self.cleanup()
 
         print("No more scenarios .... Exiting")
+
+    def print_score(self):
+        pass
 
 
 if __name__ == '__main__':
