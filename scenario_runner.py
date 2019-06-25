@@ -318,6 +318,9 @@ class ScenarioRunner(object):
                 world = World(self.client.get_world(), hud, args.filter)
                 controller = DualControl(world, False)
 
+                self.setTrafficLights(self.client.get_world())
+
+
                 clock = pygame.time.Clock()
 
                 self.manager.start_time_scenario()
@@ -367,6 +370,15 @@ class ScenarioRunner(object):
 
     def print_score(self, score):
         pass
+
+    def setTrafficLights(self, world):
+        for item in world.get_actors().filter('*'):
+            if isinstance(item,carla.TrafficLight):
+                item.freeze(True)
+                item.set_yellow_time(0)
+                item.set_red_time(0)
+                item.set_green_time(0)
+                item.set_state(carla.TrafficLightState.Green)
 
 
 if __name__ == '__main__':
