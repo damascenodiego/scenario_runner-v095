@@ -77,7 +77,7 @@ class Town03GasStation(BasicScenario):
 
         # Build behavior tree
         root = py_trees.composites.Parallel(policy=py_trees.common.ParallelPolicy.SuccessOnAll())
-        timeout = TimeOut(self.timeout*10)
+        timeout = TimeOut(self.timeout*10, display=False)
 
         # leaf nodes
         cyclist_trigger_distance = InTriggerDistanceToVehicle(
@@ -132,14 +132,14 @@ class Town03GasStation(BasicScenario):
 
         root = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnAll())
         root_sequence = py_trees.composites.Sequence()
-        timeout = TimeOut(self.timeout)
+        timeout = TimeOut(self.timeout, display=True)
 
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
         in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
-        # completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
+        completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
         test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         test_criteria.add_child(collision_criterion)
@@ -147,7 +147,7 @@ class Town03GasStation(BasicScenario):
         test_criteria.add_child(in_route_criterion)
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
-        # test_criteria.add_child(completion_criterion)
+        test_criteria.add_child(completion_criterion)
         test_criteria.add_child(timeout)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]

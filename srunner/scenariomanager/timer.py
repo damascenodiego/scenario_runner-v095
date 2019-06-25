@@ -13,7 +13,6 @@ timeout behavior using the CARLA game time
 
 import py_trees
 
-
 class GameTime(object):
 
     """
@@ -59,7 +58,7 @@ class TimeOut(py_trees.behaviour.Behaviour):
     the py_trees timer.
     """
 
-    def __init__(self, timeout, name="TimeOut"):
+    def __init__(self, timeout, name="TimeOut", display=False):
         """
         Setup timeout
         """
@@ -68,6 +67,7 @@ class TimeOut(py_trees.behaviour.Behaviour):
         self._timeout_value = timeout
         self._start_time = 0.0
         self.timeout = False
+        self.display = display
 
     def setup(self, unused_timeout=15):
         self.logger.debug("%s.setup()" % (self.__class__.__name__))
@@ -85,6 +85,9 @@ class TimeOut(py_trees.behaviour.Behaviour):
 
         elapsed_time = GameTime.get_time() - self._start_time
 
+        if self.display:
+            ScenarioTimer.timeLeft = self._timeout_value - elapsed_time
+
         if elapsed_time < self._timeout_value:
             new_status = py_trees.common.Status.RUNNING
         else:
@@ -99,3 +102,7 @@ class TimeOut(py_trees.behaviour.Behaviour):
     def terminate(self, new_status):
         self.logger.debug("%s.terminate()[%s->%s]" % (
             self.__class__.__name__, self.status, new_status))
+
+
+class ScenarioTimer:
+    timeLeft = 0

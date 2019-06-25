@@ -678,6 +678,7 @@ class RouteCompletionTest(Criterion):
                     best_index = index
             self._current_index = best_index
             self._percentage_route_completed = 100.0*float(self._current_index) / float(self._route_length)
+            ScenarioInfo.routePercentageCompleted = self._percentage_route_completed
             self._traffic_event.set_dict({'route_completed': self._percentage_route_completed})
             self._traffic_event.set_message("Agent has completed > {:.2f}% of the route".format(self._percentage_route_completed))
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
@@ -850,3 +851,7 @@ class ComputeScore(Criterion):
 
         return new_status
 
+
+class ScenarioInfo:
+
+    routePercentageCompleted = 0
