@@ -68,7 +68,7 @@ class Town03GasStation(BasicScenario):
             self._route = self._config.route.data
             self._target = self._route[-1][0]
 
-        super(Town03GasStation, self).__init__("Town03GasStation", ego_vehicle, other_actors, town, world, debug_mode, True)
+        super(Town03GasStation, self).__init__("Town03GasStation", ego_vehicle, other_actors, town, world, int(config.timeout), debug_mode, True)
 
     def _create_behavior(self):
         """
@@ -137,7 +137,7 @@ class Town03GasStation(BasicScenario):
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
-        in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
+        in_route_criterion = InRouteTest(self.ego_vehicle, radius=10.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
         completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
@@ -150,8 +150,8 @@ class Town03GasStation(BasicScenario):
         test_criteria.add_child(completion_criterion)
         test_criteria.add_child(timeout)
 
-        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
+        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion, timeout, completion_criterion]
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.name)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)
@@ -199,7 +199,7 @@ class Town03TrainTrack(BasicScenario):
             self._route = self._config.route.data
             self._target = self._route[-1][0]
 
-        super(Town03TrainTrack, self).__init__("Town03TrainTrack", ego_vehicle, other_actors, town, world, debug_mode, True)
+        super(Town03TrainTrack, self).__init__("Town03TrainTrack", ego_vehicle, other_actors, town, world, int(config.timeout), debug_mode, True)
 
     def _create_behavior(self):
         """
@@ -287,9 +287,9 @@ class Town03TrainTrack(BasicScenario):
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
-        in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
+        in_route_criterion = InRouteTest(self.ego_vehicle, radius=10.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
-        route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
+        completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
         test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         test_criteria.add_child(collision_criterion)
@@ -297,11 +297,11 @@ class Town03TrainTrack(BasicScenario):
         test_criteria.add_child(in_route_criterion)
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
-        test_criteria.add_child(route_percentage_criterion)
+        test_criteria.add_child(completion_criterion)
         test_criteria.add_child(timeout)
 
-        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
+        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion, timeout, completion_criterion]
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.name)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)
@@ -350,7 +350,7 @@ class Town01Restaurant(BasicScenario):
             self._route = self._config.route.data
             self._target = self._route[-1][0]
 
-        super(Town01Restaurant, self).__init__("Town01Restaurant", ego_vehicle, other_actors, town, world, debug_mode, True)
+        super(Town01Restaurant, self).__init__("Town01Restaurant", ego_vehicle, other_actors, town, world, int(config.timeout), debug_mode, True)
 
     def _create_behavior(self):
         """
@@ -438,9 +438,9 @@ class Town01Restaurant(BasicScenario):
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
-        in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
+        in_route_criterion = InRouteTest(self.ego_vehicle, radius=10.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
-        route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
+        completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
         test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         test_criteria.add_child(collision_criterion)
@@ -448,11 +448,11 @@ class Town01Restaurant(BasicScenario):
         test_criteria.add_child(in_route_criterion)
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
-        test_criteria.add_child(route_percentage_criterion)
+        test_criteria.add_child(completion_criterion)
         test_criteria.add_child(timeout)
 
-        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
+        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion, timeout, completion_criterion]
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.name)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)
@@ -499,7 +499,7 @@ class Town04ParkingLot(BasicScenario):
             self._route = self._config.route.data
             self._target = self._route[-1][0]
 
-        super(Town04ParkingLot, self).__init__("Town04ParkingLot", ego_vehicle, other_actors, town, world, debug_mode, True)
+        super(Town04ParkingLot, self).__init__("Town04ParkingLot", ego_vehicle, other_actors, town, world, int(config.timeout), debug_mode, True)
 
     def _create_behavior(self):
         """
@@ -588,9 +588,9 @@ class Town04ParkingLot(BasicScenario):
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
-        in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
+        in_route_criterion = InRouteTest(self.ego_vehicle, radius=10.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
-        route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
+        completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
         test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         test_criteria.add_child(timeout)
@@ -599,10 +599,10 @@ class Town04ParkingLot(BasicScenario):
         test_criteria.add_child(in_route_criterion)
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
-        test_criteria.add_child(route_percentage_criterion)
+        test_criteria.add_child(completion_criterion)
 
-        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
+        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion, timeout, completion_criterion]
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.name)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)
@@ -649,7 +649,7 @@ class Town07Farm(BasicScenario):
             self._route = self._config.route.data
             self._target = self._route[-1][0]
 
-        super(Town07Farm, self).__init__("Town07Farm", ego_vehicle, other_actors, town, world, debug_mode, True)
+        super(Town07Farm, self).__init__("Town07Farm", ego_vehicle, other_actors, town, world, int(config.timeout), debug_mode, True)
 
     def _create_behavior(self):
         """
@@ -738,9 +738,9 @@ class Town07Farm(BasicScenario):
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
-        in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
+        in_route_criterion = InRouteTest(self.ego_vehicle, radius=10.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
-        route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
+        completion_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
         test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         test_criteria.add_child(timeout)
@@ -749,10 +749,10 @@ class Town07Farm(BasicScenario):
         test_criteria.add_child(in_route_criterion)
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
-        test_criteria.add_child(route_percentage_criterion)
+        test_criteria.add_child(completion_criterion)
 
-        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
-        score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
+        criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion, timeout, completion_criterion]
+        score_counter = ComputeScore(criteria, self.ego_vehicle, self.name)
 
         root_sequence.add_child(test_criteria)
         root_sequence.add_child(score_counter)

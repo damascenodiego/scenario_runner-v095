@@ -3,7 +3,7 @@
 	<scenario name="Town03GasStation" type="Town03GasStation" town="Town03"
 			  description="Town 03, Route A"
 			  goal="Reach the Gas Station"
-			  timeout="90"
+			  timeout="100"
 			  criteria="Avoid collisions and follow the red line!">
 
 		<ego_vehicle x="-50.0" y="-197.0" z="0" yaw="0.0" model="vehicle.tesla.model3" />
@@ -230,7 +230,7 @@
 	<scenario name="Town03TrainTrack" type="Town03TrainTrack" town="Town03"
 			  description="Town 03, Route B"
 			  goal="Go home before it's late!"
-			  timeout="90"
+			  timeout="100"
 			  criteria="Avoid collisions and follow the red line!">
 
 		<ego_vehicle x="-87.0" y="-115.0" z="1" yaw="90.0" model="vehicle.tesla.model3" />
@@ -505,7 +505,7 @@
 
 	<scenario_ name="Town01Restaurant" type="Town01Restaurant" town="Town01"
 			  goal="Are you hungry? Let's get some food!"
-			  timeout="90"
+			  timeout="100"
 			  criteria="Avoid collisions and follow the red line!">
 
 		<ego_vehicle x="396.3" y="51.9" z="2" yaw="-90.0" model="vehicle.tesla.model3" />
@@ -774,7 +774,7 @@
 
 	<scenario name="Town04ParkingLot" type="Town04ParkingLot" town="Town04"
 			  goal="Get to the parking lot before you lose your spot!"
-			  timeout="90"
+			  timeout="100"
 			  criteria="Avoid collisions and follow the red line!">
 
 		<ego_vehicle x="384.3" y="-233.5" z="2" yaw="90" model="vehicle.tesla.model3" />
@@ -1018,7 +1018,7 @@
 
 	<scenario name="Town07Farm" type="Town07Farm" town="Town07"
 			  goal="Wanna relax? Why not go for a visit  to your uncle's farm!"
-			  timeout="90"
+			  timeout="100"
 			  criteria="Avoid collisions and follow the red line!">
 
 		<ego_vehicle x="-3.2" y="-240.8" z="1" yaw="9" model="vehicle.tesla.model3" />

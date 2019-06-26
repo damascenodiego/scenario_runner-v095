@@ -49,7 +49,7 @@ class BasicScenario(object):
     ego_vehicle = None
     other_actors = []
 
-    def __init__(self, name, ego_vehicle, other_actors, town, world, debug_mode=False, terminate_on_failure=False):
+    def __init__(self, name, ego_vehicle, other_actors, town, world, timeout=60, debug_mode=False, terminate_on_failure=False):
         """
         Setup all relevant parameters and create scenario
         and instantiate scenario manager
@@ -58,7 +58,7 @@ class BasicScenario(object):
         # Check if the CARLA server uses the correct map
         self._town = town
         self._check_town(world)
-        self.timeout = 60
+        self.timeout = timeout
 
         self.ego_vehicle = ego_vehicle
         self.other_actors = other_actors

@@ -414,11 +414,12 @@ class ScenarioRunner(object):
     def set_traffic_lights(self, world):
         for item in world.get_actors().filter('*'):
             if isinstance(item,carla.TrafficLight):
-                item.freeze(True)
-                item.set_yellow_time(0)
-                item.set_red_time(0)
-                item.set_green_time(0)
+                # item.freeze(True)
+                # item.set_yellow_time(1)
+                # item.set_red_time(1)
+                item.set_green_time(1000)
                 item.set_state(carla.TrafficLightState.Green)
+                item.freeze(True)
 
 
 if __name__ == '__main__':

@@ -550,11 +550,9 @@ class TriggerCollision(AtomicBehavior):
             self._other_velocity = other_distance * actor_velocity / actor_distance
             self._other_actor.set_velocity(carla.Vector3D(self._other_velocity*self._multiplier[0], self._other_velocity*self._multiplier[1], 0))
             self._hasComputedVelocity = True
-            print("COLLISION: " + str(self._collisionLocation))
         else:
             self._other_velocity += self._loopCounter/100
             self._other_actor.set_velocity(carla.Vector3D(self._other_velocity*self._multiplier[0], self._other_velocity*self._multiplier[1], 0))
-            print("LOCATION: " + str(self._other_actor.get_location()) + "      DISTANCE: " + str(self._other_actor.get_location().distance(self._collisionLocation)))
             # Stops accelerating once the vehicle gets close enough
             if self._other_actor.get_location().distance(self._collisionLocation) < 1:
                 self._other_actor.set_autopilot(True)

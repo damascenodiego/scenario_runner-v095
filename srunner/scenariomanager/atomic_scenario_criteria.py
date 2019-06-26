@@ -24,6 +24,7 @@ import carla
 import datetime
 import csv
 import os
+import time
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.timer import GameTime
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
@@ -256,8 +257,11 @@ class CollisionTest(Criterion):
 
         world = self.actor.get_world()
         blueprint = world.get_blueprint_library().find('sensor.other.collision')
+        self.lastCollision = time.monotonic()
         self._collision_sensor = world.spawn_actor(blueprint, carla.Transform(), attach_to=self.actor)
         self._collision_sensor.listen(lambda event: CollisionTest._count_collisions(weakref.ref(self), event))
+        self.staticCollisions = 0
+        self.humanCollisions = 0
 
     def update(self):
         """
@@ -301,22 +305,35 @@ class CollisionTest(Criterion):
         if not self:
             return
 
+        if time.monotonic() - self.lastCollision < 1:
+            return
+
+        impulse = event.normal_impulse
+        intensity = math.sqrt(impulse.x**2 + impulse.y**2 + impulse.z**2)
+
         actor_type = None
         if 'static' in event.other_actor.type_id:
             actor_type = TrafficEventType.COLLISION_STATIC
+            if intensity >= 100:
+                self.staticCollisions += 1
         elif 'vehicle' in event.other_actor.type_id:
             actor_type = TrafficEventType.COLLISION_VEHICLE
+            self.humanCollisions += 1
         elif 'walker' in event.other_actor.type_id:
             actor_type = TrafficEventType.COLLISION_PEDESTRIAN
+            self.humanCollisions += 1
+
 
         collision_event = TrafficEvent(type=actor_type)
         collision_event.set_dict({'type':event.other_actor.type_id, 'id': event.other_actor.id})
         collision_event.set_message("Agent collided against object with type={} and id={}.".format(
             event.other_actor.type_id, event.other_actor.id))
 
+
+
         self.list_traffic_events.append(collision_event)
         self.actual_value += 1
-
+        self.lastCollision = time.monotonic()
 
 
 class KeepLaneTest(Criterion):
@@ -510,7 +527,7 @@ class WrongLaneTest(Criterion):
                 # direction?
                 self._infractions += 1
                 self.actual_value += 1
-
+                print("WRONG LANE")
 
                 wrong_way_event = TrafficEvent(type=TrafficEventType.WRONG_WAY_INFRACTION)
                 wrong_way_event.set_message('Agent invaded a lane in opposite direction: road_id={}, lane_id={}'.format(
@@ -616,17 +633,18 @@ class InRouteTest(Criterion):
                 if off_route:
                     self._counter_off_route += 1
                     self.actual_value += 1
+                    print("OFF ROUTE")
 
 
-                if self._counter_off_route > self._offroad_max:
-                    route_deviation_event = TrafficEvent(type=TrafficEventType.ROUTE_DEVIATION)
-                    route_deviation_event.set_message("Agent deviated from the route at (x={}, y={}, z={})".format(
-                        location.x, location.y, location.z))
-                    route_deviation_event.set_dict({'x':location.x, 'y':location.y, 'z':location.z})
-                    self.list_traffic_events.append(route_deviation_event)
-
-                    self.test_status = "FAILURE"
-                    #new_status = py_trees.common.Status.FAILURE
+                # if self._counter_off_route > self._offroad_max:
+                #     route_deviation_event = TrafficEvent(type=TrafficEventType.ROUTE_DEVIATION)
+                #     route_deviation_event.set_message("Agent deviated from the route at (x={}, y={}, z={})".format(
+                #         location.x, location.y, location.z))
+                #     route_deviation_event.set_dict({'x':location.x, 'y':location.y, 'z':location.z})
+                #     self.list_traffic_events.append(route_deviation_event)
+                #
+                #     self.test_status = "FAILURE"
+                #     #new_status = py_trees.common.Status.FAILURE
 
             self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 
@@ -679,6 +697,7 @@ class RouteCompletionTest(Criterion):
             self._current_index = best_index
             self._percentage_route_completed = 100.0*float(self._current_index) / float(self._route_length)
             ScenarioInfo.routePercentageCompleted = self._percentage_route_completed
+            self.actual_value = self._percentage_route_completed
             self._traffic_event.set_dict({'route_completed': self._percentage_route_completed})
             self._traffic_event.set_message("Agent has completed > {:.2f}% of the route".format(self._percentage_route_completed))
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
@@ -782,20 +801,25 @@ class ComputeScore(Criterion):
     The test is a success if the actor is within a given radius of a specified region
     """
 
-    collision_weight = 100
-    wrongLane_weight = 50
-    redLight_weight = 0
-    offRoute_weight = 10
+    humanCollision_weight = 5000
+    staticCollision_weight = 500
+    wrongLane_weight = 200
+    redLight_weight = 1000
+    offRoute_weight = 100
+    routeCompletion_weight = 100
     time_weight = 100
 
+    maxTimeout = 2000
+    sortConstant = maxTimeout * time_weight
 
 
 
-    def __init__(self, criteria, actor, timeout, name="ComputeScore", terminate_on_failure=False):
+
+    def __init__(self, criteria, actor, scenarioName, name="ComputeScore", terminate_on_failure=False):
         super(ComputeScore, self).__init__(name, actor, 0, terminate_on_failure=terminate_on_failure)
         self.criteria = criteria
         self.score = 0
-        self.timeout = timeout
+        self.scenarioName = scenarioName
         self.logger.debug("%s.__init__()" % (self.__class__.__name__))
 
     def update(self):
@@ -806,29 +830,38 @@ class ComputeScore(Criterion):
 
         criterionScores = dict()
         timestamp = str(datetime.datetime.now().strftime('%d%H%M'))
-        criterionScores['timestamp'] = timestamp
-        criterionScores['collision_weight'] = self.collision_weight
-        criterionScores['wrongLane_weight'] = self.wrongLane_weight
-        criterionScores['redLight_weight']  = self.redLight_weight
-        criterionScores['offRoute_weight']  = self.offRoute_weight
-        criterionScores['time_weight']      = self.time_weight
-
+        criterionScores['id'] = timestamp
+        criterionScores['scenario'] = self.scenarioName
+        # criterionScores['collision_weight'] = self.collision_weight
+        # criterionScores['wrongLane_weight'] = self.wrongLane_weight
+        # criterionScores['redLight_weight']  = self.redLight_weight
+        # criterionScores['offRoute_weight']  = self.offRoute_weight
+        # criterionScores['time_weight']      = self.time_weight
         for criterion in self.criteria:
             if criterion.name == "CheckCollisions":
-                criterionScores[criterion.name] = criterion.actual_value
-                self.score -= criterion.actual_value * self.collision_weight
+                criterionScores["humanCollisions"] = criterion.humanCollisions
+                criterionScores["staticCollisions"] = criterion.staticCollisions
+                self.score -= criterion.humanCollisions * self.humanCollision_weight
+                self.score -= criterion.staticCollisions * self.staticCollision_weight
             elif criterion.name == "WrongLaneTest":
-                criterionScores[criterion.name] = criterion.actual_value
+                criterionScores["wrongLane"] = criterion.actual_value
                 self.score -= criterion.actual_value * self.wrongLane_weight
             elif criterion.name == "RunningRedLightTest":
-                criterionScores[criterion.name] = criterion.actual_value
+                criterionScores["redLights"] = criterion.actual_value
                 self.score -= criterion.actual_value * self.redLight_weight
             elif criterion.name == "InRouteTest":
-                criterionScores[criterion.name] = criterion.actual_value
+                criterionScores["offRoute"] = criterion.actual_value
                 self.score -= criterion.actual_value * self.offRoute_weight
-            elif criterion.name == "InRadiusRegionTest":
-                criterionScores[criterion.name] = self.timeout - criterion._elapsed_time
-                self.score += (self.timeout - criterion._elapsed_time) * self.time_weight
+            elif criterion.name == "RouteCompletionTest":
+                routeCompletedPercentage = math.ceil(criterion.actual_value)
+                routeCompletedPercentage = 100 if routeCompletedPercentage >= 98 else routeCompletedPercentage
+                criterionScores["routeCompleted"] = routeCompletedPercentage
+                self.score -= (100 - routeCompletedPercentage) * self.routeCompletion_weight
+            elif criterion.name == "TimeOut":
+                timeLeft = criterion._timeout_value - criterion.elapsed_time
+                self.score += timeLeft * self.time_weight
+                criterionScores["timeLeft"] = math.ceil(timeLeft)
+
             else:
                 pass
 
@@ -836,7 +869,9 @@ class ComputeScore(Criterion):
         ScenarioInfo.finalScore = criterionScores['finalScore']
         ScenarioInfo.timestamp = timestamp
 
-        criterionScores['finalScore_sort'] = "%+010d" % (-1*int(self.score))
+        finalScore = int(self.score)
+        finalScore_sort = "%010d" % (-1 * (finalScore - self.sortConstant)) #sorting the sfinal score
+        criterionScores['finalScore_sort'] = finalScore_sort
 
         # if score.csv does not exist, then create
         if not os.path.isfile('score.csv') or os.path.getsize('score.csv') == 0:

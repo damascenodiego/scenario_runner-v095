@@ -68,6 +68,7 @@ class TimeOut(py_trees.behaviour.Behaviour):
         self._start_time = 0.0
         self.timeout = False
         self.display = display
+        self.elapsed_time = 0
 
     def setup(self, unused_timeout=15):
         self.logger.debug("%s.setup()" % (self.__class__.__name__))
@@ -83,12 +84,12 @@ class TimeOut(py_trees.behaviour.Behaviour):
         Upon reaching the timeout value the status changes to SUCCESS
         """
 
-        elapsed_time = GameTime.get_time() - self._start_time
+        self.elapsed_time = GameTime.get_time() - self._start_time
 
         if self.display:
-            ScenarioTimer.timeLeft = self._timeout_value - elapsed_time
+            ScenarioTimer.timeLeft = self._timeout_value - self.elapsed_time
 
-        if elapsed_time < self._timeout_value:
+        if self.elapsed_time < self._timeout_value:
             new_status = py_trees.common.Status.RUNNING
         else:
             new_status = py_trees.common.Status.SUCCESS

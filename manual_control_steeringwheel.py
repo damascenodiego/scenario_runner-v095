@@ -259,7 +259,6 @@ class DualControl(object):
             if event.type == pygame.QUIT:
                 return True
             elif event.type == pygame.JOYBUTTONDOWN:
-                print(event.button)
                 # if event.button == 1:
                 #     world.hud.toggle_info()
                 # elif event.button == 2:
@@ -774,6 +773,7 @@ class CollisionSensor(object):
         weak_self = weakref.ref(self)
         self.sensor.listen(lambda event: CollisionSensor._on_collision(weak_self, event))
 
+
     def get_collision_history(self):
         history = collections.defaultdict(int)
         for frame, intensity in self.history:
@@ -787,7 +787,6 @@ class CollisionSensor(object):
             return
         actor_type = get_actor_display_name(event.other_actor)
         # self.hud.notification('Collision with %r' % actor_type)
-        # self.hud.notification_image(pygame.image.load('/home/driverleics/racecar.png').convert())
         impulse = event.normal_impulse
         intensity = math.sqrt(impulse.x**2 + impulse.y**2 + impulse.z**2)
         self.history.append((event.frame_number, intensity))
