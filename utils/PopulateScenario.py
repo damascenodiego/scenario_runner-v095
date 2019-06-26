@@ -1,5 +1,8 @@
 import time
-import tkinter as tk
+import os
+import imageio
+import tkinter as tk, threading
+
 from tkinter import font as tkfont
 from PIL import Image,ImageTk
 
@@ -9,65 +12,54 @@ class PopulateScenario(tk.Frame):
         super().__init__(parent)
         self._controller = controller
         self.configure(background='#67BFFF')
-        # label = tk.Label(self, text="Populating Scenario...", font=controller.title_font,bg='#67BFFF')
-        # label.pack(side="top", fill="x", pady=10)
-
         labelframe1 = tk.LabelFrame(self,
                                     text="Populating test scenario with obstacles...\n",
                                     font=controller.title_font, bg='#67BFFF')
-
-        cycleimage= Image.open("utils/images/cyclist.png")
-        width = 128
-        height = 128
-        smallcyclephoto = cycleimage.resize((width,height),Image.ANTIALIAS)
-        cyclephoto = ImageTk.PhotoImage(smallcyclephoto)
-        slabel = tk.Label(image=cyclephoto)
-        slabel.image = cyclephoto
-        clabel = tk.Label(labelframe1,image=cyclephoto,bg='#67BFFF')
-        clabel.grid(row=0,column=0, padx=2)
-
-        pedeimage = Image.open("utils/images/pedestrian.png")
-        width = 128
-        height = 128
-        smallpedephoto = pedeimage.resize((width,height),Image.ANTIALIAS)
-        pedephoto = ImageTk.PhotoImage(smallpedephoto)
-        olabel = tk.Label(image = pedephoto)
-        olabel.image = pedephoto
-        plabel = tk.Label(labelframe1,image=pedephoto,bg='#67BFFF')
-        plabel.grid(row=0,column=1, padx=2)
-
-        weatherimage = Image.open("utils/images/weather.png")
-        width = 128
-        height = 128
-        smallweat = weatherimage.resize((width,height),Image.ANTIALIAS)
-        weatphoto = ImageTk.PhotoImage(smallweat)
-        qlabel = tk.Label(image= weatphoto)
-        qlabel.image = weatphoto
-        rlabel = tk.Label(labelframe1,image=weatphoto,bg='#67BFFF')
-        rlabel.grid(row=0,column=2, padx=2)
-
-        carimage = Image.open("utils/images/car.png")
-        width = 128
-        height = 128
-        smallcar = carimage.resize((width, height), Image.ANTIALIAS)
-        carphoto = ImageTk.PhotoImage(smallcar)
-        tlabel = tk.Label(image=carphoto)
-        tlabel.image = carphoto
-        ulabel = tk.Label(labelframe1, image=carphoto,bg='#67BFFF')
-        ulabel.grid(row=0,column=3)
-
-        text_font = tkfont.Font(family='Helvetica', size=35, weight="bold", slant="italic")
-        bottomlabel = tk.Label(labelframe1, text="Follow the red line and drive safely!", font=text_font,bg='#67BFFF')
-        # bottomlabel.pack()
-        bottomlabel.grid(row=1, columnspan=4)
-
         labelframe1.pack(fill="both", expand="yes")
         labelframe1.place(anchor="c", relx=.5, rely=.5)
 
+
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        image_name = os.path.join(dir_path, "images", "populating.gif")
+        image = Image.open(image_name)
+
+        self._label = tk.Label(labelframe1)
+        self._label.image = image
+        self._label.pack()
+        # self._label.place(anchor="c", relx=.5, rely=.5)
+
+        text_font = tkfont.Font(family='Helvetica', size=32, slant="italic")
+        bottomlabel = tk.Label(labelframe1, text="Follow the red line and drive safely!", font=text_font,bg='#67BFFF')
+        bottomlabel.pack()
+        # bottomlabel.grid(row=1)
+
+
+
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
+
+    def stream(self):
+        try:
+            dir_path = os.path.dirname(os.path.realpath(__file__))
+            video_name = os.path.join(dir_path, "images", "populating.gif")
+            video = imageio.get_reader(video_name)
+            wait_sleep = self._controller.timeout_SearchingRoute/len(video)
+            for image in video.iter_data():
+                frame_image = ImageTk.PhotoImage(Image.fromarray(image))
+                self._label.config(image=frame_image)
+                self._label.image = frame_image
+                time.sleep(wait_sleep)
+        except Exception as e:
+            print(e)
+
+        self._controller.show_frame("DrivingMode")
 
     def _event_call(self, event):
         print(self.__class__.__name__)
-        # print("event -> " + str(event))
-        time.sleep(self._controller.timeout_PopulateScenario)
-        self._controller.show_frame("DrivingMode")
+        # print("event -> "+str(event))
+        self.focus()
+        self.focus_set()
+        self.focus_force()
+        self._thread = threading.Thread(target=self.stream)
+        self._thread.daemon = 1
+        self._thread.start()
+

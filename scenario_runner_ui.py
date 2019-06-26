@@ -20,7 +20,7 @@ class ScenarioRunnerApp(tk.Tk):
 
     timeout_ExperimentInfo   = 10
     timeout_SearchingRoute   = 4
-    timeout_PopulateScenario = 5
+    timeout_PopulateScenario = 3
     timeout_DrivingMode      = 0
     timeout_DrivingSummary   = 15
 

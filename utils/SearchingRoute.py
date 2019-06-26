@@ -43,7 +43,7 @@ class SearchingRoute(tk.Frame):
                 self._label.image = frame_image
                 time.sleep(wait_sleep)
             self._description['text'] = "Goal: {}\n" \
-                                        "Time limit: {} seconds".format(
+                                        "Time limit: {} sec".format(
                 scenario.goal,
                 scenario.timeout,
                 scenario.description

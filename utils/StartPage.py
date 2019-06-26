@@ -36,8 +36,10 @@ class StartPage(tk.Frame):
         print(self.__class__.__name__)
         # print("event -> "+str(event))
         self._controller.csv_size = self._controller.file_len("score.csv")
+        key = random.choice(list(self._controller.map_of_scenarios.keys()))
+        print(list(self._controller.map_of_scenarios.keys()))
+        print("Selected scenario: {}".format(key))
+        self._controller.selected_scenario = self._controller.map_of_scenarios[key]
         self.button1.focus()
         self.button1.focus_set()
         self.button1.focus_force()
-        key = random.choice(list(self._controller.map_of_scenarios.keys()))
-        self._controller.selected_scenario = self._controller.map_of_scenarios[key]
