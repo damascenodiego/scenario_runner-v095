@@ -15,12 +15,13 @@ and finally triggers the scenario execution.
 
 from __future__ import print_function
 import argparse
+import traceback
+import pygame
+
+from manual_control_steeringwheel import HUD, DualControl, World
 from argparse import RawTextHelpFormatter
 from datetime import datetime
-import traceback
-
-import pygame
-from manual_control_steeringwheel import HUD, DualControl, World
+from utils.leicester_receipt import print_receipt
 
 import glob
 import os
@@ -112,6 +113,9 @@ class ScenarioRunner(object):
         _failed = True
         num_of_attempts = 0
         while _failed:
+            if num_of_attempts > 20:
+                raise Exception("Connection failed!\n"
+                                "The server has not been started!")
             try:
                 self.client = carla.Client(args.host, int(args.port))
                 self.client.set_timeout(self.client_timeout)
@@ -303,6 +307,9 @@ class ScenarioRunner(object):
             world = None
             try:
 
+                self.set_traffic_lights(self.client.get_world())
+                self.set_random_weather(self.client.get_world())
+
                 pygame.init()
                 pygame.font.init()
 
@@ -318,16 +325,13 @@ class ScenarioRunner(object):
                 world = World(self.client.get_world(), hud, args.filter)
                 controller = DualControl(world, False)
 
-                self.setTrafficLights(self.client.get_world())
-
-
                 clock = pygame.time.Clock()
 
                 self.manager.start_time_scenario()
                 while True:
                     clock.tick_busy_loop(60)
                     if controller.parse_events(world, clock):
-                        return
+                        break
                     if not self.manager.running:
                         break
                     world.tick(clock)
@@ -359,6 +363,13 @@ class ScenarioRunner(object):
 
                 self.cleanup()
 
+                # try to print the receipt
+                try:
+                    id = ScenarioInfo.timestamp
+                    score = ScenarioInfo.finalScore
+                    print_receipt(id, score)
+                except Exception as e:
+                    print(e)
             finally:
                 if world is not None:
                     world.destroy()
@@ -371,7 +382,36 @@ class ScenarioRunner(object):
     def print_score(self, score):
         pass
 
-    def setTrafficLights(self, world):
+    def set_random_weather(self, world):
+        scenario_config_file = os.getenv('ROOT_SCENARIO_RUNNER', "./") + "/srunner/configs/Weather.xml"
+        tree = ET.parse(scenario_config_file)
+        configurations =[]
+        new_config = ScenarioConfiguration()
+        configurations.append(new_config)
+        for scenario in tree.iter("scenarios"):
+            new_config = ScenarioConfiguration()
+            for weather in scenario.iter("weather"):
+                new_config.cloudyness = int(set_attrib(weather, "cloudyness", 0))
+                new_config.precipitation = int(set_attrib(weather, "precipitation", 0))
+                new_config.precipitation_deposits = int(set_attrib(weather, "precipitation_deposits", 0))
+                new_config.wind_intensity = int(set_attrib(weather, "wind_intensity", 0))
+                new_config.sun_azimuth = int(set_attrib(weather, "sun_azimuth", 360))
+                new_config.sun_altitude = int(set_attrib(weather, "sun_altitude", 90))
+                configurations.append(new_config)
+
+        config = random.choice(configurations)
+
+        weather = carla.WeatherParameters(
+            cloudyness=config.cloudyness,
+            precipitation=config.precipitation,
+            precipitation_deposits=config.precipitation_deposits,
+            wind_intensity=config.wind_intensity,
+            sun_azimuth_angle=config.sun_azimuth,
+            sun_altitude_angle=config.sun_altitude
+        )
+        world.set_weather(weather)
+
+    def set_traffic_lights(self, world):
         for item in world.get_actors().filter('*'):
             if isinstance(item,carla.TrafficLight):
                 item.freeze(True)

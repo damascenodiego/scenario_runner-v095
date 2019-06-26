@@ -805,7 +805,7 @@ class ComputeScore(Criterion):
         self.score = 0
 
         criterionScores = dict()
-        timestamp = str(datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S'))
+        timestamp = str(datetime.datetime.now().strftime('%d%H%M'))
         criterionScores['timestamp'] = timestamp
         criterionScores['collision_weight'] = self.collision_weight
         criterionScores['wrongLane_weight'] = self.wrongLane_weight
@@ -833,8 +833,10 @@ class ComputeScore(Criterion):
                 pass
 
         criterionScores['finalScore'] = int(self.score)
+        ScenarioInfo.finalScore = criterionScores['finalScore']
+        ScenarioInfo.timestamp = timestamp
 
-        criterionScores['finalScore_sort'] = "%+010d" % int(self.score)
+        criterionScores['finalScore_sort'] = "%+010d" % (-1*int(self.score))
 
         # if score.csv does not exist, then create
         if not os.path.isfile('score.csv') or os.path.getsize('score.csv') == 0:
@@ -857,3 +859,5 @@ class ComputeScore(Criterion):
 class ScenarioInfo:
 
     routePercentageCompleted = 0
+    timestamp = 0
+    finalScore = 0
