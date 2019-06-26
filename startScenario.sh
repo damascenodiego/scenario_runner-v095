@@ -1,6 +1,7 @@
 #!/bin/bash
 # killall -9 python
-killall -9 CarlaUE4 CarlaUE4.sh || echo "CarlaUE4 was not running."
+#killall -9 CarlaUE4 CarlaUE4.sh || echo "CarlaUE4 was not running."
+( killall -9 CarlaUE4 CarlaUE4.sh 2>&1 ) > /dev/null
 clear
 
 run_python=/home/driverleics/opt/python3.6-venv/bin/python
@@ -53,4 +54,5 @@ $run_python /home/driverleics/git/scenario_runner-v095/scenario_runner.py --scen
 #rm -rf /home/driverleics/git/driverleics.github.io/_site/
 #/home/driverleics/.rvm/rubies/default/bin/bundle exec jekyll pagemaster scores
 
-killall -9 CarlaUE4 CarlaUE4.sh || echo "CarlaUE4 was not running."
+#killall -9 CarlaUE4 CarlaUE4.sh || echo "CarlaUE4 was not running."
+( killall -9 CarlaUE4 CarlaUE4.sh 2>&1 ) > /dev/null
