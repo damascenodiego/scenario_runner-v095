@@ -18,8 +18,8 @@
     />
     <weather name="earlymorning_gas"
              cloudyness="20"
-             precipitation="80"
-             precipitation_deposits="80"
+             precipitation="65"
+             precipitation_deposits="78"
              wind_intensity="80"
              sun_azimuth="275"
              sun_altitude="10"
@@ -39,5 +39,21 @@
              wind_intensity="80"
              sun_azimuth="360"
              sun_altitude="5"
+    />
+    <weather name="other_weather"
+             cloudyness="60"
+             precipitation="40"
+             precipitation_deposits="80"
+             wind_intensity="50"
+             sun_azimuth="45"
+             sun_altitude="25"
+    />
+    <weather name="other_weather2"
+             cloudyness="20"
+             precipitation="20"
+             precipitation_deposits="20"
+             wind_intensity="20"
+             sun_azimuth="25"
+             sun_altitude="75"
     />
 </scenarios>
