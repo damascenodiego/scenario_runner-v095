@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<scenarios>
+    <weather name="good"
+             cloudyness="0"
+             precipitation="0"
+             precipitation_deposits="0"
+             wind_intensity="0"
+             sun_azimuth="360"
+             sun_altitude="90"
+    />
+    <weather name="earlymorning"
+             cloudyness="50"
+             precipitation="80"
+             precipitation_deposits="80"
+             wind_intensity="80"
+             sun_azimuth="360"
+             sun_altitude="20"
+    />
+    <weather name="earlymorning_gas"
+             cloudyness="20"
+             precipitation="80"
+             precipitation_deposits="80"
+             wind_intensity="80"
+             sun_azimuth="275"
+             sun_altitude="10"
+    />
+    <weather name="night"
+             cloudyness="80"
+             precipitation="80"
+             precipitation_deposits="80"
+             wind_intensity="80"
+             sun_azimuth="360"
+             sun_altitude="5"
+    />
+    <weather name="night_rainy"
+             cloudyness="80"
+             precipitation="100"
+             precipitation_deposits="100"
+             wind_intensity="80"
+             sun_azimuth="360"
+             sun_altitude="5"
+    />
+</scenarios>
