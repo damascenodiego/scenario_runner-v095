@@ -834,6 +834,8 @@ class ComputeScore(Criterion):
 
         criterionScores['finalScore'] = int(self.score)
 
+        criterionScores['finalScore_sort'] = "%+010d" % int(self.score)
+
         # if score.csv does not exist, then create
         if not os.path.isfile('score.csv') or os.path.getsize('score.csv') == 0:
             with open("score.csv", 'w') as csvfile:
