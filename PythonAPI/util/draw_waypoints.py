@@ -115,9 +115,9 @@ def main():
     for routes in tree.iter("routes"):
         for route in routes.iter("route"):
             if color == 0:
-                args.lifetime = 20
+                args.lifetime = 25
             else:
-                args.lifetime = 15
+                args.lifetime = 14
             threading.Thread(target=draw, args=(route, colors[color % len(colors)], debug, args)).start()
             color += 1
 
@@ -143,7 +143,7 @@ def draw(route, selected_color, debug, args):
         current_w = waypoints_list[idx]
         next_w    = waypoints_list[idx+1]
 
-        draw_waypoint_union(debug, current_w, next_w, selected_color, lifetime-(0.05*delta))
+        draw_waypoint_union(debug, current_w, next_w, selected_color, lifetime-(0.02*delta))
         delta += 1
         time.sleep(args.tick_time)
 
