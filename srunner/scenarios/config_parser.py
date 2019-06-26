@@ -98,6 +98,7 @@ class ScenarioConfiguration(object):
     other_actors = []
     town = None
     name = None
+    timeout = 90
     type = None
     target = None
     route = None
@@ -144,6 +145,7 @@ def parse_scenario_configuration(file_name, scenario_name):
         new_config.town = set_attrib(scenario, 'town', None)
         new_config.name = set_attrib(scenario, 'name', None)
         new_config.type = set_attrib(scenario, 'type', None)
+        new_config.timeout = set_attrib(scenario, 'timeout', 90)
         new_config.other_actors = []
 
         for weather in scenario.iter("weather"):

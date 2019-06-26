@@ -44,7 +44,6 @@ class BasicScenario(object):
     category = None         # Scenario category, e.g. control_loss, follow_leading_vehicle, ...
     name = None             # Name of the scenario
     criteria_list = []      # List of evaluation criteria
-    timeout = 60            # Timeout of scenario in seconds
     scenario = None
 
     ego_vehicle = None
@@ -59,6 +58,7 @@ class BasicScenario(object):
         # Check if the CARLA server uses the correct map
         self._town = town
         self._check_town(world)
+        self.timeout = 60
 
         self.ego_vehicle = ego_vehicle
         self.other_actors = other_actors

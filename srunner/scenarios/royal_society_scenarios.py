@@ -44,7 +44,6 @@ class Town03GasStation(BasicScenario):
 
     category = "RoyalSocietyScenarios"
     radius = 5.0           # meters
-    timeout = 900           # Timeout of scenario in seconds
 
     # cyclist parameters
     _cyclist_trigger_distance_from_ego = 30
@@ -63,6 +62,7 @@ class Town03GasStation(BasicScenario):
         self._config = config
         self._target = None
         self._route = None
+        self.timeout = config.timeout
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
@@ -171,7 +171,6 @@ class Town03GasStation(BasicScenario):
 class Town03TrainTrack(BasicScenario):
     category = "RoyalSocietyScenarios"
     radius = 5.0           # meters
-    timeout = 900           # Timeout of scenario in seconds
 
     # cyclist parameters
     _cyclist_trigger_distance_from_ego = 20
@@ -194,6 +193,7 @@ class Town03TrainTrack(BasicScenario):
         self._config = config
         self._target = None
         self._route = None
+        self.timeout = config.timeout
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
@@ -282,14 +282,14 @@ class Town03TrainTrack(BasicScenario):
 
         root = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnAll())
         root_sequence = py_trees.composites.Sequence()
-        timeout = TimeOut(self.timeout)
+        timeout = TimeOut(self.timeout, display=True)
 
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
         in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
-        # route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
+        route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
         test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         test_criteria.add_child(collision_criterion)
@@ -297,7 +297,7 @@ class Town03TrainTrack(BasicScenario):
         test_criteria.add_child(in_route_criterion)
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
-        # test_criteria.add_child(route_percentage_criterion)
+        test_criteria.add_child(route_percentage_criterion)
         test_criteria.add_child(timeout)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
@@ -320,7 +320,6 @@ class Town03TrainTrack(BasicScenario):
 class Town01Restaurant(BasicScenario):
     category = "RoyalSocietyScenarios"
     radius = 5.0           # meters
-    timeout = 900           # Timeout of scenario in seconds
 
     # driveway car parameters
     _driveway_car_trigger_distance_from_ego = 25
@@ -345,6 +344,7 @@ class Town01Restaurant(BasicScenario):
         self._config = config
         self._target = None
         self._route = None
+        self.timeout = config.timeout
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
@@ -433,14 +433,14 @@ class Town01Restaurant(BasicScenario):
 
         root = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnAll())
         root_sequence = py_trees.composites.Sequence()
-        timeout = TimeOut(self.timeout)
+        timeout = TimeOut(self.timeout, display=True)
 
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
         in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
-        # route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
+        route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
         test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         test_criteria.add_child(collision_criterion)
@@ -448,7 +448,7 @@ class Town01Restaurant(BasicScenario):
         test_criteria.add_child(in_route_criterion)
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
-        # test_criteria.add_child(route_percentage_criterion)
+        test_criteria.add_child(route_percentage_criterion)
         test_criteria.add_child(timeout)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
@@ -471,7 +471,6 @@ class Town01Restaurant(BasicScenario):
 class Town04ParkingLot(BasicScenario):
     category = "RoyalSocietyScenarios"
     radius = 5.0           # meters
-    timeout = 900           # Timeout of scenario in seconds
 
     # car parameters
     _car_trigger_distance_from_ego = 30
@@ -494,6 +493,7 @@ class Town04ParkingLot(BasicScenario):
         self._config = config
         self._target = None
         self._route = None
+        self.timeout = config.timeout
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
@@ -583,14 +583,14 @@ class Town04ParkingLot(BasicScenario):
 
         root = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnAll())
         root_sequence = py_trees.composites.Sequence()
-        timeout = TimeOut(self.timeout)
+        timeout = TimeOut(self.timeout, display=True)
 
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
         in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
-        # route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
+        route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
         test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         test_criteria.add_child(timeout)
@@ -599,7 +599,7 @@ class Town04ParkingLot(BasicScenario):
         test_criteria.add_child(in_route_criterion)
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
-        # test_criteria.add_child(route_percentage_criterion)
+        test_criteria.add_child(route_percentage_criterion)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
         score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
@@ -621,7 +621,6 @@ class Town04ParkingLot(BasicScenario):
 class Town07Farm(BasicScenario):
     category = "RoyalSocietyScenarios"
     radius = 5.0           # meters
-    timeout = 900           # Timeout of scenario in seconds
 
     # car parameters
     _car_trigger_distance_from_ego = 35
@@ -637,13 +636,14 @@ class Town07Farm(BasicScenario):
 
     score = 0
 
-    def __init__(self, world, ego_vehicle, other_actors, town, randomize=False, debug_mode=False, config=None):
+    def __init__(self, world, ego_vehicle, other_actors, town,  randomize=False, debug_mode=False, config=None):
         """
         Setup all relevant parameters and create scenario
         """
         self._config = config
         self._target = None
         self._route = None
+        self.timeout = config.timeout
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
@@ -733,14 +733,14 @@ class Town07Farm(BasicScenario):
 
         root = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnAll())
         root_sequence = py_trees.composites.Sequence()
-        timeout = TimeOut(self.timeout)
+        timeout = TimeOut(self.timeout, display=True)
 
         collision_criterion = CollisionTest(self.ego_vehicle)
         wrong_way_criterion = WrongLaneTest(self.ego_vehicle)
         red_light_criterion = RunningRedLightTest(self.ego_vehicle)
         in_route_criterion = InRouteTest(self.ego_vehicle, radius=30.0, route=self._route, offroad_max=100)
         target_criterion = InRadiusRegionTest(self.ego_vehicle,  x=self._target.x, y=self._target.y, radius=self.radius)
-        # route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
+        route_percentage_criterion = RouteCompletionTest(self.ego_vehicle, route=self._route)
 
         test_criteria = py_trees.composites.Parallel("group_criteria", policy=py_trees.common.ParallelPolicy.SuccessOnOne())
         test_criteria.add_child(timeout)
@@ -749,7 +749,7 @@ class Town07Farm(BasicScenario):
         test_criteria.add_child(in_route_criterion)
         test_criteria.add_child(wrong_way_criterion)
         test_criteria.add_child(red_light_criterion)
-        # test_criteria.add_child(route_percentage_criterion)
+        test_criteria.add_child(route_percentage_criterion)
 
         criteria = [collision_criterion, target_criterion, in_route_criterion, wrong_way_criterion, red_light_criterion]
         score_counter = ComputeScore(criteria, self.ego_vehicle, self.timeout)
