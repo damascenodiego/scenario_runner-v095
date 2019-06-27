@@ -236,7 +236,7 @@
 		<ego_vehicle x="-87.0" y="-115.0" z="1" yaw="90.0" model="vehicle.tesla.model3" />
 		<other_actor x="-114.5" y="17" z="1" yaw="90" model="vehicle.diamondback.century" />
 		<other_actor x="-9.5" y="110" z="1" yaw="90" model="vehicle.lincoln.mkz2017" />
-		<other_actor x="146.3" y="145.2" z="9" yaw="90" model="vehicle.lincoln.mkz2017" />
+		<other_actor x="109.1" y="116.5" z="3" yaw="-90" model="vehicle.lincoln.mkz2017" />
 		<other_actor x="61.7" y="58.5" z="2" yaw="-20" roll="90" model="vehicle.diamondback.century" />
 		<other_actor x="59.7" y="56.5" z="5" yaw="60" model="vehicle.carlamotors.carlacola" />
 

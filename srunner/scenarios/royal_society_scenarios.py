@@ -174,7 +174,7 @@ class Town03TrainTrack(BasicScenario):
     radius = 5.0           # meters
 
     # cyclist parameters
-    _cyclist_trigger_distance_from_ego = 20
+    _cyclist_trigger_distance_from_ego = 25
     _cyclist_location_of_collision = carla.Location(-114.5, 27.4)
 
     # car parameters
@@ -182,8 +182,8 @@ class Town03TrainTrack(BasicScenario):
     _car_location_of_collision = carla.Location(-9.5, 136.3)
 
     # driveway car parameters
-    _driveway_car_trigger_distance_from_ego = 25
-    _driveway_car_location_of_collision = carla.Location(146.3, 140)
+    _driveway_car_trigger_distance_from_ego = 30
+    _driveway_car_location_of_collision = carla.Location(109.1, 131)
 
     score = 0
 
@@ -244,7 +244,7 @@ class Town03TrainTrack(BasicScenario):
             self.other_actors[2],
             self.ego_vehicle,
             self._driveway_car_location_of_collision,
-            [0, -1],
+            [0, 1],
             True)
 
         # non leaf nodes
@@ -350,6 +350,7 @@ class Town01Restaurant(BasicScenario):
         self.timeout = config.timeout
 
         ScenarioInfo.cameraTransform = carla.Transform(carla.Location(x=455.1, y=260.2, z=205.4), carla.Rotation(yaw=-157.8, pitch=-52.5, roll=-1.4))
+        ScenarioInfo.mandatoryWrongLane = 1
 
 
         if hasattr(self._config, 'route'):
@@ -502,6 +503,7 @@ class Town04ParkingLot(BasicScenario):
         self.timeout = config.timeout
 
         ScenarioInfo.cameraTransform = carla.Transform(carla.Location(x=219.2, y=-107.7, z=162.6), carla.Rotation(yaw=-89.1, pitch=-58.9, roll=3.3))
+        ScenarioInfo.mandatoryWrongLane = 2
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
@@ -655,6 +657,7 @@ class Town07Farm(BasicScenario):
         self.timeout = config.timeout
 
         ScenarioInfo.cameraTransform = carla.Transform(carla.Location(x=-179.4, y=-85.0, z=239.7), carla.Rotation(yaw=0.6, pitch=-69.1, roll=3.7))
+        ScenarioInfo.mandatoryWrongLane = 5
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data

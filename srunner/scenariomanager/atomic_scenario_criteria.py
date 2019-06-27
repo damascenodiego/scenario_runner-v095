@@ -851,8 +851,10 @@ class ComputeScore(Criterion):
                 self.score -= criterion.humanCollisions * self.humanCollision_weight
                 self.score -= criterion.staticCollisions * self.staticCollision_weight
             elif criterion.name == "WrongLaneTest":
-                criterionScores["wrongLane"] = criterion.actual_value
-                self.score -= criterion.actual_value * self.wrongLane_weight
+                wrongLanes = criterion.actual_value - ScenarioInfo.mandatoryWrongLane
+                wrongLanes = min(0, wrongLanes)
+                criterionScores["wrongLane"] = wrongLanes
+                self.score -= wrongLanes * self.wrongLane_weight
             elif criterion.name == "RunningRedLightTest":
                 criterionScores["redLights"] = criterion.actual_value
                 self.score -= criterion.actual_value * self.redLight_weight
@@ -901,6 +903,7 @@ class ComputeScore(Criterion):
 class ScenarioInfo:
 
     routePercentageCompleted = 0
+    mandatoryWrongLane = 0
     timestamp = 0
     finalScore = 0
     cameraTransform = None

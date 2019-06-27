@@ -418,7 +418,7 @@ class ScenarioRunner(object):
             debug.draw_point(location, 0.2, red, 30, False)
         time.sleep(0.5)
         for location in ScenarioInfo.wrongLanePoints:
-            debug.draw_point(location, 0.2, green, 30, False)
+            debug.draw_point(location, 0.2, blue, 30, False)
         time.sleep(0.5)
         for location in ScenarioInfo.offTrackPoints:
             debug.draw_point(location, 0.2, yellow, 30, False)
