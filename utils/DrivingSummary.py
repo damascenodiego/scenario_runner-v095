@@ -23,16 +23,17 @@ class DrivingSummary(tk.Frame):
         a1label.image = photo
         a1label.pack()
 
+        photo = tk.PhotoImage(file="snapshots/snapshot_blank.png")
+        self.snapshot = tk.Label(labelframe1, image=photo, bg='#67BFFF')
+        self.snapshot.image = photo
+        self.snapshot.pack()
+
         text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
-        self.toplabel = tk.Label(labelframe1, text="\nThank you for visiting and drive safe!\n"
+        self.toplabel = tk.Label(labelframe1, text="Thank you for visiting and drive safe!\n"
+                                                   "If you would like more information please visit:\n"
+                                                   "http://driverleics.github.io/"
                             , font=text_font, bg='#67BFFF')
         self.toplabel.pack()
-        # self.toplabel.place(anchor="c", relx=.5, rely=.5)
-
-        infomessage = tk.Label(labelframe1,text = "If you would like more information please visit:\n"
-                                                  "http://driverleics.github.io/", font=text_font, bg='#67BFFF')
-        infomessage.pack()
-
 
         self.button1 = tk.Button(self, text="Back to start menu", command=lambda: controller.show_frame("StartPage"),bg='#FF9A2E')
         self.button1.focus()
@@ -45,11 +46,30 @@ class DrivingSummary(tk.Frame):
         print("event -> "+str(event))
         csv_size = self._controller.file_len("score.csv")
         if csv_size == self._controller.csv_size:
-            self.toplabel["text"] = "\nThank you for visiting and drive safe!\n"
+            frame_image = tk.PhotoImage(file="snapshots/snapshot_blank.png")
+            self.snapshot.config(image=frame_image)
+            self.snapshot.image = frame_image
+
+            self.toplabel["text"] = "Thank you for visiting and drive safe!\n"\
+                                    "If you would like more information please visit:\n"\
+                                    "http://driverleics.github.io/"
         else:
-            score = self.check_last_score()
-            self.toplabel["text"] = "\nYour score is {}\n"\
-                                    "\nThank you for visiting and drive safe!\n".format(int(score))
+            id_score = self.check_last_score()
+            id    = id_score[0]
+            score = id_score[1]
+            self.toplabel["text"] = "\nYour score is {}\n" \
+                                    "Thank you for visiting and drive safe!".format(int(score))
+
+            try:
+                frame_image = tk.PhotoImage(file="snapshots/snapshot_{}.png".format(id))
+                self.snapshot.config(image=frame_image)
+                self.snapshot.image = frame_image
+            except Exception as e:
+                print(e)
+                frame_image = tk.PhotoImage(file="snapshots/snapshot_blank.png")
+                self.snapshot.config(image=frame_image)
+                self.snapshot.image = frame_image
+
             self.button1.focus()
             self.button1.focus_set()
             self.button1.focus_force()
@@ -58,14 +78,16 @@ class DrivingSummary(tk.Frame):
         # time.sleep(self._controller.timeout_DrivingSummary)
 
     def check_last_score(self):
+        id = None
         finalScore = None
         try:
             with open("score.csv","r") as fp:
                 scorereader = csv.DictReader(fp, delimiter=',')
                 for row in scorereader:
                     print(row['finalScore'])
+                    id = row['id']
                     finalScore = row['finalScore']
         except Exception as e:
             print(e)
 
-        return finalScore
+        return [id, finalScore]
