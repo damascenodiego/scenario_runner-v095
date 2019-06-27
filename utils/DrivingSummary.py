@@ -23,7 +23,7 @@ class DrivingSummary(tk.Frame):
         a1label.image = photo
         a1label.pack()
 
-        photo = tk.PhotoImage(file="snapshots/snapshot_blank.png")
+        photo = tk.PhotoImage(file="utils/images/snapshot_blank.png")
         self.snapshot = tk.Label(labelframe1, image=photo, bg='#67BFFF')
         self.snapshot.image = photo
         self.snapshot.pack()
