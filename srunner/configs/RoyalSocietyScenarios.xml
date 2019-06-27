@@ -503,12 +503,12 @@
 		</route>
 	</scenario>
 
-	<scenario_ name="Town01Restaurant" type="Town01Restaurant" town="Town01"
+	<scenario name="Town01Restaurant" type="Town01Restaurant" town="Town01"
 			  goal="Are you hungry? Let's get some food!"
 			  timeout="100"
 			  criteria="Avoid collisions and follow the red line!">
 
-		<ego_vehicle x="396.3" y="51.9" z="2" yaw="-90.0" model="vehicle.tesla.model3" />
+		<ego_vehicle x="396.3" y="51.9" z="3" yaw="-90.0" model="vehicle.tesla.model3" />
 		<other_actor x="322" y="95.2" z="2" yaw="180" model="vehicle.lincoln.mkz2017" />
 		<other_actor x="235" y="134.5" z="2" yaw="-180" model="vehicle.dodge_charger.police" />
 		<other_actor x="202" y="119" z="2" yaw="90" model="vehicle.diamondback.century" />
@@ -523,7 +523,6 @@
 		<other_actor x="229.1" y="135.7" z="2" yaw="32" model="walker.pedestrian.0002" />
 		<other_actor x="228.2" y="136" z="2" yaw="-7" model="walker.pedestrian.0001" />
 		<other_actor x="75" y="328.6" z="2" yaw="0" model="walker.pedestrian.0001" />
-
 
 		<route>
 			<waypoint  x="396.29998779296875" y="51.89999771118164" z="-0.013818320818245411" connection="RoadOption.LANEFOLLOW"/>
@@ -770,7 +769,7 @@
 			<waypoint  x="20.337142944335938" y="325.5686950683594" z="0.008871878497302532" connection="RoadOption.LANEFOLLOW"/>
 			<waypoint  x="17.32874870300293" y="325.2818298339844" z="0.009628943167626858" connection="RoadOption.LANEFOLLOW"/>
 		</route>
-	</scenario_>
+	</scenario>
 
 	<scenario name="Town04ParkingLot" type="Town04ParkingLot" town="Town04"
 			  goal="Get to the parking lot before you lose your spot!"
@@ -1277,7 +1276,6 @@
 			<waypoint  x="-37.38408660888672" y="-71.00203704833984" z="-0.014336241409182549" connection="RoadOption.LANEFOLLOW"/>
 		</route>
 	</scenario>
-
 </scenarios>
 
 

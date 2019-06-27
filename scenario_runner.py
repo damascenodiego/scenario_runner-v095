@@ -91,7 +91,7 @@ class ScenarioRunner(object):
     """
 
     # Tunable parameters
-    client_timeout = 2.0  # in seconds
+    client_timeout = 5.0  # in seconds
     wait_for_world = 10.0  # in seconds
 
 
