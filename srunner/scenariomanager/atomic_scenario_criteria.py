@@ -333,6 +333,7 @@ class CollisionTest(Criterion):
 
         self.list_traffic_events.append(collision_event)
         self.actual_value += 1
+        ScenarioInfo.collisionPoints.append(self.actor.get_transform().location)
         self.lastCollision = time.monotonic()
 
 
@@ -527,6 +528,7 @@ class WrongLaneTest(Criterion):
                 # direction?
                 self._infractions += 1
                 self.actual_value += 1
+                ScenarioInfo.wrongLanePoints.append(self.actor.get_transform().location)
                 print("WRONG LANE")
 
                 wrong_way_event = TrafficEvent(type=TrafficEventType.WRONG_WAY_INFRACTION)
@@ -605,6 +607,7 @@ class InRouteTest(Criterion):
             self._radius = radius
             self._route = route
             self._offroad_max = offroad_max
+            self.lastOffRoute = time.monotonic()
 
             self._counter_off_route = 0
             self._waypoints, _ = zip(*self._route)
@@ -633,7 +636,10 @@ class InRouteTest(Criterion):
                 if off_route:
                     self._counter_off_route += 1
                     self.actual_value += 1
-                    print("OFF ROUTE")
+                    if time.monotonic() - self.lastOffRoute > 0.5:
+                        ScenarioInfo.offTrackPoints.append(self.actor.get_transform().location)
+                        print("OFF ROUTE")
+                        self.lastOffRoute = time.monotonic()
 
 
                 # if self._counter_off_route > self._offroad_max:
@@ -772,6 +778,7 @@ class RunningRedLightTest(Criterion):
                     # you are running a red light
                     self.test_status = "FAILURE"
                     self.actual_value += 1
+                    ScenarioInfo.redLightPoints.append(self.actor.get_transform().location)
 
                     red_light_event = TrafficEvent(type=TrafficEventType.TRAFFIC_LIGHT_INFRACTION)
                     red_light_event.set_message("Agent ran a red light {} at (x={}, y={}, x={})".format(
@@ -896,3 +903,10 @@ class ScenarioInfo:
     routePercentageCompleted = 0
     timestamp = 0
     finalScore = 0
+    cameraTransform = None
+    route = None
+    route = None
+    collisionPoints = []
+    wrongLanePoints = []
+    redLightPoints = []
+    offTrackPoints = []

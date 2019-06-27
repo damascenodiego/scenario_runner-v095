@@ -467,7 +467,7 @@ class HUD(object):
         self.server_fps = self._server_clock.get_fps()
         self.frame_number = timestamp.frame_count
 
-    def show_score(self, display, score):
+    def show_score(self, display, score=0):
         self.score.set_score(score)
         self.score.toggle()
         self.score.render(display)
@@ -701,7 +701,7 @@ class ScoreText(object):
         self._render = not self._render
 
     def set_score(self,score):
-        self.lines = ["Total score: {} points!".format(score)]
+        self.lines = ["Computing Score..."]
         self.font = self.font
         self.dim = (680, len(self.lines) * 40 + 12)
         self.pos = (0.5 * self.width - 0.5 * self.dim[0], 0.5 * self.height - 0.5 * self.dim[1])

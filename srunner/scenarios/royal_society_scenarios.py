@@ -63,6 +63,7 @@ class Town03GasStation(BasicScenario):
         self._target = None
         self._route = None
         self.timeout = config.timeout
+        ScenarioInfo.cameraTransform = carla.Transform(carla.Location(x=135.5, y=-34.7, z=220.5), carla.Rotation(yaw=-178.9, pitch=-66.3, roll=2.5))
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
@@ -194,6 +195,8 @@ class Town03TrainTrack(BasicScenario):
         self._target = None
         self._route = None
         self.timeout = config.timeout
+
+        ScenarioInfo.cameraTransform = carla.Transform(carla.Location(x=87.0, y=171.1, z=300.8), carla.Rotation(yaw=-89.9, pitch=-69.2, roll=0))
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
@@ -346,6 +349,9 @@ class Town01Restaurant(BasicScenario):
         self._route = None
         self.timeout = config.timeout
 
+        ScenarioInfo.cameraTransform = carla.Transform(carla.Location(x=455.1, y=260.2, z=205.4), carla.Rotation(yaw=-157.8, pitch=-52.5, roll=-1.4))
+
+
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
             self._target = self._route[-1][0]
@@ -495,9 +501,12 @@ class Town04ParkingLot(BasicScenario):
         self._route = None
         self.timeout = config.timeout
 
+        ScenarioInfo.cameraTransform = carla.Transform(carla.Location(x=219.2, y=-107.7, z=162.6), carla.Rotation(yaw=-89.1, pitch=-58.9, roll=3.3))
+
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data
             self._target = self._route[-1][0]
+            ScenarioInfo.route = self._route
 
         super(Town04ParkingLot, self).__init__("Town04ParkingLot", ego_vehicle, other_actors, town, world, int(config.timeout), debug_mode, True)
 
@@ -644,6 +653,8 @@ class Town07Farm(BasicScenario):
         self._target = None
         self._route = None
         self.timeout = config.timeout
+
+        ScenarioInfo.cameraTransform = carla.Transform(carla.Location(x=-179.4, y=-85.0, z=239.7), carla.Rotation(yaw=0.6, pitch=-69.1, roll=3.7))
 
         if hasattr(self._config, 'route'):
             self._route = self._config.route.data

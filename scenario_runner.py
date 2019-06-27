@@ -17,6 +17,7 @@ from __future__ import print_function
 import argparse
 import traceback
 import pygame
+from carla import ColorConverter as cc
 
 from manual_control_steeringwheel import HUD, DualControl, World
 from argparse import RawTextHelpFormatter
@@ -333,6 +334,7 @@ class ScenarioRunner(object):
                     if controller.parse_events(world, clock):
                         break
                     if not self.manager.running:
+                        self.print_overview(clock, display, args)
                         break
                     world.tick(clock)
                     world.render(display)
@@ -343,8 +345,11 @@ class ScenarioRunner(object):
                 # stop  manual_control_steeringwheel #
                 ######################################
 
+                # self.print_overview2(clock, display, args)
+
                 # Provide outputs if required
                 self.analyze_scenario(args, config)
+
 
                 # score = 0
                 # for crit in self.manager.scenario.test_criteria:
@@ -379,8 +384,62 @@ class ScenarioRunner(object):
 
         print("No more scenarios .... Exiting")
 
-    def print_score(self, score):
-        pass
+
+    def print_overview(self, clock, display, args):
+        world = self.client.get_world()
+
+        camera_bp = world.get_blueprint_library().find('sensor.camera.rgb')
+        camera_bp.set_attribute('image_size_x', str(int(args.width)/2))
+        camera_bp.set_attribute('image_size_y', str(int(args.height)/2))
+
+        camera_pos = ScenarioInfo.cameraTransform
+        camera = world.spawn_actor(camera_bp, camera_pos)
+
+        red = carla.Color(255, 0, 0)
+        green = carla.Color(0, 255, 0)
+        cyan = carla.Color(0, 255, 255)
+        orange = carla.Color(255, 130, 0)
+        blue = carla.Color(0, 0, 255)
+        yellow = carla.Color(255, 255, 0)
+        white = carla.Color(255, 255, 255)
+
+        debug = world.debug
+
+        # if ScenarioInfo.route is not None:
+        #     points = []
+        #     for waypoint, _ in ScenarioInfo.route:
+        #         points.append(carla.Transform(waypoint))
+        #         for idx in range(len(points)-1):
+        #             begin = points[idx].location   + carla.Location(z=0.3)
+        #             end   = points[idx+1].location + carla.Location(z=0.3)
+        #             debug.draw_arrow(begin, end, thickness=1.0, arrow_size=3, life_time=600.0)
+
+        for location in ScenarioInfo.collisionPoints:
+            debug.draw_point(location, 0.2, red, 30, False)
+        time.sleep(0.5)
+        for location in ScenarioInfo.wrongLanePoints:
+            debug.draw_point(location, 0.2, green, 30, False)
+        time.sleep(0.5)
+        for location in ScenarioInfo.offTrackPoints:
+            debug.draw_point(location, 0.2, yellow, 30, False)
+        time.sleep(0.5)
+        for location in ScenarioInfo.redLightPoints:
+            debug.draw_point(location, 0.2, white, 30, False)
+        time.sleep(1)
+
+        camera.listen(self.process_img)
+        camera.listen(None)
+
+
+        world.tick(clock)
+        # world.render(display)
+        # pygame.display.flip()
+
+    def process_img(self, image):
+        fileName = "snapshots/snapshot_" + str(ScenarioInfo.timestamp) + ".png"
+        if not os.path.exists(fileName):
+            image.convert(cc.Raw)
+            image.save_to_disk(fileName)
 
     def set_random_weather(self, world):
         scenario_config_file = os.getenv('ROOT_SCENARIO_RUNNER', "./") + "/srunner/configs/Weather.xml"
