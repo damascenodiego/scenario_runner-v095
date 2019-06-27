@@ -46,7 +46,7 @@ class DrivingSummary(tk.Frame):
         print("event -> "+str(event))
         csv_size = self._controller.file_len("score.csv")
         if csv_size == self._controller.csv_size:
-            frame_image = tk.PhotoImage(file="snapshots/snapshot_blank.png")
+            frame_image = tk.PhotoImage(file="utils/images/snapshot_blank.png")
             self.snapshot.config(image=frame_image)
             self.snapshot.image = frame_image
 
@@ -66,7 +66,7 @@ class DrivingSummary(tk.Frame):
                 self.snapshot.image = frame_image
             except Exception as e:
                 print(e)
-                frame_image = tk.PhotoImage(file="snapshots/snapshot_blank.png")
+                frame_image = tk.PhotoImage(file="utils/images/snapshot_blank.png")
                 self.snapshot.config(image=frame_image)
                 self.snapshot.image = frame_image
 

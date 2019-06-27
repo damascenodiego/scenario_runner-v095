@@ -49,7 +49,7 @@ def print_receipt(id, score):
     p.text('\n------------------------\n')
     p.text("Trusted Autonomous Vehicles\n"
            "presented by\n")
-    uol_logo = os.getenv('ROOT_SCENARIO_RUNNER', "./") + "/utils/"+ "uol.jpg"
+    uol_logo = os.getenv('ROOT_SCENARIO_RUNNER', "./") + "/utils/images/"+ "uol.jpg"
     p.image(uol_logo)
 
     p.text("\nYour driving score:\n\n")
