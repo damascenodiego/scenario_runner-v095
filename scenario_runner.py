@@ -334,6 +334,10 @@ class ScenarioRunner(object):
                     if controller.parse_events(world, clock):
                         break
                     if not self.manager.running:
+                        hud.notification("COMPUTING SCORE...", 5)
+                        world.tick(clock)
+                        world.render(display)
+                        pygame.display.flip()
                         self.print_overview(clock, display, args)
                         break
                     world.tick(clock)
