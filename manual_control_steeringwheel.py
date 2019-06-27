@@ -444,6 +444,7 @@ class DualControl(object):
 class HUD(object):
     def __init__(self, width, height):
         self.dim = (width, height)
+        self.display = None
         pygame.mouse.set_pos(width, height)
         font = pygame.font.Font(pygame.font.get_default_font(), 20)
         fonts = [x for x in pygame.font.get_fonts() if 'mono' in x]
@@ -451,10 +452,10 @@ class HUD(object):
         mono = default_font if default_font in fonts else fonts[0]
         mono = pygame.font.match_font(mono)
         self._font_mono = pygame.font.Font(mono, 20)
-        self._notifications = FadingText(font, (width, 40), (0, height - 40))
+        self._notifications = textHUD(font, width, height)
         self._image = FadingImage(font, width, height)
         self.help = HelpText(pygame.font.Font(mono, 24), width, height)
-        self.score = ScoreText(pygame.font.Font(mono, 40), width, height)
+
         self.server_fps = 0
         self.frame_number = 0
         self.simulation_time = 0
@@ -467,10 +468,6 @@ class HUD(object):
         self.server_fps = self._server_clock.get_fps()
         self.frame_number = timestamp.frame_count
 
-    def show_score(self, display, score=0):
-        self.score.set_score(score)
-        self.score.toggle()
-        self.score.render(display)
 
     def tick(self, world, clock):
         self._notifications.tick(world, clock)
@@ -481,7 +478,7 @@ class HUD(object):
 
         if isinstance(c, carla.VehicleControl):
             if c.reverse:
-                pass
+                self.notification("      REVERSE MODE", seconds=0.1)
             #     self._image.set_image(pygame.image.load('utils/images/r_icon.png').convert(),seconds=1)
             #     self._image.tick(world, clock)
             # else:
@@ -688,35 +685,39 @@ class HelpText(object):
 
 
 # ==============================================================================
-# -- ScoreText ------------------------------------------------------------------
+# -- textHUD ------------------------------------------------------------------
 # ==============================================================================
 
-class ScoreText(object):
+class textHUD(object):
     def __init__(self, font, width, height):
-        self.width, self.height = width,height
+        lines = __doc__.split('\n')
         self.font = font
-        self.set_score(0)
-
-    def toggle(self):
-        self._render = not self._render
-
-    def set_score(self,score):
-        self.lines = ["Computing Score..."]
-        self.font = self.font
-        self.dim = (680, len(self.lines) * 40 + 12)
-        self.pos = (0.5 * self.width - 0.5 * self.dim[0], 0.5 * self.height - 0.5 * self.dim[1])
+        self.dim = (250, len(lines) * 4 + 12)
+        self.pos = (0.52 * width - 0.5 * self.dim[0], 0.15 * height - 0.5 * self.dim[1])
         self.seconds_left = 0
         self.surface = pygame.Surface(self.dim)
         self.surface.fill((0, 0, 0, 0))
-        for n, line in enumerate(self.lines):
+        for n, line in enumerate(lines):
             text_texture = self.font.render(line, True, (255, 255, 255))
             self.surface.blit(text_texture, (22, n * 22))
             self._render = False
-        self.surface.set_alpha(220)
+        self.surface.set_alpha(150)
+
+    def set_text(self, text, color=(255, 255, 255), seconds=2.0):
+        text_texture = self.font.render(text, True, color)
+        self.surface = pygame.Surface(self.dim)
+        self.seconds_left = seconds
+        self.surface.fill((0, 0, 0, 0))
+        self.surface.blit(text_texture, (10, 11))
+
+    def tick(self, _, clock):
+        delta_seconds = 1e-3 * clock.get_time()
+        self.seconds_left = max(0.0, self.seconds_left - delta_seconds)
+        self.surface.set_alpha(300.0 * self.seconds_left)
 
     def render(self, display):
-        if self._render:
-            display.blit(self.surface, self.pos)
+        display.blit(self.surface, self.pos)
+
 # ==============================================================================
 # -- FadingImage ------------------------------------------------------------------
 # ==============================================================================
