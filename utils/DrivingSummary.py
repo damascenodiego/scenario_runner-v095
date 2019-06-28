@@ -28,6 +28,21 @@ class DrivingSummary(tk.Frame):
         self.snapshot.image = photo
         self.snapshot.pack()
 
+        sq_sz = 15
+        self.legend = tk.Canvas(labelframe1, width=390, height=18)
+        self.legend.create_rectangle(0, 2, sq_sz, sq_sz + 2, fill="red", outline ='black')
+        self.legend.create_text(3.5 * sq_sz - 5, sq_sz / 2, text="Collision")
+
+        self.legend.create_rectangle(100, 2, 100 + sq_sz, sq_sz + 2, fill="blue", outline ='black')
+        self.legend.create_text(100 + 3.5 * sq_sz + 4, sq_sz / 2, text="Wrong way")
+
+        self.legend.create_rectangle(210, 2, 210 + sq_sz, sq_sz + 2, fill="yellow", outline ='black')
+        self.legend.create_text(210 + 3.5 * sq_sz - 3, sq_sz / 2, text="Off track")
+
+        self.legend.create_rectangle(300, 2, 300+sq_sz, sq_sz+2, fill="white",  outline = 'black')
+        self.legend.create_text(300+3.5*sq_sz,sq_sz/2, text="Red light")
+        self.legend.pack()
+
         text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
         self.toplabel = tk.Label(labelframe1, text="Thank you for visiting and drive safe!\n"
                                                    "If you would like more information please visit:\n"
@@ -49,11 +64,15 @@ class DrivingSummary(tk.Frame):
             frame_image = tk.PhotoImage(file="utils/images/snapshot_blank.png")
             self.snapshot.config(image=frame_image)
             self.snapshot.image = frame_image
+            self.legend.pack_forget()
 
             self.toplabel["text"] = "Thank you for visiting and drive safe!\n"\
                                     "If you would like more information please visit:\n"\
                                     "http://driverleics.github.io/"
         else:
+            self.toplabel.pack_forget()
+            self.legend.pack()
+            self.toplabel.pack()
             id_score = self.check_last_score()
             id    = id_score[0]
             score = id_score[1]
