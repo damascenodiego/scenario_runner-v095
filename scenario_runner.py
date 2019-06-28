@@ -20,6 +20,7 @@ import pygame
 from carla import ColorConverter as cc
 
 from manual_control_steeringwheel import HUD, DualControl, World
+from PythonAPI.examples.manual_control import KeyboardControl
 from argparse import RawTextHelpFormatter
 from datetime import datetime
 
@@ -323,14 +324,16 @@ class ScenarioRunner(object):
 
                 hud = HUD(args.width, args.height)
                 world = World(self.client.get_world(), hud, args.filter)
-                controller = DualControl(world, False)
+                # controller = DualControl(world, False)
+                controller = KeyboardControl(world, False)
 
                 clock = pygame.time.Clock()
 
                 self.manager.start_time_scenario()
                 while True:
                     clock.tick_busy_loop(60)
-                    if controller.parse_events(world, clock):
+                    # if controller.parse_events(world, clock):
+                    if controller.parse_events(self.client, world, clock): # KeyboardControl
                         break
                     if not self.manager.running:
                         hud.notification("COMPUTING SCORE...", 5)

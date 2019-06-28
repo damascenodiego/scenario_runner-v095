@@ -44,8 +44,8 @@ class DrivingSummary(tk.Frame):
         self.legend.pack()
 
         text_font = tkfont.Font(family='Helvetica', size=25, weight="bold", slant="italic")
-        self.toplabel = tk.Label(labelframe1, text="Thank you for visiting and drive safe!\n"
-                                                   "If you would like more information please visit:\n"
+        self.toplabel = tk.Label(labelframe1, text="Thank you for visiting our stand and drive safe!\n"
+                                                   "For more information, check our homepage:\n" \
                                                    "http://driverleics.github.io/"
                             , font=text_font, bg='#67BFFF')
         self.toplabel.pack()
@@ -66,8 +66,8 @@ class DrivingSummary(tk.Frame):
             self.snapshot.image = frame_image
             self.legend.pack_forget()
 
-            self.toplabel["text"] = "Thank you for visiting and drive safe!\n"\
-                                    "If you would like more information please visit:\n"\
+            self.toplabel["text"] = "Thank you for visiting our stand and drive safe!\n" \
+                                    "For more information, check our homepage:\n" \
                                     "http://driverleics.github.io/"
         else:
             self.toplabel.pack_forget()
@@ -76,8 +76,10 @@ class DrivingSummary(tk.Frame):
             id_score = self.check_last_score()
             id    = id_score[0]
             score = id_score[1]
-            self.toplabel["text"] = "\nYour score is {}\n" \
-                                    "Thank you for visiting and drive safe!".format(int(score))
+            self.toplabel["text"] = "\nYour ID is {}\tYour score is {}\n" \
+                                    "Thank you for visiting our stand and drive safe!\n" \
+                                    "For more information, check our homepage:\n" \
+                                    "http://driverleics.github.io/".format(int(id),int(score))
 
             try:
                 self._controller.printer.print(id,score)
