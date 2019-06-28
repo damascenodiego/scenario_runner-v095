@@ -22,7 +22,6 @@ from carla import ColorConverter as cc
 from manual_control_steeringwheel import HUD, DualControl, World
 from argparse import RawTextHelpFormatter
 from datetime import datetime
-from utils.leicester_receipt import print_receipt
 
 import glob
 import os
@@ -354,31 +353,12 @@ class ScenarioRunner(object):
                 # Provide outputs if required
                 self.analyze_scenario(args, config)
 
-
-                # score = 0
-                # for crit in self.manager.scenario.test_criteria:
-                #     if isinstance(crit, CountScore):
-                #         score = crit.score
-                #
-                # hud.show_score(display, score)
-                # self.print_score(score)
-                # pygame.display.flip()
-                # time.sleep(10)
-
-
                 # Stop scenario and cleanup
                 self.manager.stop_scenario()
                 del scenario
 
                 self.cleanup()
 
-                # try to print the receipt
-                # try:
-                #     id = ScenarioInfo.timestamp
-                #     score = ScenarioInfo.finalScore
-                #     print_receipt(id, score)
-                # except Exception as e:
-                #     print(e)
             finally:
                 if world is not None:
                     world.destroy()

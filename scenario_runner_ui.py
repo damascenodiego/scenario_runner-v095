@@ -1,11 +1,12 @@
-import os
+import usb
 import random
-import ntpath
+import sys
 import tkinter as tk
 from tkinter import font as tkfont
 import xml.etree.ElementTree as ET
 import configparser
 
+from tkinter import messagebox
 
 from utils.StartPage import StartPage
 from utils.ExperimentInfo import ExperimentInfo
@@ -29,7 +30,24 @@ class ScenarioRunnerApp(tk.Tk):
         super().__init__(*args, **kwargs)
         self.attributes("-zoomed", True)
 
-        self.printer = Terow_Printer()
+        printer_is_ok = False
+        self.printer = None
+
+        while not printer_is_ok:
+            try:
+                self.printer = Terow_Printer()
+                check_if_printer_is_ok(self.printer)
+                printer_is_ok = True
+
+            except Exception as e:
+                ret = messagebox.askretrycancel("Printer error",
+                                      "Wanna try again?\n\n"
+                                      "Make sure the printer is\n"
+                                      "on and connected to the USB!\n\n"                                      
+                                      "Message:\n{}".format(e))
+                print(ret)
+                if not ret:
+                    sys.exit(-1)
 
         self.title("Carla Scenario Runner UI")
 
@@ -97,6 +115,32 @@ class ScenarioRunnerApp(tk.Tk):
             for i, l in enumerate(f):
                 pass
         return i + 1
+
+
+def check_if_printer_is_ok(printer):
+    # This method has been created based on the
+    # __init__() method from the escposprinter library
+    if printer.p.device is None:
+        raise Exception("Cable isn't plugged in")
+    try:
+
+        if printer.p.device.is_kernel_driver_active(0):
+            try:
+                printer.p.device.detach_kernel_driver(0)
+            except usb.core.USBError as e:
+                raise Exception("Could not detatch kernel driver: %s" % str(e))
+            except Exception as e:
+                raise Exception(str(e))
+
+    except Exception as e:
+        raise Exception(str(e))
+
+    try:
+        printer.p.device.set_configuration()
+        printer.p.device.reset()
+    except usb.core.USBError as e:
+        raise Exception("Could not set configuration: %s" % str(e))
+
 
 def loadXml(xml_path):
     scenarios = dict()

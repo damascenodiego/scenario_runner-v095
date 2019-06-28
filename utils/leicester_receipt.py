@@ -8,8 +8,15 @@ from PIL import Image
 
 class Terow_Printer:
     def __init__(self):
-        self.p = printer.Usb(0x0416, 0x5011)
-        self.uol_logo = os.getenv('ROOT_SCENARIO_RUNNER', "./") + "/utils/images/"+ "uol.jpg"
+        self.p = None
+        try:
+            self.p = printer.Usb(0x0416, 0x5011)
+            self.uol_logo = os.getenv('ROOT_SCENARIO_RUNNER', "./") + "/utils/images/"+ "uol.jpg"
+        except Exception as e:
+            raise ConnectionError(e)
+
+
+
 
     def custom_qr(self, data):
         # Create qr code instance
@@ -87,4 +94,5 @@ class Terow_Printer:
         self.p.cut()
 
     def __del__(self):
-        del self.p
+        if self.p is not None:
+            del self.p

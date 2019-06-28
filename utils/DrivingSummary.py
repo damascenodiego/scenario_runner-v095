@@ -63,8 +63,8 @@ class DrivingSummary(tk.Frame):
             try:
                 self._controller.printer.print(id,score)
             except Exception as e:
-                print("Printer error!", file=sys.stderr)
-                print(e)
+                print("Printer error: {}".format(e), file=sys.stderr)
+
             try:
                 frame_image = tk.PhotoImage(file="snapshots/snapshot_{}.png".format(id))
                 self.snapshot.config(image=frame_image)
