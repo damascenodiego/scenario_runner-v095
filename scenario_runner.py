@@ -324,16 +324,16 @@ class ScenarioRunner(object):
 
                 hud = HUD(args.width, args.height)
                 world = World(self.client.get_world(), hud, args.filter)
-                # controller = DualControl(world, False)
-                controller = KeyboardControl(world, False)
+                controller = DualControl(world, False)
+                # controller = KeyboardControl(world, False)
 
                 clock = pygame.time.Clock()
 
                 self.manager.start_time_scenario()
                 while True:
                     clock.tick_busy_loop(60)
-                    # if controller.parse_events(world, clock):
-                    if controller.parse_events(self.client, world, clock): # KeyboardControl
+                    if controller.parse_events(world, clock): # DualControl
+                    # if controller.parse_events(self.client, world, clock): # KeyboardControl
                         break
                     if not self.manager.running:
                         hud.notification("COMPUTING SCORE...", 5)
