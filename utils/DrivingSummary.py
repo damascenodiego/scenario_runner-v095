@@ -1,4 +1,4 @@
-import time
+import sys
 import csv
 import tkinter as tk
 from tkinter import font as tkfont
@@ -60,6 +60,11 @@ class DrivingSummary(tk.Frame):
             self.toplabel["text"] = "\nYour score is {}\n" \
                                     "Thank you for visiting and drive safe!".format(int(score))
 
+            try:
+                self._controller.printer.print(id,score)
+            except Exception as e:
+                print("Printer error!", file=sys.stderr)
+                print(e)
             try:
                 frame_image = tk.PhotoImage(file="snapshots/snapshot_{}.png".format(id))
                 self.snapshot.config(image=frame_image)

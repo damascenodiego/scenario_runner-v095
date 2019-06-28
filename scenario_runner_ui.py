@@ -14,6 +14,7 @@ from utils.PopulateScenario import PopulateScenario
 from utils.DrivingMode import DrivingMode
 from utils.DrivingSummary import DrivingSummary
 from utils.Scenario import Scenario
+from utils.leicester_receipt import Terow_Printer
 
 
 class ScenarioRunnerApp(tk.Tk):
@@ -27,6 +28,8 @@ class ScenarioRunnerApp(tk.Tk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.attributes("-zoomed", True)
+
+        self.printer = Terow_Printer()
 
         self.title("Carla Scenario Runner UI")
 
