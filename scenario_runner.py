@@ -373,12 +373,12 @@ class ScenarioRunner(object):
                 self.cleanup()
 
                 # try to print the receipt
-                try:
-                    id = ScenarioInfo.timestamp
-                    score = ScenarioInfo.finalScore
-                    print_receipt(id, score)
-                except Exception as e:
-                    print(e)
+                # try:
+                #     id = ScenarioInfo.timestamp
+                #     score = ScenarioInfo.finalScore
+                #     print_receipt(id, score)
+                # except Exception as e:
+                #     print(e)
             finally:
                 if world is not None:
                     world.destroy()
