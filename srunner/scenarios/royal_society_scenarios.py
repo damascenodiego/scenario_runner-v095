@@ -165,7 +165,7 @@ class Town03GasStation(BasicScenario):
         points = []
         for waypoint, _ in self._route:
             points.append(carla.Transform(waypoint))
-        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.3)
+        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.2)
         draw_circle(self.ego_vehicle.get_world(), self._target, 0.5, 0, 600, [0, 1])
 
 
@@ -316,7 +316,7 @@ class Town03TrainTrack(BasicScenario):
         points = []
         for waypoint, _ in self._route:
             points.append(carla.Transform(waypoint))
-        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.3)
+        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.2)
         draw_circle(self.ego_vehicle.get_world(), self._target, 0.5, 0, 600, [1, 0])
 
 
@@ -471,7 +471,7 @@ class Town01Restaurant(BasicScenario):
         points = []
         for waypoint, _ in self._route:
             points.append(carla.Transform(waypoint))
-        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.3)
+        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.2)
         draw_circle(self.ego_vehicle.get_world(), self._target, 0.5, 0, 600, [0, 1])
 
 
@@ -625,7 +625,7 @@ class Town04ParkingLot(BasicScenario):
         points = []
         for waypoint, _ in self._route:
             points.append(carla.Transform(waypoint))
-        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.3)
+        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.2)
         draw_circle(self.ego_vehicle.get_world(), self._target, 0.5, 0, 600, [0, 1])
 
 
@@ -778,5 +778,5 @@ class Town07Farm(BasicScenario):
         points = []
         for waypoint, _ in self._route:
             points.append(carla.Transform(waypoint))
-        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.3)
+        draw_waypoints_location(self.ego_vehicle.get_world(), points, 0.2)
         draw_circle(self.ego_vehicle.get_world(), self._target, 0.5, 0, 600, [1, 0])

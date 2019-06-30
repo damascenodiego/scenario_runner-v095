@@ -863,7 +863,7 @@ class CameraManager(object):
         self.hud = hud
         self.recording = False
         self._camera_transforms = [
-            carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15)),
+            carla.Transform(carla.Location(x=0.15, y=-0.30, z=1.15)),
             carla.Transform(carla.Location(x=-5.5, z=2.8), carla.Rotation(pitch=-15)),
             carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=-55)),
             carla.Transform(carla.Location(x=0.150, y=-0.30, z=1.15), carla.Rotation(yaw=55)),
@@ -893,6 +893,7 @@ class CameraManager(object):
             if item[0].startswith('sensor.camera'):
                 bp.set_attribute('image_size_x', str(hud.dim[0]))
                 bp.set_attribute('image_size_y', str(hud.dim[1]))
+                bp.set_attribute('fov', '110')
             elif item[0].startswith('sensor.lidar'):
                 bp.set_attribute('range', '5000')
             item.append(bp)
