@@ -40,14 +40,24 @@ class ScenarioRunnerApp(tk.Tk):
                 printer_is_ok = True
 
             except Exception as e:
-                ret = messagebox.askretrycancel("Printer error",
-                                      "Wanna try again?\n\n"
-                                      "Make sure the printer is\n"
-                                      "on and connected to the USB!\n\n"                                      
-                                      "Message:\n{}".format(e))
+                ret = messagebox.askyesnocancel("Printer error",
+                                                "PRINTER ERROR: {}\n\n"\
+                                                "Wanna try to setup the printer again?\n\n"\
+                                                "Click YES to try again\n\n"\
+                                                 "Click NO to start without printing support\n\n"\
+                                                "Click CANCEL to close the UI"\
+                                                # "Make sure the printer is\n"
+                                                # "on and connected to the USB!\n\n"
+                                                .format(e))
                 print(ret)
-                if not ret:
+                if ret is None:
                     sys.exit(-1)
+                elif ret is not False:
+                    printer_is_ok = False
+                elif ret is not True:
+                    printer_is_ok = True
+
+
 
         self.title("Carla Scenario Runner UI")
 

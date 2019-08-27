@@ -27,6 +27,7 @@ import os
 import time
 from srunner.scenariomanager.carla_data_provider import CarlaDataProvider
 from srunner.scenariomanager.timer import GameTime
+from srunner.scenariomanager.timer import ScenarioTimer
 from srunner.scenariomanager.traffic_events import TrafficEvent, TrafficEventType
 from PythonAPI.carla.agents.tools.misc import draw_waypoints
 
@@ -608,9 +609,11 @@ class InRouteTest(Criterion):
             self._route = route
             self._offroad_max = offroad_max
             self.lastOffRoute = time.monotonic()
+            self.lastWaypoint = time.monotonic()
 
             self._counter_off_route = 0
             self._waypoints, _ = zip(*self._route)
+
 
         def update(self):
             """
@@ -619,6 +622,8 @@ class InRouteTest(Criterion):
             new_status = py_trees.common.Status.RUNNING
 
             location = CarlaDataProvider.get_location(self._actor)
+            velocity = CarlaDataProvider.get_velocity(self._actor)
+
             if location is None:
                 return new_status
 
@@ -626,6 +631,15 @@ class InRouteTest(Criterion):
                 new_status = py_trees.common.Status.FAILURE
 
             elif self.test_status == "RUNNING" or self.test_status == "INIT":
+
+
+                if time.monotonic() - self.lastWaypoint > 0.5:
+                    print("kajhsdokjsafdh")
+                    velocity = CarlaDataProvider.get_velocity(self._actor)
+                    ScenarioInfo.egoTrajectory.append("Timestamp: " + str(ScenarioTimer.elapsedTime) + " " + str(self._actor.get_transform()) + " Velocity: " + str(velocity))
+                    self.lastWaypoint = time.monotonic()
+
+
                 # are we too far away from the route waypoints (i.e., off route)?
                 off_route = True
                 for waypoint in self._waypoints:
@@ -852,7 +866,7 @@ class ComputeScore(Criterion):
                 self.score -= criterion.staticCollisions * self.staticCollision_weight
             elif criterion.name == "WrongLaneTest":
                 wrongLanes = criterion.actual_value - ScenarioInfo.mandatoryWrongLane
-                wrongLanes = min(0, wrongLanes)
+                wrongLanes = max(0, wrongLanes)
                 criterionScores["wrongLane"] = wrongLanes
                 self.score -= wrongLanes * self.wrongLane_weight
             elif criterion.name == "RunningRedLightTest":
@@ -894,6 +908,15 @@ class ComputeScore(Criterion):
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writerow(criterionScores)
 
+
+        # record ego car trajectory
+        trajectoryFile = os.path.join('_trajectories', str(timestamp) + '.txt')
+        f = open(trajectoryFile, "a")
+        for trajectory in ScenarioInfo.egoTrajectory:
+            f.write(str(trajectory))
+            f.write('\r\n')
+        f.close()
+
         new_status = py_trees.common.Status.SUCCESS
         self.logger.debug("%s.update()[%s->%s]" % (self.__class__.__name__, self.status, new_status))
 
@@ -903,6 +926,7 @@ class ComputeScore(Criterion):
 class ScenarioInfo:
 
     routePercentageCompleted = 0
+    egoTrajectory = []
     mandatoryWrongLane = 0
     timestamp = 0
     finalScore = 0

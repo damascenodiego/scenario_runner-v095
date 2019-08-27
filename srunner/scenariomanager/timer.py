@@ -88,6 +88,7 @@ class TimeOut(py_trees.behaviour.Behaviour):
 
         if self.display:
             ScenarioTimer.timeLeft = self._timeout_value - self.elapsed_time
+            ScenarioTimer.elapsedTime = self.elapsed_time
 
         if self.elapsed_time < self._timeout_value:
             new_status = py_trees.common.Status.RUNNING
@@ -107,3 +108,4 @@ class TimeOut(py_trees.behaviour.Behaviour):
 
 class ScenarioTimer:
     timeLeft = 0
+    elapsedTime = 0

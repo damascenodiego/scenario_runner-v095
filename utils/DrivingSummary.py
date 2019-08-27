@@ -76,7 +76,7 @@ class DrivingSummary(tk.Frame):
             id_score = self.check_last_score()
             id    = id_score[0]
             score = id_score[1]
-            self.toplabel["text"] = "\nYour ID is {}\tYour score is {}\n" \
+            self.toplabel["text"] = "\nYour ID is {}\nYour score is {}\n" \
                                     "Thank you for visiting our stand and drive safe!\n" \
                                     "For more information, check our homepage:\n" \
                                     "http://driverleics.github.io/".format(int(id),int(score))

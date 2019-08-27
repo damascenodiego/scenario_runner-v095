@@ -27,6 +27,8 @@ class StartPage(tk.Frame):
         self.button1.pack()
         self.button1.place(anchor="c", relx=.5, rely=.5)
 
+        self.curr_scenario = 0
+        self.list_of_scenarios = list(self._controller.map_of_scenarios.keys())
         self.bind("<<"+self.__class__.__name__+">>", self._event_call)
 
     def start_experiment(self, event):
@@ -36,8 +38,10 @@ class StartPage(tk.Frame):
         print(self.__class__.__name__)
         # print("event -> "+str(event))
         self._controller.csv_size = self._controller.file_len("score.csv")
-        key = random.choice(list(self._controller.map_of_scenarios.keys()))
-        print(list(self._controller.map_of_scenarios.keys()))
+        key = self.list_of_scenarios[self.curr_scenario % len(self.list_of_scenarios)]
+        self.curr_scenario += 1
+        # key = self.list_of_scenarios[self.curr_scenario %]
+        # print(list(self._controller.map_of_scenarios.keys()))
         print("Selected scenario: {}".format(key))
         self._controller.selected_scenario = self._controller.map_of_scenarios[key]
         self.button1.focus()

@@ -56,4 +56,20 @@
              sun_azimuth="25"
              sun_altitude="75"
     />
+    <weather name="other_weather3"
+             cloudyness="90"
+             precipitation="90"
+             precipitation_deposits="80"
+             wind_intensity="70"
+             sun_azimuth="25"
+             sun_altitude="75"
+    />
+    <weather name="other_weather4"
+             cloudyness="90"
+             precipitation="90"
+             precipitation_deposits="80"
+             wind_intensity="70"
+             sun_azimuth="25"
+             sun_altitude="75"
+    />
 </scenarios>

@@ -174,7 +174,7 @@ class Town03TrainTrack(BasicScenario):
     radius = 5.0           # meters
 
     # cyclist parameters
-    _cyclist_trigger_distance_from_ego = 25
+    _cyclist_trigger_distance_from_ego = 22
     _cyclist_location_of_collision = carla.Location(-114.5, 27.4)
 
     # car parameters
@@ -182,7 +182,7 @@ class Town03TrainTrack(BasicScenario):
     _car_location_of_collision = carla.Location(-9.5, 136.3)
 
     # driveway car parameters
-    _driveway_car_trigger_distance_from_ego = 30
+    _driveway_car_trigger_distance_from_ego = 27
     _driveway_car_location_of_collision = carla.Location(109.1, 131)
 
     score = 0
@@ -484,11 +484,11 @@ class Town04ParkingLot(BasicScenario):
     _car_location_of_collision = carla.Location(310.9, -172.2)
 
     # cyclist parameters
-    _cyclist_trigger_distance_from_ego = 30
+    _cyclist_trigger_distance_from_ego = 22
     _cyclist_location_of_collision = carla.Location(239, -172.8)
 
     # driveway car parameters
-    _driveway_car_trigger_distance_from_ego = 25
+    _driveway_car_trigger_distance_from_ego = 20
     _driveway_car_location_of_collision = carla.Location(183.7, -246)
 
     score = 0
@@ -638,11 +638,11 @@ class Town07Farm(BasicScenario):
     _car_location_of_collision = carla.Location(-5.3, -3.1)
 
     # cyclist parameters
-    _cyclist_trigger_distance_from_ego = 25
+    _cyclist_trigger_distance_from_ego = 17
     _cyclist_location_of_collision = carla.Location(-150.8, -3)
 
     # driveway car parameters
-    _driveway_car_trigger_distance_from_ego = 25
+    _driveway_car_trigger_distance_from_ego = 18
     _driveway_car_location_of_collision = carla.Location(-59.0, -63.5)
 
     score = 0
