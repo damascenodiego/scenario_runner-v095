@@ -634,7 +634,6 @@ class InRouteTest(Criterion):
 
 
                 if time.monotonic() - self.lastWaypoint > 0.5:
-                    print("kajhsdokjsafdh")
                     velocity = CarlaDataProvider.get_velocity(self._actor)
                     ScenarioInfo.egoTrajectory.append("Timestamp: " + str(ScenarioTimer.elapsedTime) + " " + str(self._actor.get_transform()) + " Velocity: " + str(velocity))
                     self.lastWaypoint = time.monotonic()
@@ -652,7 +651,6 @@ class InRouteTest(Criterion):
                     self.actual_value += 1
                     if time.monotonic() - self.lastOffRoute > 0.5:
                         ScenarioInfo.offTrackPoints.append(self.actor.get_transform().location)
-                        print("OFF ROUTE")
                         self.lastOffRoute = time.monotonic()
 
 
@@ -910,6 +908,7 @@ class ComputeScore(Criterion):
 
 
         # record ego car trajectory
+        os.mkdir('_trajectories')
         trajectoryFile = os.path.join('_trajectories', str(timestamp) + '.txt')
         f = open(trajectoryFile, "a")
         for trajectory in ScenarioInfo.egoTrajectory:
